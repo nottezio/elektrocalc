@@ -1,0 +1,969 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Electrolyte Correction · Clinical Decision Support</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{--bg:#0c1117;--bg2:#131a23;--card:#161c24;--card2:#1a2230;--border:#2a3441;--bord-l:#1f2937;--text:#e2e8f0;--text-d:#94a3b8;--text-m:#64748b;--gold:#d4af6a;--gold-d:#b08e4f;--red:#ef4444;--amber:#f59e0b;--em:#10b981;--blue:#3b82f6}
+  html,body{background:var(--bg);color:var(--text);font-family:'Outfit',system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+  body{background-image:radial-gradient(ellipse 80% 50% at 50% -20%,rgba(212,175,106,.06),transparent 60%),radial-gradient(ellipse 60% 40% at 100% 100%,rgba(59,130,246,.04),transparent 70%)}
+  .font-serif{font-family:'Cormorant Garamond',serif}.font-mono{font-family:'JetBrains Mono',monospace}.gold{color:var(--gold)}
+  .card{background:var(--card);border:1px solid var(--border);border-radius:14px}
+  .card-inset{background:var(--bg2);border:1px solid var(--bord-l);border-radius:10px}
+  .card-rec{border:1px solid rgba(212,175,106,.5);box-shadow:0 0 0 1px rgba(212,175,106,.15),0 8px 32px rgba(212,175,106,.06)}
+  .input-field{background:var(--bg);border:1px solid var(--border);color:var(--text);transition:.15s;font-family:'JetBrains Mono',monospace;font-size:.95rem}
+  .input-field:focus{border-color:var(--gold);outline:none;box-shadow:0 0 0 3px rgba(212,175,106,.12)}
+  .input-field::placeholder{color:var(--text-m);opacity:.6}
+  select.input-field{font-family:'Outfit',sans-serif}
+  .btn-primary{background:linear-gradient(180deg,var(--gold) 0,var(--gold-d) 100%);color:#0c1117;font-weight:600;letter-spacing:.02em;transition:.15s;border:1px solid var(--gold)}
+  .btn-primary:hover{filter:brightness(1.08);transform:translateY(-1px)}
+  .btn-ghost{background:transparent;color:var(--text-d);border:1px solid var(--border);transition:.15s}
+  .btn-ghost:hover{background:var(--card2);color:var(--text)}
+  .tab{transition:.2s;font-weight:500}
+  .tab-active{background:var(--gold);color:#0c1117;box-shadow:0 4px 16px rgba(212,175,106,.18)}
+  .tab-inactive{background:transparent;color:var(--text-d)}
+  .tab-inactive:hover{background:var(--card2);color:var(--text)}
+  .warn-crit{background:linear-gradient(135deg,rgba(239,68,68,.1),rgba(239,68,68,.04));border:1px solid rgba(239,68,68,.35);border-left:4px solid var(--red)}
+  .warn-caut{background:linear-gradient(135deg,rgba(245,158,11,.1),rgba(245,158,11,.04));border:1px solid rgba(245,158,11,.3);border-left:4px solid var(--amber)}
+  .info-box{background:linear-gradient(135deg,rgba(59,130,246,.08),rgba(59,130,246,.02));border:1px solid rgba(59,130,246,.25);border-left:4px solid var(--blue)}
+  .m-label{font-size:.7rem;text-transform:uppercase;letter-spacing:.12em;color:var(--text-m);font-weight:500}
+  .m-val{font-family:'JetBrains Mono',monospace;color:var(--gold);font-weight:600}
+  .m-unit{font-size:.8em;color:var(--text-d);font-weight:400;margin-left:4px}
+  .order-box{background:linear-gradient(135deg,rgba(212,175,106,.08),rgba(212,175,106,.02));border:1px solid rgba(212,175,106,.25);border-radius:8px;padding:14px}
+  .order-text{font-family:'JetBrains Mono',monospace;color:var(--gold);font-weight:600;font-size:.95rem}
+  .badge{display:inline-flex;align-items:center;gap:6px;font-size:.7rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;padding:4px 10px;border-radius:999px}
+  .b-amber{background:rgba(245,158,11,.15);color:var(--amber);border:1px solid rgba(245,158,11,.3)}
+  .b-red{background:rgba(239,68,68,.15);color:var(--red);border:1px solid rgba(239,68,68,.3)}
+  .b-em{background:rgba(16,185,129,.15);color:var(--em);border:1px solid rgba(16,185,129,.3)}
+  .b-gold{background:rgba(212,175,106,.15);color:var(--gold);border:1px solid rgba(212,175,106,.3)}
+  .b-blue{background:rgba(59,130,246,.15);color:var(--blue);border:1px solid rgba(59,130,246,.3)}
+  .hidden{display:none!important}
+  .pulse-dot{width:8px;height:8px;border-radius:50%;background:var(--em);animation:pulse 2s infinite}
+  @keyframes pulse{0%{box-shadow:0 0 0 0 rgba(16,185,129,.5)}70%{box-shadow:0 0 0 8px rgba(16,185,129,0)}100%{box-shadow:0 0 0 0 rgba(16,185,129,0)}}
+  .fade-in{animation:fadeIn .35s ease-out}@keyframes fadeIn{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
+  .lang-toggle{display:inline-flex;background:var(--card);border:1px solid var(--border);border-radius:999px;padding:3px;gap:2px}
+  .lang-toggle button{padding:4px 12px;border-radius:999px;font-size:.72rem;font-weight:600;letter-spacing:.06em;color:var(--text-m);transition:.2s;font-family:'JetBrains Mono',monospace;cursor:pointer}
+  .lang-toggle button.active{background:var(--gold);color:#0c1117}
+  .lang-toggle button:not(.active):hover{color:var(--text)}
+  ::-webkit-scrollbar{width:10px;height:10px}::-webkit-scrollbar-track{background:var(--bg)}
+  ::-webkit-scrollbar-thumb{background:var(--border);border-radius:4px}::-webkit-scrollbar-thumb:hover{background:#3a4555}
+</style>
+</head>
+<body class="min-h-screen pb-28">
+
+<header class="border-b border-slate-800/80 bg-[#0c1117]/85 backdrop-blur sticky top-0 z-30">
+  <div class="max-w-6xl mx-auto px-4 sm:px-6 py-4 flex items-center justify-between gap-3">
+    <div class="flex items-center gap-3 min-w-0">
+      <div class="w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0" style="background:linear-gradient(135deg,var(--gold),var(--gold-d));color:#0c1117"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg></div>
+      <div class="min-w-0">
+        <h1 data-i18n="title" class="font-serif text-xl sm:text-2xl font-semibold gold leading-none truncate">Electrolyte Correction</h1>
+        <p data-i18n="subtitle" class="text-xs text-slate-400 mt-1 tracking-wide truncate">Clinical Decision Support · Sodium &amp; Potassium Replacement</p>
+      </div>
+    </div>
+    <div class="flex items-center gap-3 flex-shrink-0">
+      <div class="hidden md:flex items-center gap-2 text-xs text-slate-500"><span class="pulse-dot"></span><span class="font-mono">ED · v1.1</span></div>
+      <div class="lang-toggle">
+        <button id="lang-en" class="active" onclick="setLang('en')">EN</button>
+        <button id="lang-id" onclick="setLang('id')">ID</button>
+      </div>
+    </div>
+  </div>
+</header>
+
+<div class="max-w-6xl mx-auto px-4 sm:px-6 mt-6">
+  <div class="flex gap-2 p-1.5 card">
+    <button id="tab-na" onclick="switchTab('na')" class="tab tab-active flex-1 py-3 px-4 rounded-lg text-sm"><span data-i18n="naTab">Hyponatremia · Na⁺ Correction</span></button>
+    <button id="tab-k" onclick="switchTab('k')" class="tab tab-inactive flex-1 py-3 px-4 rounded-lg text-sm"><span data-i18n="kTab">Hypokalemia · K⁺ Correction</span></button>
+  </div>
+</div>
+
+<!-- NA PANEL -->
+<section id="panel-na" class="max-w-6xl mx-auto px-4 sm:px-6 py-6">
+  <div class="grid lg:grid-cols-5 gap-5">
+    <div class="lg:col-span-2 card p-5">
+      <div class="flex items-center justify-between mb-4">
+        <h2 data-i18n="patientInputs" class="font-serif text-xl font-semibold gold">Patient Inputs</h2>
+        <span class="badge b-gold"><span data-i18n="step1">Step 1</span></span>
+      </div>
+      <div class="space-y-4">
+        <div>
+          <label data-i18n="weight" class="m-label block mb-1.5">Weight (kg)</label>
+          <input id="na-weight" type="number" step="0.1" min="1" max="300" data-i18n-ph="phWeight" placeholder="e.g. 65" class="input-field w-full px-3 py-2.5 rounded-md">
+        </div>
+        <div class="grid grid-cols-2 gap-3">
+          <div><label data-i18n="gender" class="m-label block mb-1.5">Gender</label>
+            <select id="na-gender" class="input-field w-full px-3 py-2.5 rounded-md">
+              <option value="male" data-i18n="male">Male</option>
+              <option value="female" data-i18n="female">Female</option>
+            </select></div>
+          <div><label data-i18n="ageGroup" class="m-label block mb-1.5">Age Group</label>
+            <select id="na-age" class="input-field w-full px-3 py-2.5 rounded-md">
+              <option value="adult" data-i18n="adult">Adult (&lt;65)</option>
+              <option value="elderly" data-i18n="elderly">Elderly (≥65)</option>
+            </select></div>
+        </div>
+        <div class="grid grid-cols-2 gap-3">
+          <div><label data-i18n="currentNa" class="m-label block mb-1.5">Current Na (mEq/L)</label>
+            <input id="na-current" type="number" step="0.1" placeholder="e.g. 118" class="input-field w-full px-3 py-2.5 rounded-md"></div>
+          <div><label data-i18n="targetNa" class="m-label block mb-1.5">Target Na (mEq/L)</label>
+            <input id="na-target" type="number" step="0.1" placeholder="e.g. 135" class="input-field w-full px-3 py-2.5 rounded-md"></div>
+        </div>
+        <div class="info-box rounded-md p-3 text-xs text-slate-300">
+          <div data-i18n="tbwFactors" class="font-medium text-blue-300 mb-1">TBW Factors</div>
+          <div class="font-mono text-[11px] leading-relaxed" data-i18n-html="tbwFactorsDesc">♂ adult 0.6 · ♀ adult 0.5<br>♂ elderly 0.5 · ♀ elderly 0.45</div>
+        </div>
+        <div class="flex gap-2 pt-1">
+          <button data-i18n="calculate" onclick="calculateNa()" class="btn-primary flex-1 py-3 rounded-md text-sm">Calculate</button>
+          <button data-i18n="reset" onclick="resetNa()" class="btn-ghost px-4 py-3 rounded-md text-sm">Reset</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="lg:col-span-3 space-y-4">
+      <div id="na-empty" class="card p-8 text-center">
+        <div class="w-12 h-12 mx-auto mb-3 rounded-full flex items-center justify-center" style="background:rgba(212,175,106,.1)"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#d4af6a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11H1l3-9 4 12 4-12 4 12 4-12 3 9h-8"/></svg></div>
+        <h3 data-i18n="awaitingInputs" class="font-serif text-lg text-slate-300">Awaiting Inputs</h3>
+        <p data-i18n="awaitingNaDesc" class="text-sm text-slate-500 mt-1">Enter patient data and press Calculate to generate the replacement plan.</p>
+      </div>
+
+      <div id="na-results" class="hidden space-y-4 fade-in">
+        <div class="card p-5">
+          <div class="flex items-center justify-between mb-4">
+            <h3 data-i18n="deficitSummary" class="font-serif text-xl font-semibold gold">Deficit Summary</h3>
+            <span id="na-severity-badge" class="badge b-amber">Mild</span>
+          </div>
+          <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+            <div class="card-inset p-3"><div data-i18n="tbw" class="m-label">TBW</div><div class="m-val text-2xl mt-1"><span id="na-tbw">—</span><span class="m-unit">L</span></div></div>
+            <div class="card-inset p-3"><div data-i18n="deltaNa" class="m-label">ΔNa</div><div class="m-val text-2xl mt-1"><span id="na-delta">—</span><span class="m-unit">mEq/L</span></div></div>
+            <div class="card-inset p-3"><div data-i18n="naDeficitLabel" class="m-label">Na Deficit</div><div class="m-val text-2xl mt-1"><span id="na-deficit">—</span><span class="m-unit">mEq</span></div></div>
+            <div class="card-inset p-3"><div data-i18n="safeTarget" class="m-label">Safe 24h Target</div><div class="m-val text-2xl mt-1"><span id="na-safe-target">—</span><span class="m-unit">mEq/L</span></div></div>
+          </div>
+          <div data-i18n="formulaNa" class="text-xs text-slate-500 font-mono mt-3 pt-3 border-t border-slate-800">Na Deficit = TBW × (Target Na − Current Na)</div>
+          <div id="na-multiday-note" class="hidden mt-2 text-xs font-mono" style="color:var(--gold)">—</div>
+        </div>
+
+        <div class="warn-crit rounded-lg p-4">
+          <div class="flex items-start gap-3">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="flex-shrink-0 mt-0.5"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+            <div>
+              <div data-i18n="odsTitle" class="font-semibold text-red-300 text-sm tracking-wide">⚠ OSMOTIC DEMYELINATION SYNDROME (ODS) RISK</div>
+              <div data-i18n-html="odsDesc" class="text-xs text-slate-300 mt-2 leading-relaxed"><span class="text-red-300 font-semibold">Maximum correction rate: &lt;8 mEq/L per 24h</span> (absolute ceiling 10 mEq/L/24h, 18 mEq/L/48h). Risk highest in chronic hyponatremia, alcoholism, malnutrition, hypokalemia, liver disease. Overcorrection: <span class="font-mono">D5W ± DDAVP</span> to re-lower. Recheck Na q4–6h.</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="grid md:grid-cols-2 gap-4">
+          <div class="card p-5">
+            <div class="flex items-center justify-between mb-3">
+              <div><h3 class="font-serif text-lg font-semibold gold">NaCl 3% <span data-i18n="hypertonicLabel">Hypertonic</span></h3><p class="text-xs text-slate-400 mt-0.5">Otsu-Salin 3 · 513 mEq Na/L</p></div>
+              <span class="badge b-red" data-i18n="hypertonicBadge">Hypertonic</span>
+            </div>
+            <div class="space-y-3">
+              <div class="card-inset p-3"><div data-i18n="totalVolFull" class="m-label">Total Volume (full deficit)</div><div class="m-val text-xl mt-1"><span id="nacl3-volume">—</span><span class="m-unit">mL</span></div></div>
+              <div class="grid grid-cols-2 gap-3">
+                <div class="card-inset p-3"><div data-i18n="safe24Vol" class="m-label">Safe 24h Volume</div><div class="m-val text-lg mt-1"><span id="nacl3-vol24">—</span><span class="m-unit">mL</span></div></div>
+                <div class="card-inset p-3"><div data-i18n="rate24" class="m-label">Rate (24h)</div><div class="m-val text-lg mt-1"><span id="nacl3-rate">—</span><span class="m-unit">mL/h</span></div></div>
+              </div>
+              <div class="card-inset p-3"><div data-i18n="adrogue" class="m-label">Adrogué-Madias ΔNa</div><div class="m-val text-lg mt-1"><span id="nacl3-adrogue">—</span><span class="m-unit">mEq/L per L</span></div></div>
+              <div class="order-box">
+                <div class="flex items-center justify-between mb-2"><span data-i18n="suggestedOrder" class="m-label" style="color:var(--gold)">Suggested Order</span><span class="badge b-gold" data-i18n="orderReady">Ready to write</span></div>
+                <div id="nacl3-order" class="order-text">—</div>
+                <div id="nacl3-order-note" class="text-[11px] text-slate-400 mt-2 font-mono">—</div>
+              </div>
+            </div>
+            <div data-i18n="bolusOption" class="text-[11px] text-slate-500 font-mono mt-3 pt-3 border-t border-slate-800">Bolus option: 100–150 mL over 10 min × up to 3 doses for symptomatic severe hyponatremia (seizures, coma).</div>
+          </div>
+
+          <div class="card p-5">
+            <div class="flex items-center justify-between mb-3">
+              <div><h3 class="font-serif text-lg font-semibold gold">NaCl 0.9% <span data-i18n="isotonicLabel">Isotonic</span></h3><p class="text-xs text-slate-400 mt-0.5">Otsu-NS · 154 mEq Na/L</p></div>
+              <span class="badge b-em" data-i18n="isotonicBadge">Isotonic</span>
+            </div>
+            <div id="ns-applicable">
+              <div class="space-y-3">
+                <div class="card-inset p-3"><div data-i18n="totalVolFull" class="m-label">Total Volume (full deficit)</div><div class="m-val text-xl mt-1"><span id="ns-volume">—</span><span class="m-unit">mL</span></div></div>
+                <div class="grid grid-cols-2 gap-3">
+                  <div class="card-inset p-3"><div data-i18n="safe24Vol" class="m-label">Safe 24h Volume</div><div class="m-val text-lg mt-1"><span id="ns-vol24">—</span><span class="m-unit">mL</span></div></div>
+                  <div class="card-inset p-3"><div data-i18n="rate24" class="m-label">Rate (24h)</div><div class="m-val text-lg mt-1"><span id="ns-rate">—</span><span class="m-unit">mL/h</span></div></div>
+                </div>
+                <div class="card-inset p-3"><div data-i18n="adrogue" class="m-label">Adrogué-Madias ΔNa</div><div class="m-val text-lg mt-1"><span id="ns-adrogue">—</span><span class="m-unit">mEq/L per L</span></div></div>
+                <div class="order-box">
+                  <div class="flex items-center justify-between mb-2"><span data-i18n="suggestedOrder" class="m-label" style="color:var(--gold)">Suggested Order</span><span class="badge b-gold" data-i18n="orderReady">Ready to write</span></div>
+                  <div id="ns-order" class="order-text">—</div>
+                  <div id="ns-order-note" class="text-[11px] text-slate-400 mt-2 font-mono">—</div>
+                </div>
+              </div>
+              <div data-i18n="nsUsage" class="text-[11px] text-slate-500 font-mono mt-3 pt-3 border-t border-slate-800">Preferred for hypovolemic hyponatremia. Avoid in SIADH/euvolemic states.</div>
+            </div>
+            <div id="ns-not-applicable" class="hidden warn-caut rounded-md p-3 text-xs text-amber-200">
+              <strong data-i18n="nsNotApplicableTitle">NS 0.9% not appropriate.</strong> <span data-i18n="nsNotApplicableDesc">Serum Na ≥154 mEq/L means NS provides no net Na rise. Use NaCl 3% instead.</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="info-box rounded-lg p-4">
+          <div class="flex items-start gap-3">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="flex-shrink-0 mt-0.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+            <div class="text-xs text-slate-300 space-y-1 leading-relaxed" data-i18n-html="naPearls">
+              <div><span class="text-blue-300 font-semibold">Classify first:</span> hypovolemic vs euvolemic (SIADH) vs hypervolemic (CHF, cirrhosis) — guides fluid choice.</div>
+              <div><span class="text-blue-300 font-semibold">Severe symptomatic</span> (seizure, coma): bolus NaCl 3% 100–150 mL × 1–3, target ΔNa 4–6 mEq/L acutely, then stop.</div>
+              <div><span class="text-blue-300 font-semibold">Recheck Na q2–4h</span> initially; q6h once stable. Track urine output.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- K PANEL -->
+<section id="panel-k" class="max-w-6xl mx-auto px-4 sm:px-6 py-6 hidden">
+  <div class="grid lg:grid-cols-5 gap-5">
+    <div class="lg:col-span-2 card p-5">
+      <div class="flex items-center justify-between mb-4">
+        <h2 data-i18n="patientInputs" class="font-serif text-xl font-semibold gold">Patient Inputs</h2>
+        <span class="badge b-gold"><span data-i18n="step1">Step 1</span></span>
+      </div>
+      <div class="space-y-4">
+        <div class="grid grid-cols-2 gap-3">
+          <div><label data-i18n="currentK" class="m-label block mb-1.5">Current K (mEq/L)</label>
+            <input id="k-current" type="number" step="0.01" placeholder="e.g. 2.8" class="input-field w-full px-3 py-2.5 rounded-md"></div>
+          <div><label data-i18n="targetK" class="m-label block mb-1.5">Target K (mEq/L)</label>
+            <input id="k-target" type="number" step="0.01" placeholder="e.g. 4.0" value="4.0" class="input-field w-full px-3 py-2.5 rounded-md"></div>
+        </div>
+        <div>
+          <label data-i18n="weightOpt" class="m-label block mb-1.5">Weight (kg) — optional</label>
+          <input id="k-weight" type="number" step="0.1" data-i18n-ph="phWeight" placeholder="e.g. 65" class="input-field w-full px-3 py-2.5 rounded-md">
+        </div>
+        <div>
+          <label data-i18n="clinicalContext" class="m-label block mb-1.5">Clinical Context</label>
+          <select id="k-context" class="input-field w-full px-3 py-2.5 rounded-md">
+            <option value="asymptomatic" data-i18n="ctxAsymp">Asymptomatic / Routine</option>
+            <option value="symptomatic" data-i18n="ctxSymp">Symptomatic (cramps, weakness)</option>
+            <option value="cardiac" data-i18n="ctxCardiac">ECG changes / Arrhythmia</option>
+            <option value="dka" data-i18n="ctxDKA">DKA / Insulin therapy ongoing</option>
+          </select>
+        </div>
+        <div>
+          <label data-i18n="cvcAvail" class="m-label block mb-1.5">CVC Available?</label>
+          <select id="k-cvc-avail" class="input-field w-full px-3 py-2.5 rounded-md">
+            <option value="no" data-i18n="cvcNo">No (peripheral only)</option>
+            <option value="yes" data-i18n="cvcYes">Yes (CVC accessible)</option>
+          </select>
+        </div>
+        <div class="info-box rounded-md p-3 text-xs text-slate-300">
+          <div data-i18n="availConc" class="font-medium text-blue-300 mb-1">Available Concentrate</div>
+          <div data-i18n-html="availConcDesc" class="font-mono text-[11px] leading-relaxed">KCl 7.46% (Otsuka) = 1 mEq/mL<br>Typical vial: 25 mL = 25 mEq</div>
+        </div>
+        <div class="flex gap-2 pt-1">
+          <button data-i18n="calculate" onclick="calculateK()" class="btn-primary flex-1 py-3 rounded-md text-sm">Calculate</button>
+          <button data-i18n="reset" onclick="resetK()" class="btn-ghost px-4 py-3 rounded-md text-sm">Reset</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="lg:col-span-3 space-y-4">
+      <div id="k-empty" class="card p-8 text-center">
+        <div class="w-12 h-12 mx-auto mb-3 rounded-full flex items-center justify-center" style="background:rgba(212,175,106,.1)"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#d4af6a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg></div>
+        <h3 data-i18n="awaitingInputs" class="font-serif text-lg text-slate-300">Awaiting Inputs</h3>
+        <p data-i18n="awaitingKDesc" class="text-sm text-slate-500 mt-1">Enter current K and target to generate the replacement strategy.</p>
+      </div>
+
+      <div id="k-results" class="hidden space-y-4 fade-in">
+        <div class="card p-5">
+          <div class="flex items-center justify-between mb-4">
+            <h3 data-i18n="severityDeficit" class="font-serif text-xl font-semibold gold">Severity &amp; Deficit</h3>
+            <span id="k-severity-badge" class="badge b-amber">Mild</span>
+          </div>
+          <div class="grid grid-cols-2 md:grid-cols-3 gap-3">
+            <div class="card-inset p-3"><div data-i18n="deltaK" class="m-label">ΔK Target</div><div class="m-val text-2xl mt-1"><span id="k-delta">—</span><span class="m-unit">mEq/L</span></div></div>
+            <div class="card-inset p-3"><div data-i18n="estDeficit" class="m-label">Estimated Deficit</div><div class="m-val text-2xl mt-1"><span id="k-deficit">—</span><span class="m-unit">mEq</span></div></div>
+            <div class="card-inset p-3 col-span-2 md:col-span-1"><div data-i18n="recRoute" class="m-label">Recommended Route</div><div class="m-val text-2xl mt-1" id="k-route">—</div></div>
+          </div>
+          <div data-i18n="deficitRule" class="text-xs text-slate-500 font-mono mt-3 pt-3 border-t border-slate-800">Formula: K Deficit (mEq) = (Target K − Current K) × Weight × 0.4. Restores ECF/redistribution need; intracellular pool replenishes over days via oral intake.</div>
+        </div>
+
+        <div id="k-cvc-warning" class="hidden warn-crit rounded-lg p-4">
+          <div class="flex items-start gap-3">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="flex-shrink-0 mt-0.5"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+            <div>
+              <div data-i18n="cvcRecTitle" class="font-semibold text-red-300 text-sm tracking-wide">⚠ CENTRAL VENOUS CATHETER (CVC) RECOMMENDED</div>
+              <div class="text-xs text-slate-300 mt-2 leading-relaxed" id="k-cvc-reason"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- RECOMMENDED -->
+        <div class="card card-rec p-5">
+          <div class="flex items-center justify-between mb-3">
+            <div>
+              <div class="flex items-center gap-2 mb-1 flex-wrap">
+                <span class="badge b-gold"><span data-i18n="recommendedBadge">Recommended</span></span>
+                <span id="k-rec-context-badge" class="badge b-blue hidden"></span>
+              </div>
+              <h3 id="k-rec-title" class="font-serif text-lg font-semibold gold">—</h3>
+              <p id="k-rec-subtitle" class="text-xs text-slate-400 mt-0.5">—</p>
+            </div>
+          </div>
+
+          <div id="k-rec-single" class="hidden">
+            <div class="order-box">
+              <div class="flex items-center justify-between mb-2"><span data-i18n="suggestedOrder" class="m-label" style="color:var(--gold)">Suggested Order</span></div>
+              <div id="k-rec-order" class="order-text">—</div>
+              <div id="k-rec-note" class="text-[11px] text-slate-400 mt-2 font-mono">—</div>
+            </div>
+          </div>
+
+          <div id="k-rec-dual" class="hidden space-y-2">
+            <div class="order-box">
+              <div class="flex items-center justify-between mb-2"><span class="m-label" style="color:var(--gold)"><span data-i18n="line">Line</span> 1</span><span class="badge b-em" data-i18n="piv">PIV</span></div>
+              <div id="k-rec-line1" class="order-text">—</div>
+            </div>
+            <div class="order-box">
+              <div class="flex items-center justify-between mb-2"><span class="m-label" style="color:var(--gold)"><span data-i18n="line">Line</span> 2</span><span class="badge b-em" data-i18n="piv">PIV</span></div>
+              <div id="k-rec-line2" class="order-text">—</div>
+            </div>
+            <div id="k-rec-dual-note" class="text-[11px] text-slate-400 mt-2 font-mono px-1">—</div>
+          </div>
+
+          <div class="grid grid-cols-3 gap-2 mt-3 pt-3 border-t border-slate-800">
+            <div><div data-i18n="conc" class="m-label">Concentration</div><div class="font-mono text-sm gold mt-0.5"><span id="k-rec-conc">—</span> <span class="text-slate-500">mEq/L</span></div></div>
+            <div><div data-i18n="rate" class="m-label">Rate</div><div class="font-mono text-sm gold mt-0.5"><span id="k-rec-rate">—</span> <span class="text-slate-500">mEq/h</span></div></div>
+            <div><div data-i18n="duration" class="m-label">Duration</div><div class="font-mono text-sm gold mt-0.5"><span id="k-rec-duration">—</span> <span class="text-slate-500">h</span></div></div>
+          </div>
+        </div>
+
+        <!-- ALTERNATIVES -->
+        <div class="card p-5">
+          <div class="flex items-center justify-between mb-4">
+            <h3 data-i18n="altRegimens" class="font-serif text-lg font-semibold gold">Alternative Regimens</h3>
+            <span class="badge b-blue" data-i18n="reference">Reference</span>
+          </div>
+          <div class="space-y-3">
+            <div class="card-inset p-4">
+              <div class="flex items-center justify-between mb-2">
+                <div><div class="font-semibold text-sm text-slate-200" data-i18n="altConservPIV">Conservative Single PIV</div><div data-i18n="altConservPIVDesc" class="text-[11px] text-slate-500">Textbook safe · 40 mEq/L max</div></div>
+                <span class="badge b-em" data-i18n="safeBadge">Safe</span>
+              </div>
+              <div class="order-text text-xs sm:text-sm mt-2" id="k-alt-safe-order">—</div>
+              <div class="text-[11px] text-slate-500 font-mono mt-1" id="k-alt-safe-note">—</div>
+            </div>
+            <div class="card-inset p-4">
+              <div class="flex items-center justify-between mb-2">
+                <div><div class="font-semibold text-sm text-slate-200" data-i18n="altStdPIV">Standard Single PIV</div><div data-i18n="altStdPIVDesc" class="text-[11px] text-slate-500">Common Indonesian practice · 100 mEq/L · large-bore PIV</div></div>
+                <span class="badge b-amber" data-i18n="cautionBadge">Caution</span>
+              </div>
+              <div class="order-text text-xs sm:text-sm mt-2" id="k-alt-std-order">—</div>
+              <div class="text-[11px] text-slate-500 font-mono mt-1" id="k-alt-std-note">—</div>
+            </div>
+            <div class="card-inset p-4">
+              <div class="flex items-center justify-between mb-2">
+                <div><div class="font-semibold text-sm text-slate-200" data-i18n="altDualPIV">Dual-Line PIV</div><div data-i18n="altDualPIVDesc" class="text-[11px] text-slate-500">High deficit, no CVC · 2 simultaneous peripheral lines</div></div>
+                <span class="badge b-amber" data-i18n="cautionBadge">Caution</span>
+              </div>
+              <div class="space-y-1 mt-2">
+                <div class="order-text text-xs sm:text-sm"><span class="text-slate-500">L1:</span> <span id="k-alt-dual-l1">—</span></div>
+                <div class="order-text text-xs sm:text-sm"><span class="text-slate-500">L2:</span> <span id="k-alt-dual-l2">—</span></div>
+              </div>
+              <div class="text-[11px] text-slate-500 font-mono mt-1" id="k-alt-dual-note">—</div>
+            </div>
+            <div class="card-inset p-4">
+              <div class="flex items-center justify-between mb-2">
+                <div><div class="font-semibold text-sm text-slate-200" data-i18n="altCVC">CVC High-Concentration</div><div data-i18n="altCVCDesc" class="text-[11px] text-slate-500">Severe / monitored · 500 mEq/L · continuous ECG</div></div>
+                <span class="badge b-red" data-i18n="cvcOnly">CVC only</span>
+              </div>
+              <div class="order-text text-xs sm:text-sm mt-2" id="k-alt-cvc-order">—</div>
+              <div class="text-[11px] text-slate-500 font-mono mt-1" id="k-alt-cvc-note">—</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ORAL -->
+        <div class="card p-5">
+          <div class="flex items-center justify-between mb-3">
+            <h3 data-i18n="oralSupp" class="font-serif text-lg font-semibold gold">Oral Supplementation</h3>
+            <span class="badge b-em" data-i18n="outpatientMild">Outpatient · Mild</span>
+          </div>
+          <div class="grid sm:grid-cols-2 gap-3">
+            <div class="card-inset p-3"><div class="m-label">KSR (Slow-K)</div><div class="text-sm font-mono text-slate-200 mt-1">600 mg = <span class="m-val">8 mEq</span> K⁺</div><div class="text-xs text-slate-400 mt-1" id="k-oral-ksr">Total: —</div></div>
+            <div class="card-inset p-3"><div class="m-label">Aspar-K</div><div class="text-sm font-mono text-slate-200 mt-1">1 tab ≈ <span class="m-val">3.5 mEq</span> K⁺</div><div class="text-xs text-slate-400 mt-1" id="k-oral-aspar">Total: —</div></div>
+          </div>
+          <div data-i18n="oralUsage" class="text-[11px] text-slate-500 font-mono mt-3 pt-3 border-t border-slate-800">Oral preferred when K ≥3.0, asymptomatic, intact GI absorption. Max 40 mEq/dose; split across day. Take with food.</div>
+        </div>
+
+        <div class="info-box rounded-lg p-4">
+          <div class="flex items-start gap-3">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="flex-shrink-0 mt-0.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+            <div class="text-xs text-slate-300 space-y-1 leading-relaxed" data-i18n-html="kPearls">
+              <div><span class="text-blue-300 font-semibold">Always check Mg:</span> hypomagnesemia causes refractory hypokalemia. Replace MgSO₄ in parallel.</div>
+              <div><span class="text-blue-300 font-semibold">Renal function:</span> reduce dose if eGFR &lt;30 or oliguric — risk of hyperkalemia.</div>
+              <div><span class="text-blue-300 font-semibold">Diluent:</span> use NS over D5W (dextrose → insulin → intracellular K shift, paradoxical drop).</div>
+              <div><span class="text-blue-300 font-semibold">Recheck K</span> 2–4h after each replacement; sooner if ECG changes or rate &gt;10 mEq/h.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer class="fixed bottom-0 left-0 right-0 bg-[#0c1117]/95 backdrop-blur border-t border-slate-800 py-3 px-4 z-40">
+  <div class="max-w-6xl mx-auto text-center text-xs text-slate-400 leading-relaxed">
+    <span class="text-amber-400 font-semibold" data-i18n="disclaimerLead">⚠ For Clinical Decision Support only.</span>
+    <span data-i18n="disclaimerBody">Results must be verified by a licensed professional. Not for direct patient use.</span>
+  </div>
+</footer>
+
+<script>
+// ==================== I18N ====================
+const I18N = {
+  en: {
+    title: "Electrolyte Correction",
+    subtitle: "Clinical Decision Support · Sodium & Potassium Replacement",
+    naTab: "Hyponatremia · Na⁺ Correction",
+    kTab: "Hypokalemia · K⁺ Correction",
+    patientInputs: "Patient Inputs", step1: "Step 1",
+    weight: "Weight (kg)", weightOpt: "Weight (kg) — required", phWeight: "e.g. 65",
+    gender: "Gender", male: "Male", female: "Female",
+    ageGroup: "Age Group", adult: "Adult (<65)", elderly: "Elderly (≥65)",
+    currentNa: "Current Na (mEq/L)", targetNa: "Target Na (mEq/L)",
+    currentK: "Current K (mEq/L)", targetK: "Target K (mEq/L)",
+    clinicalContext: "Clinical Context",
+    ctxAsymp: "Asymptomatic / Routine",
+    ctxSymp: "Symptomatic (cramps, weakness)",
+    ctxCardiac: "ECG changes / Arrhythmia",
+    ctxDKA: "DKA / Insulin therapy ongoing",
+    cvcAvail: "CVC Available?",
+    cvcNo: "No (peripheral only)", cvcYes: "Yes (CVC accessible)",
+    tbwFactors: "TBW Factors",
+    tbwFactorsDesc: "♂ adult 0.6 · ♀ adult 0.5<br>♂ elderly 0.5 · ♀ elderly 0.45",
+    availConc: "Available Concentrate",
+    availConcDesc: "KCl 7.46% (Otsuka) = 1 mEq/mL<br>Typical vial: 25 mL = 25 mEq",
+    calculate: "Calculate", reset: "Reset",
+    awaitingInputs: "Awaiting Inputs",
+    awaitingNaDesc: "Enter patient data and press Calculate to generate the replacement plan.",
+    awaitingKDesc: "Enter current K and target to generate the replacement strategy.",
+    deficitSummary: "Deficit Summary",
+    tbw: "TBW", deltaNa: "ΔNa", naDeficitLabel: "Na Deficit", safeTarget: "Safe 24h Target",
+    formulaNa: "Na Deficit = TBW × (Target Na − Current Na)",
+    odsTitle: "⚠ OSMOTIC DEMYELINATION SYNDROME (ODS) RISK",
+    odsDesc: '<span class="text-red-300 font-semibold">Maximum correction rate: &lt;8 mEq/L per 24h</span> (absolute ceiling 10 mEq/L/24h, 18 mEq/L/48h). Risk highest in chronic hyponatremia, alcoholism, malnutrition, hypokalemia, liver disease. Overcorrection: <span class="font-mono">D5W ± DDAVP</span> to re-lower. Recheck Na q4–6h.',
+    hypertonicLabel: "Hypertonic", hypertonicBadge: "Hypertonic",
+    isotonicLabel: "Isotonic", isotonicBadge: "Isotonic",
+    totalVolFull: "Total Volume (full deficit)",
+    safe24Vol: "Safe 24h Volume", rate24: "Rate (24h)",
+    adrogue: "Adrogué-Madias ΔNa",
+    suggestedOrder: "Suggested Order", orderReady: "Ready to write",
+    bolusOption: "Bolus option: 100–150 mL over 10 min × up to 3 doses for symptomatic severe hyponatremia (seizures, coma).",
+    nsUsage: "Preferred for hypovolemic hyponatremia. Avoid in SIADH/euvolemic states.",
+    nsNotApplicableTitle: "NS 0.9% not appropriate.",
+    nsNotApplicableDesc: "Serum Na ≥154 mEq/L means NS provides no net Na rise. Use NaCl 3% instead.",
+    naPearls: '<div><span class="text-blue-300 font-semibold">Classify first:</span> hypovolemic vs euvolemic (SIADH) vs hypervolemic (CHF, cirrhosis) — guides fluid choice.</div><div><span class="text-blue-300 font-semibold">Severe symptomatic</span> (seizure, coma): bolus NaCl 3% 100–150 mL × 1–3, target ΔNa 4–6 mEq/L acutely, then stop.</div><div><span class="text-blue-300 font-semibold">Recheck Na q2–4h</span> initially; q6h once stable. Track urine output (auto-correction risk).</div>',
+    multiDayNote: "Multi-day plan: full correction Na {cur} → {tgt} takes ~{days} days at ≤8 mEq/L per 24h. Repeat the 24h regimen daily, rechecking Na q4–6h until target reached.",
+    severityDeficit: "Severity & Deficit",
+    deltaK: "ΔK Target", estDeficit: "Estimated Deficit", recRoute: "Recommended Route",
+    deficitRule: "Formula: K Deficit (mEq) = (Target K − Current K) × Weight × 0.4. Restores ECF/redistribution need; intracellular pool replenishes over days via oral intake.",
+    cvcRecTitle: "⚠ CENTRAL VENOUS CATHETER (CVC) RECOMMENDED",
+    recommendedBadge: "Recommended",
+    altRegimens: "Alternative Regimens", reference: "Reference",
+    altConservPIV: "Conservative Single PIV",
+    altConservPIVDesc: "Textbook safe · 40 mEq/L max",
+    altStdPIV: "Standard Single PIV",
+    altStdPIVDesc: "Common Indonesian practice · 100 mEq/L · large-bore PIV",
+    altDualPIV: "Dual-Line PIV",
+    altDualPIVDesc: "High deficit, no CVC · 2 simultaneous peripheral lines",
+    altCVC: "CVC High-Concentration",
+    altCVCDesc: "Severe / monitored · 500 mEq/L · continuous ECG",
+    safeBadge: "Safe", cautionBadge: "Caution", cvcOnly: "CVC only",
+    line: "Line", piv: "PIV",
+    conc: "Concentration", rate: "Rate", duration: "Duration",
+    oralSupp: "Oral Supplementation", outpatientMild: "Outpatient · Mild",
+    oralUsage: "Oral preferred when K ≥3.0, asymptomatic, intact GI absorption. Max 40 mEq/dose; split across day. Take with food.",
+    kPearls: '<div><span class="text-blue-300 font-semibold">Always check Mg:</span> hypomagnesemia causes refractory hypokalemia. Replace MgSO₄ in parallel.</div><div><span class="text-blue-300 font-semibold">Renal function:</span> reduce dose if eGFR &lt;30 or oliguric — risk of hyperkalemia.</div><div><span class="text-blue-300 font-semibold">Diluent:</span> use NS over D5W (dextrose → insulin → intracellular K shift, paradoxical drop).</div><div><span class="text-blue-300 font-semibold">Recheck K</span> 2–4h after each replacement; sooner if ECG changes or rate &gt;10 mEq/h.</div>',
+    disclaimerLead: "⚠ For Clinical Decision Support only.",
+    disclaimerBody: "Results must be verified by a licensed professional. Not for direct patient use.",
+    mild: "Mild", moderate: "Moderate", severe: "Severe",
+    routeOralPIV: "Oral / PIV", routeIVPIV: "IV (PIV)", routeIVCVC: "IV (CVC)",
+    hourShort: "h", cycle: "cycle", cycles: "cycles",
+    recSlowMaint: "Slow Maintenance Drip",
+    recSlowMaintSub: "Mild / asymptomatic · low concentration over extended time",
+    recStdPIV: "Standard Peripheral IV",
+    recStdPIVSub: "Moderate deficit · single peripheral line",
+    recDualPIV: "Dual-Line Peripheral IV",
+    recDualPIVSub: "High deficit, CVC unavailable · 2 simultaneous PIV lines",
+    recCVC: "Central Line (CVC)",
+    recCVCSub: "Severe / monitored · high-concentration via CVC",
+    naOrderNote: "Deliver {vol} mL of {fluid} over 24h. Rate ≈ {rate} mL/h.",
+    recSingleNote: "Total dose: {dose} mEq over {dur} h · concentration {conc} mEq/L · rate {rate} mEq/h.",
+    recDualNote: "Combined rate ≈ {combined} mEq/h via 2 separate peripheral access points. Each line stays within peripheral safety limits ({rate} mEq/h per line).",
+    altSafeNote: "Rate {rate} mEq/h · {dose} mEq total over {dur} h.",
+    altStdNote: "Rate {rate} mEq/h · {dose} mEq total over {dur} h.",
+    altDualNote: "Combined rate {combined} mEq/h · {dose} mEq total over {dur} h.",
+    altCVCNote: "Rate {rate} mEq/h · {dose} mEq total over {dur} h · ECG required.",
+    cvcReasonSevere: "Severe hypokalemia (K &lt;2.5 mEq/L) typically requires faster correction than peripheral route allows.",
+    cvcReasonECG: "ECG changes / arrhythmia present — rapid replacement via CVC indicated.",
+    cvcRateClause: "Required when rate &gt;10 mEq/h or concentration &gt;40 mEq/L. Continuous ECG monitoring.",
+    cvcUnavailable: "CVC unavailable — using Dual-Line PIV",
+    oralKsrText: "Total ≈ {n} tablets (≈ {dose} mEq), split 2–3 doses/day",
+    oralAsparText: "Total ≈ {n} tablets — adjunct only (lower mEq/tab)"
+  },
+  id: {
+    title: "Koreksi Elektrolit",
+    subtitle: "Pendukung Keputusan Klinis · Penggantian Natrium & Kalium",
+    naTab: "Hiponatremia · Koreksi Na⁺",
+    kTab: "Hipokalemia · Koreksi K⁺",
+    patientInputs: "Data Pasien", step1: "Langkah 1",
+    weight: "Berat Badan (kg)", weightOpt: "Berat Badan (kg) — wajib", phWeight: "mis. 65",
+    gender: "Jenis Kelamin", male: "Laki-laki", female: "Perempuan",
+    ageGroup: "Kelompok Usia", adult: "Dewasa (<65)", elderly: "Lansia (≥65)",
+    currentNa: "Na Saat Ini (mEq/L)", targetNa: "Na Target (mEq/L)",
+    currentK: "K Saat Ini (mEq/L)", targetK: "K Target (mEq/L)",
+    clinicalContext: "Konteks Klinis",
+    ctxAsymp: "Asimptomatik / Rutin",
+    ctxSymp: "Simptomatik (kram, lemas)",
+    ctxCardiac: "Perubahan EKG / Aritmia",
+    ctxDKA: "KAD / Terapi insulin berjalan",
+    cvcAvail: "CVC Tersedia?",
+    cvcNo: "Tidak (hanya perifer)", cvcYes: "Ya (CVC tersedia)",
+    tbwFactors: "Faktor TBW",
+    tbwFactorsDesc: "♂ dewasa 0.6 · ♀ dewasa 0.5<br>♂ lansia 0.5 · ♀ lansia 0.45",
+    availConc: "Konsentrat Tersedia",
+    availConcDesc: "KCl 7.46% (Otsuka) = 1 mEq/mL<br>Vial standar: 25 mL = 25 mEq",
+    calculate: "Hitung", reset: "Reset",
+    awaitingInputs: "Menunggu Input",
+    awaitingNaDesc: "Masukkan data pasien dan tekan Hitung untuk membuat rencana penggantian.",
+    awaitingKDesc: "Masukkan K saat ini dan target untuk membuat strategi penggantian.",
+    deficitSummary: "Ringkasan Defisit",
+    tbw: "TBW", deltaNa: "ΔNa", naDeficitLabel: "Defisit Na", safeTarget: "Target Aman 24 jam",
+    formulaNa: "Defisit Na = TBW × (Na Target − Na Saat Ini)",
+    odsTitle: "⚠ RISIKO SINDROM DEMIELINISASI OSMOTIK (ODS)",
+    odsDesc: '<span class="text-red-300 font-semibold">Kecepatan koreksi maksimum: &lt;8 mEq/L per 24 jam</span> (batas mutlak 10 mEq/L/24j, 18 mEq/L/48j). Risiko tertinggi pada hiponatremia kronis, alkoholisme, malnutrisi, hipokalemia, penyakit hati. Bila overkoreksi: <span class="font-mono">D5W ± DDAVP</span> untuk menurunkan kembali. Periksa Na ulang tiap 4–6 jam.',
+    hypertonicLabel: "Hipertonis", hypertonicBadge: "Hipertonis",
+    isotonicLabel: "Isotonis", isotonicBadge: "Isotonis",
+    totalVolFull: "Volume Total (defisit penuh)",
+    safe24Vol: "Volume Aman 24 jam", rate24: "Kecepatan (24j)",
+    adrogue: "Adrogué-Madias ΔNa",
+    suggestedOrder: "Resep Saran", orderReady: "Siap ditulis",
+    bolusOption: "Opsi bolus: 100–150 mL dalam 10 menit × hingga 3 dosis untuk hiponatremia berat simptomatik (kejang, koma).",
+    nsUsage: "Pilihan utama untuk hiponatremia hipovolemik. Hindari pada SIADH/euvolemik.",
+    nsNotApplicableTitle: "NaCl 0.9% tidak sesuai.",
+    nsNotApplicableDesc: "Serum Na ≥154 mEq/L berarti NaCl 0.9% tidak menaikkan Na. Gunakan NaCl 3%.",
+    naPearls: '<div><span class="text-blue-300 font-semibold">Klasifikasi dulu:</span> hipovolemik vs euvolemik (SIADH) vs hipervolemik (CHF, sirosis) — menentukan pilihan cairan.</div><div><span class="text-blue-300 font-semibold">Berat simptomatik</span> (kejang, koma): bolus NaCl 3% 100–150 mL × 1–3, target ΔNa 4–6 mEq/L akut, kemudian stop.</div><div><span class="text-blue-300 font-semibold">Periksa Na tiap 2–4j</span> awalnya; tiap 6j bila stabil. Pantau urin (risiko auto-koreksi).</div>',
+    multiDayNote: "Rencana multi-hari: koreksi penuh Na {cur} → {tgt} memerlukan ~{days} hari pada laju ≤8 mEq/L per 24 jam. Ulang regimen 24 jam tiap hari, cek Na ulang tiap 4–6 jam sampai target tercapai.",
+    severityDeficit: "Tingkat Keparahan & Defisit",
+    deltaK: "ΔK Target", estDeficit: "Estimasi Defisit", recRoute: "Rute yang Direkomendasikan",
+    deficitRule: "Rumus: Defisit K (mEq) = (K Target − K Saat Ini) × Berat Badan × 0.4. Mengisi kebutuhan ECF/redistribusi; pool intraseluler dipulihkan bertahap via asupan oral.",
+    cvcRecTitle: "⚠ CENTRAL VENOUS CATHETER (CVC) DIREKOMENDASIKAN",
+    recommendedBadge: "Rekomendasi",
+    altRegimens: "Alternatif Regimen", reference: "Referensi",
+    altConservPIV: "PIV Tunggal Konservatif",
+    altConservPIVDesc: "Aman sesuai pedoman · maks 40 mEq/L",
+    altStdPIV: "PIV Tunggal Standar",
+    altStdPIVDesc: "Praktik umum Indonesia · 100 mEq/L · IV perifer besar",
+    altDualPIV: "PIV Dua Jalur",
+    altDualPIVDesc: "Defisit tinggi, tanpa CVC · 2 jalur perifer simultan",
+    altCVC: "CVC Konsentrasi Tinggi",
+    altCVCDesc: "Berat / termonitor · 500 mEq/L · EKG kontinu",
+    safeBadge: "Aman", cautionBadge: "Hati-hati", cvcOnly: "Hanya CVC",
+    line: "Jalur", piv: "PIV",
+    conc: "Konsentrasi", rate: "Kecepatan", duration: "Durasi",
+    oralSupp: "Suplementasi Oral", outpatientMild: "Rawat Jalan · Ringan",
+    oralUsage: "Oral dipilih bila K ≥3.0, asimptomatik, absorpsi GI baik. Maks 40 mEq/dosis; dibagi sepanjang hari. Diminum bersama makanan.",
+    kPearls: '<div><span class="text-blue-300 font-semibold">Selalu periksa Mg:</span> hipomagnesemia menyebabkan hipokalemia refrakter. Berikan MgSO₄ paralel.</div><div><span class="text-blue-300 font-semibold">Fungsi ginjal:</span> kurangi dosis bila eGFR &lt;30 atau oliguria — risiko hiperkalemia.</div><div><span class="text-blue-300 font-semibold">Pelarut:</span> gunakan NS, bukan D5W (dekstrosa → insulin → K masuk intraseluler, K bisa turun paradoksal).</div><div><span class="text-blue-300 font-semibold">Periksa K ulang</span> 2–4j setelah tiap penggantian; lebih cepat bila ada perubahan EKG atau kecepatan &gt;10 mEq/j.</div>',
+    disclaimerLead: "⚠ Hanya untuk Pendukung Keputusan Klinis.",
+    disclaimerBody: "Hasil harus diverifikasi oleh tenaga medis berlisensi. Bukan untuk penggunaan langsung pada pasien.",
+    mild: "Ringan", moderate: "Sedang", severe: "Berat",
+    routeOralPIV: "Oral / PIV", routeIVPIV: "IV (PIV)", routeIVCVC: "IV (CVC)",
+    hourShort: "jam", cycle: "siklus", cycles: "siklus",
+    recSlowMaint: "Drip Pemeliharaan Lambat",
+    recSlowMaintSub: "Ringan / asimptomatik · konsentrasi rendah, waktu lama",
+    recStdPIV: "PIV Perifer Standar",
+    recStdPIVSub: "Defisit sedang · satu jalur perifer",
+    recDualPIV: "PIV Perifer Dua Jalur",
+    recDualPIVSub: "Defisit tinggi, CVC tidak tersedia · 2 jalur PIV simultan",
+    recCVC: "Jalur Sentral (CVC)",
+    recCVCSub: "Berat / termonitor · konsentrasi tinggi via CVC",
+    naOrderNote: "Berikan {vol} mL {fluid} selama 24 jam. Kecepatan ≈ {rate} mL/j.",
+    recSingleNote: "Dosis total: {dose} mEq selama {dur} jam · konsentrasi {conc} mEq/L · kecepatan {rate} mEq/jam.",
+    recDualNote: "Kecepatan gabungan ≈ {combined} mEq/jam via 2 akses perifer terpisah. Setiap jalur tetap dalam batas aman perifer ({rate} mEq/jam per jalur).",
+    altSafeNote: "Kecepatan {rate} mEq/j · total {dose} mEq selama {dur} jam.",
+    altStdNote: "Kecepatan {rate} mEq/j · total {dose} mEq selama {dur} jam.",
+    altDualNote: "Kecepatan gabungan {combined} mEq/j · total {dose} mEq selama {dur} jam.",
+    altCVCNote: "Kecepatan {rate} mEq/j · total {dose} mEq selama {dur} jam · EKG wajib.",
+    cvcReasonSevere: "Hipokalemia berat (K &lt;2.5 mEq/L) umumnya memerlukan koreksi lebih cepat dari batas perifer.",
+    cvcReasonECG: "Terdapat perubahan EKG / aritmia — penggantian cepat via CVC diindikasikan.",
+    cvcRateClause: "Wajib bila kecepatan &gt;10 mEq/j atau konsentrasi &gt;40 mEq/L. Pantau EKG kontinu.",
+    cvcUnavailable: "CVC tidak tersedia — gunakan PIV Dua Jalur",
+    oralKsrText: "Total ≈ {n} tablet (≈ {dose} mEq), dibagi 2–3 dosis/hari",
+    oralAsparText: "Total ≈ {n} tablet — adjuvan saja (mEq/tablet lebih rendah)"
+  }
+};
+
+let lang = 'en';
+const t = (k) => (I18N[lang] && I18N[lang][k] !== undefined) ? I18N[lang][k] : (I18N.en[k] || k);
+const fill = (str, params) => str.replace(/\{(\w+)\}/g, (_, k) => params[k] ?? '');
+
+function setLang(l) {
+  lang = l;
+  document.getElementById('lang-en').classList.toggle('active', l === 'en');
+  document.getElementById('lang-id').classList.toggle('active', l === 'id');
+  document.documentElement.lang = l;
+
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    const k = el.dataset.i18n;
+    if (I18N[l][k] !== undefined) el.textContent = I18N[l][k];
+  });
+  document.querySelectorAll('[data-i18n-html]').forEach(el => {
+    const k = el.dataset.i18nHtml;
+    if (I18N[l][k] !== undefined) el.innerHTML = I18N[l][k];
+  });
+  document.querySelectorAll('[data-i18n-ph]').forEach(el => {
+    const k = el.dataset.i18nPh;
+    if (I18N[l][k] !== undefined) el.placeholder = I18N[l][k];
+  });
+
+  // Re-render dynamic results
+  if (!document.getElementById('na-results').classList.contains('hidden')) calculateNa(true);
+  if (!document.getElementById('k-results').classList.contains('hidden')) calculateK(true);
+}
+
+// ==================== TABS ====================
+function switchTab(tab) {
+  const map = { na: ['panel-na','tab-na'], k: ['panel-k','tab-k'] };
+  Object.keys(map).forEach(key => {
+    document.getElementById(map[key][0]).classList.toggle('hidden', key !== tab);
+    const ts = document.getElementById(map[key][1]);
+    ts.classList.toggle('tab-active', key === tab);
+    ts.classList.toggle('tab-inactive', key !== tab);
+  });
+}
+
+// ==================== UTILS ====================
+const round = (n, d=1) => {
+  if (!isFinite(n)) return '—';
+  const p = Math.pow(10, d);
+  return (Math.round(n * p) / p).toLocaleString('en-US');
+};
+const pluralCycles = (n) => `${n} ${t(n === 1 ? 'cycle' : 'cycles')}`;
+
+// ==================== NA REGIMEN BUILDER ====================
+function buildNaRegimen(volume24h, fluidLabel, bagSize=500) {
+  if (!isFinite(volume24h) || volume24h <= 0) return null;
+  let numBags = Math.max(1, Math.round(volume24h / bagSize));
+  if (numBags > 6) numBags = 6;
+  const candidates = [24, 12, 8, 6, 4];
+  const ideal = 24 / numBags;
+  const chosenHours = candidates.reduce((p, c) =>
+    Math.abs(c - ideal) < Math.abs(p - ideal) ? c : p, 24);
+  const cycles = Math.round(24 / chosenHours);
+  const actualVol = cycles * bagSize;
+  const rate = bagSize / chosenHours;
+  return {
+    orderString: `${fluidLabel} ${bagSize} mL / ${chosenHours} ${t('hourShort')} (${pluralCycles(cycles)})`,
+    actualVol, rate, cycles
+  };
+}
+
+// ==================== HYPONATREMIA ====================
+function calculateNa(rerender=false) {
+  const weight = parseFloat(document.getElementById('na-weight').value);
+  const gender = document.getElementById('na-gender').value;
+  const age    = document.getElementById('na-age').value;
+  const curNa  = parseFloat(document.getElementById('na-current').value);
+  const tgtNa  = parseFloat(document.getElementById('na-target').value);
+
+  if (!weight || !curNa || !tgtNa) {
+    if (!rerender) alert(lang === 'id' ? 'Mohon isi Berat Badan, Na Saat Ini, dan Na Target.' : 'Please fill Weight, Current Na, and Target Na.');
+    return;
+  }
+  if (tgtNa <= curNa) {
+    if (!rerender) alert(lang === 'id' ? 'Na Target harus lebih tinggi.' : 'Target Na must be higher than Current Na.');
+    return;
+  }
+
+  let tbwFactor = 0.6;
+  if (gender === 'male'   && age === 'adult')   tbwFactor = 0.60;
+  if (gender === 'female' && age === 'adult')   tbwFactor = 0.50;
+  if (gender === 'male'   && age === 'elderly') tbwFactor = 0.50;
+  if (gender === 'female' && age === 'elderly') tbwFactor = 0.45;
+
+  const tbw       = weight * tbwFactor;
+  const delta     = tgtNa - curNa;
+  const deficit   = tbw * delta;
+  const MAX_24H   = 8;
+  const safe24Tgt = Math.min(tgtNa, curNa + MAX_24H);
+  const safeDef24 = tbw * (safe24Tgt - curNa);
+
+  const NACL3_NA = 513, NS_NA = 154;
+  const nacl3VolFull = (deficit / NACL3_NA) * 1000;
+  const nsVolFull    = curNa < NS_NA ? (deficit / NS_NA) * 1000 : null;
+  const nacl3Vol24 = (safeDef24 / NACL3_NA) * 1000;
+  const nacl3Rate  = nacl3Vol24 / 24;
+  const nsVol24    = curNa < NS_NA ? (safeDef24 / NS_NA) * 1000 : null;
+  const nsRate     = nsVol24 !== null ? nsVol24 / 24 : null;
+  const adrogueNaCl3 = (NACL3_NA - curNa) / (tbw + 1);
+  const adrogueNS    = (NS_NA    - curNa) / (tbw + 1);
+
+  let sevKey, sevClass;
+  if (curNa >= 130)      { sevKey = 'mild';     sevClass = 'b-amber'; }
+  else if (curNa >= 125) { sevKey = 'moderate'; sevClass = 'b-amber'; }
+  else                   { sevKey = 'severe';   sevClass = 'b-red';   }
+  const sevBadge = document.getElementById('na-severity-badge');
+  sevBadge.className = 'badge ' + sevClass;
+  sevBadge.textContent = `${t(sevKey)} · Na ${curNa}`;
+
+  document.getElementById('na-tbw').textContent         = round(tbw, 1);
+  document.getElementById('na-delta').textContent       = round(delta, 1);
+  document.getElementById('na-deficit').textContent     = round(deficit, 0);
+  document.getElementById('na-safe-target').textContent = round(safe24Tgt, 1);
+
+  // Multi-day correction note
+  const daysNeeded = Math.ceil(delta / 8);
+  const multiDayEl = document.getElementById('na-multiday-note');
+  if (daysNeeded > 1) {
+    multiDayEl.classList.remove('hidden');
+    multiDayEl.textContent = fill(t('multiDayNote'), { cur: curNa, tgt: tgtNa, days: daysNeeded });
+  } else {
+    multiDayEl.classList.add('hidden');
+  }
+
+  document.getElementById('nacl3-volume').textContent  = round(nacl3VolFull, 0);
+  document.getElementById('nacl3-vol24').textContent   = round(nacl3Vol24, 0);
+  document.getElementById('nacl3-rate').textContent    = round(nacl3Rate, 1);
+  document.getElementById('nacl3-adrogue').textContent = round(adrogueNaCl3, 1);
+
+  const nacl3Reg = buildNaRegimen(nacl3Vol24, 'NaCl 3%', 500);
+  document.getElementById('nacl3-order').textContent = nacl3Reg.orderString;
+  document.getElementById('nacl3-order-note').textContent =
+    fill(t('naOrderNote'), { vol: round(nacl3Reg.actualVol, 0), fluid: 'NaCl 3%', rate: round(nacl3Reg.rate, 1) });
+
+  if (nsVolFull !== null) {
+    document.getElementById('ns-applicable').classList.remove('hidden');
+    document.getElementById('ns-not-applicable').classList.add('hidden');
+    document.getElementById('ns-volume').textContent  = round(nsVolFull, 0);
+    document.getElementById('ns-vol24').textContent   = round(nsVol24, 0);
+    document.getElementById('ns-rate').textContent    = round(nsRate, 1);
+    document.getElementById('ns-adrogue').textContent = round(adrogueNS, 1);
+    const nsReg = buildNaRegimen(nsVol24, 'NaCl 0.9%', 500);
+    document.getElementById('ns-order').textContent = nsReg.orderString;
+    document.getElementById('ns-order-note').textContent =
+      fill(t('naOrderNote'), { vol: round(nsReg.actualVol, 0), fluid: 'NaCl 0.9%', rate: round(nsReg.rate, 1) });
+  } else {
+    document.getElementById('ns-applicable').classList.add('hidden');
+    document.getElementById('ns-not-applicable').classList.remove('hidden');
+  }
+
+  document.getElementById('na-empty').classList.add('hidden');
+  document.getElementById('na-results').classList.remove('hidden');
+}
+
+function resetNa() {
+  ['na-weight','na-current','na-target'].forEach(id => document.getElementById(id).value = '');
+  document.getElementById('na-gender').value = 'male';
+  document.getElementById('na-age').value    = 'adult';
+  document.getElementById('na-results').classList.add('hidden');
+  document.getElementById('na-empty').classList.remove('hidden');
+}
+
+// ==================== HYPOKALEMIA ====================
+function calculateK(rerender=false) {
+  const curK     = parseFloat(document.getElementById('k-current').value);
+  const tgtK     = parseFloat(document.getElementById('k-target').value);
+  const weight   = parseFloat(document.getElementById('k-weight').value);
+  const context  = document.getElementById('k-context').value;
+  const cvcAvail = document.getElementById('k-cvc-avail').value === 'yes';
+
+  if (!curK || !tgtK) {
+    if (!rerender) alert(lang === 'id' ? 'Mohon isi K Saat Ini dan K Target.' : 'Please fill Current K and Target K.');
+    return;
+  }
+  if (!weight) {
+    if (!rerender) alert(lang === 'id' ? 'Mohon isi Berat Badan — diperlukan untuk rumus defisit K.' : 'Please enter Weight — required for the K deficit formula.');
+    return;
+  }
+  if (tgtK <= curK) {
+    if (!rerender) alert(lang === 'id' ? 'K Target harus lebih tinggi.' : 'Target K must be higher than Current K.');
+    return;
+  }
+
+  const delta = tgtK - curK;
+
+  // Kruse formula (Indonesian clinical standard):
+  //   K deficit (mEq) = ΔK × Weight × 0.4
+  // The 0.4 factor reflects ECF/redistribution replacement need —
+  // NOT the entire intracellular pool, which is restored over days via oral/diet.
+  const deficitRaw = delta * weight * 0.4;
+  const defMid = Math.max(25, deficitRaw);  // minimum 1 vial (25 mEq)
+
+  let sevKey, sevClass, routeKey;
+  if (curK >= 3.0)       { sevKey = 'mild';     sevClass = 'b-amber'; routeKey = 'routeOralPIV'; }
+  else if (curK >= 2.5)  { sevKey = 'moderate'; sevClass = 'b-amber'; routeKey = 'routeIVPIV';  }
+  else                   { sevKey = 'severe';   sevClass = 'b-red';   routeKey = 'routeIVCVC'; }
+
+  // CVC need
+  let cvcNeeded = false, cvcReason = '';
+  if (sevKey === 'severe')        { cvcNeeded = true; cvcReason = t('cvcReasonSevere'); }
+  else if (context === 'cardiac') { cvcNeeded = true; cvcReason = t('cvcReasonECG');    }
+
+  // ===== REGIMEN TEMPLATES =====
+  const SAFE = { mEq: 25, mL: 500, hpb: 4 };   // 50 mEq/L, 6.25 mEq/h
+  const STD  = { mEq: 50, mL: 500, hpb: 8 };   // 100 mEq/L, 6.25 mEq/h (single line peripheral, Indonesian standard)
+  const CVC  = { mEq: 50, mL: 100, hpb: 2 };   // 500 mEq/L, 25 mEq/h
+
+  const buildSingle = (cfg, deficit) => {
+    const cycles = Math.max(1, Math.ceil(deficit / cfg.mEq));
+    const conc = (cfg.mEq / cfg.mL) * 1000;
+    const rate = cfg.mEq / cfg.hpb;
+    return {
+      orderString: `KCl ${cfg.mEq} mEq + NS ${cfg.mL} mL / ${cfg.hpb} ${t('hourShort')} (${pluralCycles(cycles)})`,
+      cycles, conc, rate,
+      totalDose: cycles * cfg.mEq,
+      totalTime: cycles * cfg.hpb
+    };
+  };
+
+  const buildDual = (cfg, deficit) => {
+    let cycles = Math.max(2, Math.ceil(deficit / cfg.mEq));
+    if (cycles % 2 !== 0) cycles += 1;
+    const c1 = cycles / 2, c2 = cycles / 2;
+    const conc = (cfg.mEq / cfg.mL) * 1000;
+    const rate = cfg.mEq / cfg.hpb;
+    const combined = rate * 2;
+    return {
+      line1: `KCl ${cfg.mEq} mEq + NS ${cfg.mL} mL / ${cfg.hpb} ${t('hourShort')} (${pluralCycles(c1)})`,
+      line2: `KCl ${cfg.mEq} mEq + NS ${cfg.mL} mL / ${cfg.hpb} ${t('hourShort')} (${pluralCycles(c2)})`,
+      cycles, c1, c2, conc, rate, combined,
+      totalDose: cycles * cfg.mEq,
+      totalTime: c1 * cfg.hpb
+    };
+  };
+
+  // ===== DECIDE RECOMMENDED =====
+  let recType, recCfg, recTitleKey, recSubKey;
+  let contextBadgeKey = '';
+
+  if (sevKey === 'severe' || context === 'cardiac') {
+    if (cvcAvail) {
+      recType = 'single'; recCfg = CVC;
+      recTitleKey = 'recCVC'; recSubKey = 'recCVCSub';
+    } else {
+      // Use dual line only if single STD would require ≥2 cycles (meaningful speedup)
+      const stdCycles = Math.ceil(defMid / STD.mEq);
+      if (stdCycles >= 2) {
+        recType = 'dual'; recCfg = STD;
+        recTitleKey = 'recDualPIV'; recSubKey = 'recDualPIVSub';
+      } else {
+        recType = 'single'; recCfg = STD;
+        recTitleKey = 'recStdPIV'; recSubKey = 'recStdPIVSub';
+      }
+      contextBadgeKey = 'cvcUnavailable';
+    }
+  } else if (sevKey === 'moderate') {
+    recType = 'single'; recCfg = STD;
+    recTitleKey = 'recStdPIV'; recSubKey = 'recStdPIVSub';
+  } else {
+    recType = 'single'; recCfg = SAFE;
+    recTitleKey = 'recSlowMaint'; recSubKey = 'recSlowMaintSub';
+  }
+
+  document.getElementById('k-rec-title').textContent = t(recTitleKey);
+  document.getElementById('k-rec-subtitle').textContent = t(recSubKey);
+  const ctxBadge = document.getElementById('k-rec-context-badge');
+  if (contextBadgeKey) {
+    ctxBadge.classList.remove('hidden');
+    ctxBadge.textContent = t(contextBadgeKey);
+  } else {
+    ctxBadge.classList.add('hidden');
+  }
+
+  if (recType === 'single') {
+    document.getElementById('k-rec-single').classList.remove('hidden');
+    document.getElementById('k-rec-dual').classList.add('hidden');
+    const r = buildSingle(recCfg, defMid);
+    document.getElementById('k-rec-order').textContent = r.orderString;
+    document.getElementById('k-rec-note').textContent =
+      fill(t('recSingleNote'), { dose: round(r.totalDose, 0), dur: round(r.totalTime, 1), conc: round(r.conc, 0), rate: round(r.rate, 1) });
+    document.getElementById('k-rec-conc').textContent = round(r.conc, 0);
+    document.getElementById('k-rec-rate').textContent = round(r.rate, 1);
+    document.getElementById('k-rec-duration').textContent = round(r.totalTime, 1);
+  } else {
+    document.getElementById('k-rec-single').classList.add('hidden');
+    document.getElementById('k-rec-dual').classList.remove('hidden');
+    const r = buildDual(recCfg, defMid);
+    document.getElementById('k-rec-line1').textContent = r.line1;
+    document.getElementById('k-rec-line2').textContent = r.line2;
+    document.getElementById('k-rec-dual-note').textContent =
+      fill(t('recDualNote'), { combined: round(r.combined, 1), rate: round(r.rate, 1) });
+    document.getElementById('k-rec-conc').textContent = round(r.conc, 0);
+    document.getElementById('k-rec-rate').textContent = round(r.combined, 1);
+    document.getElementById('k-rec-duration').textContent = round(r.totalTime, 1);
+  }
+
+  // ===== ALTERNATIVES =====
+  const safe = buildSingle(SAFE, defMid);
+  document.getElementById('k-alt-safe-order').textContent = safe.orderString;
+  document.getElementById('k-alt-safe-note').textContent =
+    fill(t('altSafeNote'), { rate: round(safe.rate, 1), dose: round(safe.totalDose, 0), dur: round(safe.totalTime, 1) });
+
+  const std = buildSingle(STD, defMid);
+  document.getElementById('k-alt-std-order').textContent = std.orderString;
+  document.getElementById('k-alt-std-note').textContent =
+    fill(t('altStdNote'), { rate: round(std.rate, 1), dose: round(std.totalDose, 0), dur: round(std.totalTime, 1) });
+
+  const dual = buildDual(STD, defMid);
+  document.getElementById('k-alt-dual-l1').textContent = dual.line1;
+  document.getElementById('k-alt-dual-l2').textContent = dual.line2;
+  document.getElementById('k-alt-dual-note').textContent =
+    fill(t('altDualNote'), { combined: round(dual.combined, 1), dose: round(dual.totalDose, 0), dur: round(dual.totalTime, 1) });
+
+  const cvc = buildSingle(CVC, defMid);
+  document.getElementById('k-alt-cvc-order').textContent = cvc.orderString;
+  document.getElementById('k-alt-cvc-note').textContent =
+    fill(t('altCVCNote'), { rate: round(cvc.rate, 1), dose: round(cvc.totalDose, 0), dur: round(cvc.totalTime, 1) });
+
+  // ===== ORAL =====
+  const ksrTabs = Math.ceil(defMid / 8);
+  const asparTabs = Math.ceil(defMid / 3.5);
+  document.getElementById('k-oral-ksr').textContent =
+    fill(t('oralKsrText'), { n: ksrTabs, dose: round(defMid, 0) });
+  document.getElementById('k-oral-aspar').textContent =
+    fill(t('oralAsparText'), { n: asparTabs });
+
+  // ===== SUMMARY =====
+  const badge = document.getElementById('k-severity-badge');
+  badge.className = 'badge ' + sevClass;
+  badge.textContent = `${t(sevKey)} · K ${curK}`;
+  document.getElementById('k-delta').textContent   = round(delta, 2);
+  document.getElementById('k-deficit').textContent = round(defMid, 0);
+  document.getElementById('k-route').textContent   = t(routeKey);
+
+  if (cvcNeeded) {
+    document.getElementById('k-cvc-warning').classList.remove('hidden');
+    document.getElementById('k-cvc-reason').innerHTML = cvcReason + ' ' + t('cvcRateClause');
+  } else {
+    document.getElementById('k-cvc-warning').classList.add('hidden');
+  }
+
+  document.getElementById('k-empty').classList.add('hidden');
+  document.getElementById('k-results').classList.remove('hidden');
+}
+
+function resetK() {
+  ['k-current','k-weight'].forEach(id => document.getElementById(id).value = '');
+  document.getElementById('k-target').value = '4.0';
+  document.getElementById('k-context').value = 'asymptomatic';
+  document.getElementById('k-cvc-avail').value = 'no';
+  document.getElementById('k-results').classList.add('hidden');
+  document.getElementById('k-empty').classList.remove('hidden');
+}
+
+setLang('en');
+</script>
+
+</body>
+</html>
