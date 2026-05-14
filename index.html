@@ -1199,8 +1199,18 @@ function renderRecommendedRegimen(hpb) {
 
 function applyCustomRate() {
   const input = document.getElementById('k-custom-hpb');
+  const val = parseInt(input.value, 10);
+  // Only re-render if value is currently a valid number — do NOT touch input.value here
+  if (!isNaN(val) && val >= 1 && val <= 48) {
+    renderRecommendedRegimen(val);
+  }
+}
+
+function clampCustomRate() {
+  // Called on blur/change — now safe to clamp and write back
+  const input = document.getElementById('k-custom-hpb');
   let val = parseInt(input.value, 10);
-  if (isNaN(val) || val < 1)  val = 1;
+  if (isNaN(val) || val < 1) val = 1;
   if (val > 48) val = 48;
   input.value = val;
   renderRecommendedRegimen(val);
@@ -1214,7 +1224,9 @@ function resetCustomRate() {
 }
 
 // Wire up live updates
-document.getElementById('k-custom-hpb').addEventListener('input', applyCustomRate);
+document.getElementById('k-custom-hpb').addEventListener('input',  applyCustomRate);
+document.getElementById('k-custom-hpb').addEventListener('blur',   clampCustomRate);
+document.getElementById('k-custom-hpb').addEventListener('change', clampCustomRate);
 
 setLang('en');
 </script>
