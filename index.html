@@ -3,7 +3,11 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Electrolyte Correction · Clinical Decision Support</title>
+<title>ElektroCalc · Electrolyte Correction</title>
+<meta name="description" content="Clinical decision support for hyponatremia and hypokalemia correction. Bilingual EN/ID.">
+<meta name="theme-color" content="#0c1117">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230c1117'/%3E%3Cpath d='M56 32h-8l-5 14L29 14l-5 18H8' stroke='%23d4af6a' stroke-width='4' stroke-linecap='round' stroke-linejoin='round' fill='none'/%3E%3Ctext x='32' y='56' text-anchor='middle' fill='%23d4af6a' font-family='Georgia,serif' font-size='10' font-weight='bold' font-style='italic'%3ENa·K%3C/text%3E%3C/svg%3E">
+<link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230c1117'/%3E%3Cpath d='M56 32h-8l-5 14L29 14l-5 18H8' stroke='%23d4af6a' stroke-width='4' stroke-linecap='round' stroke-linejoin='round' fill='none'/%3E%3Ctext x='32' y='56' text-anchor='middle' fill='%23d4af6a' font-family='Georgia,serif' font-size='10' font-weight='bold' font-style='italic'%3ENa·K%3C/text%3E%3C/svg%3E">
 <script src="https://cdn.tailwindcss.com"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -52,6 +56,22 @@
   .lang-toggle button:not(.active):hover{color:var(--text)}
   ::-webkit-scrollbar{width:10px;height:10px}::-webkit-scrollbar-track{background:var(--bg)}
   ::-webkit-scrollbar-thumb{background:var(--border);border-radius:4px}::-webkit-scrollbar-thumb:hover{background:#3a4555}
+
+  /* Help modal */
+  .modal-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.7);backdrop-filter:blur(4px);z-index:60;display:flex;align-items:flex-start;justify-content:center;padding:20px;overflow-y:auto;animation:fadeIn .2s}
+  .modal-panel{background:var(--card);border:1px solid var(--border);border-radius:16px;max-width:780px;width:100%;margin:40px auto;box-shadow:0 24px 64px rgba(0,0,0,.5);animation:slideUp .25s ease-out}
+  @keyframes slideUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+  .help-section{border-left:3px solid var(--gold);padding-left:14px;margin-bottom:8px}
+  .help-term{color:var(--gold);font-family:'JetBrains Mono',monospace;font-weight:600;font-size:.85rem}
+  .help-tabs{display:flex;gap:2px;padding:3px;background:var(--bg2);border-radius:10px;border:1px solid var(--border)}
+  .help-tabs button{flex:1;padding:8px 16px;border-radius:8px;font-weight:500;font-size:.85rem;color:var(--text-d);transition:.15s;cursor:pointer}
+  .help-tabs button.active{background:var(--gold);color:#0c1117}
+
+  /* Custom rate input */
+  .rate-edit-wrap{display:flex;align-items:center;gap:6px;margin-top:8px;padding:8px 10px;background:var(--bg2);border:1px dashed var(--border);border-radius:8px}
+  .rate-edit-input{width:60px;background:var(--bg);border:1px solid var(--border);color:var(--gold);font-family:'JetBrains Mono',monospace;font-weight:600;padding:4px 8px;border-radius:6px;font-size:.85rem;text-align:center}
+  .rate-edit-input:focus{outline:none;border-color:var(--gold);box-shadow:0 0 0 2px rgba(212,175,106,.15)}
+  .rate-edit-label{font-size:.7rem;color:var(--text-m);text-transform:uppercase;letter-spacing:.08em;font-weight:500}
 </style>
 </head>
 <body class="min-h-screen pb-28">
@@ -61,12 +81,15 @@
     <div class="flex items-center gap-3 min-w-0">
       <div class="w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0" style="background:linear-gradient(135deg,var(--gold),var(--gold-d));color:#0c1117"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg></div>
       <div class="min-w-0">
-        <h1 data-i18n="title" class="font-serif text-xl sm:text-2xl font-semibold gold leading-none truncate">Electrolyte Correction</h1>
+        <h1 data-i18n="title" class="font-serif text-xl sm:text-2xl font-semibold gold leading-none truncate">ElektroCalc</h1>
         <p data-i18n="subtitle" class="text-xs text-slate-400 mt-1 tracking-wide truncate">Clinical Decision Support · Sodium &amp; Potassium Replacement</p>
       </div>
     </div>
-    <div class="flex items-center gap-3 flex-shrink-0">
-      <div class="hidden md:flex items-center gap-2 text-xs text-slate-500"><span class="pulse-dot"></span><span class="font-mono">ED · v1.1</span></div>
+    <div class="flex items-center gap-2 sm:gap-3 flex-shrink-0">
+      <div class="hidden md:flex items-center gap-2 text-xs text-slate-500"><span class="pulse-dot"></span><span class="font-mono">ED · v1.2</span></div>
+      <button onclick="openHelp()" class="btn-ghost rounded-full w-9 h-9 flex items-center justify-center" title="Help" aria-label="Help">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+      </button>
       <div class="lang-toggle">
         <button id="lang-en" class="active" onclick="setLang('en')">EN</button>
         <button id="lang-id" onclick="setLang('id')">ID</button>
@@ -331,6 +354,16 @@
             <div id="k-rec-dual-note" class="text-[11px] text-slate-400 mt-2 font-mono px-1">—</div>
           </div>
 
+          <!-- Custom rate override -->
+          <div class="rate-edit-wrap mt-3">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#d4af6a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+            <span class="rate-edit-label" data-i18n="customRate">Slow rate (per bag):</span>
+            <input id="k-custom-hpb" type="number" min="1" max="48" step="1" class="rate-edit-input">
+            <span class="text-xs text-slate-400" data-i18n="hourShort">h</span>
+            <button onclick="resetCustomRate()" class="btn-ghost text-[10px] px-2 py-1 rounded ml-auto" data-i18n="resetRate">Reset</button>
+          </div>
+          <div id="k-custom-warn" class="hidden mt-2 text-[11px] text-amber-300 font-mono px-1">—</div>
+
           <div class="grid grid-cols-3 gap-2 mt-3 pt-3 border-t border-slate-800">
             <div><div data-i18n="conc" class="m-label">Concentration</div><div class="font-mono text-sm gold mt-0.5"><span id="k-rec-conc">—</span> <span class="text-slate-500">mEq/L</span></div></div>
             <div><div data-i18n="rate" class="m-label">Rate</div><div class="font-mono text-sm gold mt-0.5"><span id="k-rec-rate">—</span> <span class="text-slate-500">mEq/h</span></div></div>
@@ -412,6 +445,88 @@
   </div>
 </section>
 
+<!-- HELP MODAL -->
+<div id="help-modal" class="modal-backdrop hidden" onclick="closeHelpOnBackdrop(event)">
+  <div class="modal-panel p-5 sm:p-7">
+    <div class="flex items-center justify-between mb-4">
+      <h2 data-i18n="helpTitle" class="font-serif text-2xl font-semibold gold">Help &amp; Glossary</h2>
+      <button onclick="closeHelp()" class="btn-ghost rounded-full w-9 h-9 flex items-center justify-center" aria-label="Close">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+
+    <div class="help-tabs mb-5">
+      <button id="help-tab-na" class="active" onclick="switchHelpTab('na')" data-i18n="helpTabNa">Hyponatremia</button>
+      <button id="help-tab-k" onclick="switchHelpTab('k')" data-i18n="helpTabK">Hypokalemia</button>
+    </div>
+
+    <!-- NA HELP -->
+    <div id="help-content-na" class="space-y-4 text-sm text-slate-300 leading-relaxed">
+      <div class="help-section">
+        <div class="help-term mb-1" data-i18n="helpNaFormulaTerm">Formula Basis</div>
+        <div data-i18n-html="helpNaFormulaDesc">
+          <div class="font-mono text-xs text-slate-400 mb-1">Na Deficit (mEq) = TBW × (Target Na − Current Na)</div>
+          TBW (Total Body Water) = Weight × factor (♂ adult 0.6 · ♀ adult 0.5 · ♂ elderly 0.5 · ♀ elderly 0.45). The deficit tells how much sodium must be infused to raise serum Na to target — but it must not all be given in 24h (ODS risk).
+        </div>
+      </div>
+      <div class="help-section">
+        <div class="help-term mb-1">Safe 24h Target</div>
+        <div data-i18n="helpSafe24Target">The maximum serum Na value you should aim for within the first 24 hours, calculated as Current Na + 8 mEq/L (with absolute ceiling 10 mEq/L/24h). Faster correction risks Osmotic Demyelination Syndrome (ODS), especially in chronic hyponatremia.</div>
+      </div>
+      <div class="help-section">
+        <div class="help-term mb-1">Total Volume (full deficit)</div>
+        <div data-i18n="helpTotalVol">The fluid volume that would deliver the entire calculated Na deficit. Shown for reference only — do NOT infuse all at once. Use it to plan multi-day correction (typical chronic hyponatremia needs 2–3 days).</div>
+      </div>
+      <div class="help-section">
+        <div class="help-term mb-1">Safe 24h Volume</div>
+        <div data-i18n="helpSafe24Vol">The fluid volume that delivers exactly enough Na to raise serum Na by ≤8 mEq/L in 24h. This is what you actually order on Day 1. On Day 2 and beyond, repeat the same regimen until target reached, rechecking Na q4–6h.</div>
+      </div>
+      <div class="help-section">
+        <div class="help-term mb-1">Rate (24h)</div>
+        <div data-i18n="helpRate24">Safe 24h Volume ÷ 24 hours. The infusion rate in mL/h to give continuously. For NaCl 3% this typically runs at 25–50 mL/h via infusion pump; never push hypertonic saline at maintenance fluid rates.</div>
+      </div>
+      <div class="help-section">
+        <div class="help-term mb-1">Adrogué-Madias ΔNa</div>
+        <div data-i18n-html="helpAdrogue">
+          <div class="font-mono text-xs text-slate-400 mb-1">ΔNa per L = (Infusate Na − Serum Na) / (TBW + 1)</div>
+          Predicts how much serum Na will rise after infusing 1 L of the chosen fluid. Useful sanity check — if 1 L of NaCl 3% would raise Na by 12 mEq/L, you should not give a full liter in 24h. Cross-check against the rate calculation.
+        </div>
+      </div>
+    </div>
+
+    <!-- K HELP -->
+    <div id="help-content-k" class="hidden space-y-4 text-sm text-slate-300 leading-relaxed">
+      <div class="help-section">
+        <div class="help-term mb-1" data-i18n="helpKFormulaTerm">Formula Basis</div>
+        <div data-i18n-html="helpKFormulaDesc">
+          <div class="font-mono text-xs text-slate-400 mb-1">K Deficit (mEq) = (Target K − Current K) × Weight × 0.4</div>
+          The 0.4 factor approximates the extracellular fluid space affected by acute repletion. This is the practical IV dose — NOT the entire total body deficit (which can be 200–400 mEq/L drop and is restored over days via oral/diet). For 70 kg, K 2.5 → 4.0: 1.5 × 70 × 0.4 = 42 mEq ≈ 1 vial KCl 7.46% (50 mL).
+        </div>
+      </div>
+      <div class="help-section">
+        <div class="help-term mb-1">PIV (Peripheral IV)</div>
+        <div data-i18n="helpPIV">Peripheral Intravenous line — a standard cannula in a forearm/hand vein. Safer to place but limits how concentrated and how fast you can infuse KCl. Maximum: 40 mEq/L concentration, 10 mEq/h rate (consensus safety limit to avoid endothelial injury and arrhythmia).</div>
+      </div>
+      <div class="help-section">
+        <div class="help-term mb-1">Textbook safe · 40 mEq/L max</div>
+        <div data-i18n="helpTextbookSafe">The international consensus upper limit for peripheral KCl infusion: dilute to ≤40 mEq/L (e.g., 20 mEq in 500 mL NS) and infuse at ≤10 mEq/h. This causes minimal venous irritation and is the published guideline standard (Kruse, UpToDate, NEJM).</div>
+      </div>
+      <div class="help-section">
+        <div class="help-term mb-1">Common Indonesian practice · 100 mEq/L · large-bore PIV</div>
+        <div data-i18n="helpIndoPractice">In Indonesian ED/ICU practice, KCl 50 mEq in NS 500 mL (= 100 mEq/L) is widely used via large-bore peripheral cannula (18G in cubital/forearm vein) when CVC is unavailable. This exceeds textbook safety but is accepted clinically with caution. Trade-off: faster correction vs. risk of pain, phlebitis, and infiltration. Use only if: large-bore IV, frequent site monitoring, patient can communicate pain, and no severe arrhythmia.</div>
+      </div>
+      <div class="help-section">
+        <div class="help-term mb-1" data-i18n="helpCustomRateTerm">Custom Rate / Slow Infusion</div>
+        <div data-i18n="helpCustomRateDesc">If the patient cannot tolerate the standard infusion rate (KCl burning, pain, phlebitis), use the "Slow rate" input on the recommended card to extend the per-bag duration. Example: change 50 mEq + NS 500 mL from 8 jam → 24 jam. This drops mL/h flow from 62 → 21 (less venous irritation) but slows mEq/h to 2.1. Useful when: KCl-induced pain at site, small/fragile veins, oral supplementation also given in parallel, or non-urgent correction.</div>
+      </div>
+    </div>
+
+    <div class="info-box rounded-md p-3 mt-5 text-xs text-slate-300" data-i18n="helpFooter">
+      All calculations are for clinical decision support only. Always verify against current guidelines and the patient's full clinical picture.
+    </div>
+  </div>
+</div>
+
 <footer class="fixed bottom-0 left-0 right-0 bg-[#0c1117]/95 backdrop-blur border-t border-slate-800 py-3 px-4 z-40">
   <div class="max-w-6xl mx-auto text-center text-xs text-slate-400 leading-relaxed">
     <span class="text-amber-400 font-semibold" data-i18n="disclaimerLead">⚠ For Clinical Decision Support only.</span>
@@ -423,7 +538,7 @@
 // ==================== I18N ====================
 const I18N = {
   en: {
-    title: "Electrolyte Correction",
+    title: "ElektroCalc",
     subtitle: "Clinical Decision Support · Sodium & Potassium Replacement",
     naTab: "Hyponatremia · Na⁺ Correction",
     kTab: "Hypokalemia · K⁺ Correction",
@@ -487,6 +602,29 @@ const I18N = {
     kPearls: '<div><span class="text-blue-300 font-semibold">Always check Mg:</span> hypomagnesemia causes refractory hypokalemia. Replace MgSO₄ in parallel.</div><div><span class="text-blue-300 font-semibold">Renal function:</span> reduce dose if eGFR &lt;30 or oliguric — risk of hyperkalemia.</div><div><span class="text-blue-300 font-semibold">Diluent:</span> use NS over D5W (dextrose → insulin → intracellular K shift, paradoxical drop).</div><div><span class="text-blue-300 font-semibold">Recheck K</span> 2–4h after each replacement; sooner if ECG changes or rate &gt;10 mEq/h.</div>',
     disclaimerLead: "⚠ For Clinical Decision Support only.",
     disclaimerBody: "Results must be verified by a licensed professional. Not for direct patient use.",
+    // Help modal
+    helpTitle: "Help & Glossary",
+    helpTabNa: "Hyponatremia",
+    helpTabK: "Hypokalemia",
+    helpNaFormulaTerm: "Formula Basis",
+    helpNaFormulaDesc: '<div class="font-mono text-xs text-slate-400 mb-1">Na Deficit (mEq) = TBW × (Target Na − Current Na)</div>TBW (Total Body Water) = Weight × factor (♂ adult 0.6 · ♀ adult 0.5 · ♂ elderly 0.5 · ♀ elderly 0.45). The deficit tells how much sodium must be infused to raise serum Na to target — but it must not all be given in 24h (ODS risk).',
+    helpSafe24Target: "The maximum serum Na value you should aim for within the first 24 hours, calculated as Current Na + 8 mEq/L (with absolute ceiling 10 mEq/L/24h). Faster correction risks Osmotic Demyelination Syndrome (ODS), especially in chronic hyponatremia.",
+    helpTotalVol: "The fluid volume that would deliver the entire calculated Na deficit. Shown for reference only — do NOT infuse all at once. Use it to plan multi-day correction (typical chronic hyponatremia needs 2–3 days).",
+    helpSafe24Vol: "The fluid volume that delivers exactly enough Na to raise serum Na by ≤8 mEq/L in 24h. This is what you actually order on Day 1. On Day 2 and beyond, repeat the same regimen until target reached, rechecking Na q4–6h.",
+    helpRate24: "Safe 24h Volume ÷ 24 hours. The infusion rate in mL/h to give continuously. For NaCl 3% this typically runs at 25–50 mL/h via infusion pump; never push hypertonic saline at maintenance fluid rates.",
+    helpAdrogue: '<div class="font-mono text-xs text-slate-400 mb-1">ΔNa per L = (Infusate Na − Serum Na) / (TBW + 1)</div>Predicts how much serum Na will rise after infusing 1 L of the chosen fluid. Useful sanity check — if 1 L of NaCl 3% would raise Na by 12 mEq/L, you should not give a full liter in 24h. Cross-check against the rate calculation.',
+    helpKFormulaTerm: "Formula Basis",
+    helpKFormulaDesc: '<div class="font-mono text-xs text-slate-400 mb-1">K Deficit (mEq) = (Target K − Current K) × Weight × 0.4</div>The 0.4 factor approximates the extracellular fluid space affected by acute repletion. This is the practical IV dose — NOT the entire total body deficit (which can be 200–400 mEq per 1 mEq/L drop and is restored over days via oral/diet). For 70 kg, K 2.5 → 4.0: 1.5 × 70 × 0.4 = 42 mEq ≈ 1 vial KCl 7.46% (50 mL).',
+    helpPIV: "Peripheral Intravenous line — a standard cannula in a forearm/hand vein. Safer to place but limits how concentrated and how fast you can infuse KCl. Maximum: 40 mEq/L concentration, 10 mEq/h rate (consensus safety limit to avoid endothelial injury and arrhythmia).",
+    helpTextbookSafe: "The international consensus upper limit for peripheral KCl infusion: dilute to ≤40 mEq/L (e.g., 20 mEq in 500 mL NS) and infuse at ≤10 mEq/h. This causes minimal venous irritation and is the published guideline standard (Kruse, UpToDate, NEJM).",
+    helpIndoPractice: "In Indonesian ED/ICU practice, KCl 50 mEq in NS 500 mL (= 100 mEq/L) is widely used via large-bore peripheral cannula (18G in cubital/forearm vein) when CVC is unavailable. This exceeds textbook safety but is accepted clinically with caution. Trade-off: faster correction vs. risk of pain, phlebitis, and infiltration. Use only if: large-bore IV, frequent site monitoring, patient can communicate pain, and no severe arrhythmia.",
+    helpCustomRateTerm: "Custom Rate / Slow Infusion",
+    helpCustomRateDesc: 'If the patient cannot tolerate the standard infusion rate (KCl burning, pain, phlebitis), use the "Slow rate" input on the recommended card to extend the per-bag duration. Example: change 50 mEq + NS 500 mL from 8 jam → 24 jam. This drops mL/h flow from 62 → 21 (less venous irritation) but slows mEq/h to 2.1. Useful when: KCl-induced pain at site, small/fragile veins, oral supplementation also given in parallel, or non-urgent correction.',
+    helpFooter: "All calculations are for clinical decision support only. Always verify against current guidelines and the patient's full clinical picture.",
+    customRate: "Slow rate (per bag):",
+    resetRate: "Reset",
+    customWarnSlow: "Custom rate: bag runs over {h}h. Flow {flow} mL/h · K rate {rate} mEq/h · total replacement time {total}h. Use this only for patients intolerant to standard rate.",
+    customWarnFast: "⚠ Custom rate too fast for PIV — exceeds 10 mEq/h limit. Reduce to {minH}h or longer per bag for peripheral, or use CVC.",
     mild: "Mild", moderate: "Moderate", severe: "Severe",
     routeOralPIV: "Oral / PIV", routeIVPIV: "IV (PIV)", routeIVCVC: "IV (CVC)",
     hourShort: "h", cycle: "cycle", cycles: "cycles",
@@ -513,7 +651,7 @@ const I18N = {
     oralAsparText: "Total ≈ {n} tablets — adjunct only (lower mEq/tab)"
   },
   id: {
-    title: "Koreksi Elektrolit",
+    title: "ElektroCalc",
     subtitle: "Pendukung Keputusan Klinis · Penggantian Natrium & Kalium",
     naTab: "Hiponatremia · Koreksi Na⁺",
     kTab: "Hipokalemia · Koreksi K⁺",
@@ -577,6 +715,29 @@ const I18N = {
     kPearls: '<div><span class="text-blue-300 font-semibold">Selalu periksa Mg:</span> hipomagnesemia menyebabkan hipokalemia refrakter. Berikan MgSO₄ paralel.</div><div><span class="text-blue-300 font-semibold">Fungsi ginjal:</span> kurangi dosis bila eGFR &lt;30 atau oliguria — risiko hiperkalemia.</div><div><span class="text-blue-300 font-semibold">Pelarut:</span> gunakan NS, bukan D5W (dekstrosa → insulin → K masuk intraseluler, K bisa turun paradoksal).</div><div><span class="text-blue-300 font-semibold">Periksa K ulang</span> 2–4j setelah tiap penggantian; lebih cepat bila ada perubahan EKG atau kecepatan &gt;10 mEq/j.</div>',
     disclaimerLead: "⚠ Hanya untuk Pendukung Keputusan Klinis.",
     disclaimerBody: "Hasil harus diverifikasi oleh tenaga medis berlisensi. Bukan untuk penggunaan langsung pada pasien.",
+    // Help modal
+    helpTitle: "Bantuan & Glosarium",
+    helpTabNa: "Hiponatremia",
+    helpTabK: "Hipokalemia",
+    helpNaFormulaTerm: "Dasar Rumus",
+    helpNaFormulaDesc: '<div class="font-mono text-xs text-slate-400 mb-1">Defisit Na (mEq) = TBW × (Na Target − Na Saat Ini)</div>TBW (Total Body Water) = Berat Badan × faktor (♂ dewasa 0.6 · ♀ dewasa 0.5 · ♂ lansia 0.5 · ♀ lansia 0.45). Defisit menunjukkan berapa banyak natrium harus diinfuskan untuk menaikkan Na serum ke target — namun tidak boleh diberikan seluruhnya dalam 24 jam (risiko ODS).',
+    helpSafe24Target: "Nilai Na serum maksimum yang boleh dicapai dalam 24 jam pertama, dihitung sebagai Na Saat Ini + 8 mEq/L (batas mutlak 10 mEq/L/24j). Koreksi lebih cepat berisiko Sindrom Demielinisasi Osmotik (ODS), terutama pada hiponatremia kronis.",
+    helpTotalVol: "Volume cairan yang akan memberikan seluruh defisit Na. Ditampilkan hanya untuk referensi — JANGAN diinfuskan sekaligus. Gunakan untuk perencanaan koreksi multi-hari (hiponatremia kronis biasanya butuh 2–3 hari).",
+    helpSafe24Vol: "Volume cairan yang memberikan Na cukup untuk menaikkan Na serum ≤8 mEq/L dalam 24 jam. Inilah yang Anda resepkan pada Hari 1. Pada Hari 2 dan seterusnya, ulang regimen yang sama hingga target tercapai, dengan pemeriksaan Na ulang tiap 4–6 jam.",
+    helpRate24: "Volume Aman 24 Jam ÷ 24 jam. Kecepatan infus dalam mL/jam yang diberikan kontinu. Untuk NaCl 3% biasanya 25–50 mL/jam via infusion pump; jangan pernah memberikan saline hipertonis dengan kecepatan cairan maintenance.",
+    helpAdrogue: '<div class="font-mono text-xs text-slate-400 mb-1">ΔNa per L = (Na Infus − Na Serum) / (TBW + 1)</div>Memprediksi berapa banyak Na serum akan naik setelah infus 1 L cairan terpilih. Sebagai pengecekan — jika 1 L NaCl 3% akan menaikkan Na 12 mEq/L, jangan berikan 1 L penuh dalam 24 jam. Bandingkan dengan perhitungan kecepatan.',
+    helpKFormulaTerm: "Dasar Rumus",
+    helpKFormulaDesc: '<div class="font-mono text-xs text-slate-400 mb-1">Defisit K (mEq) = (K Target − K Saat Ini) × Berat Badan × 0.4</div>Faktor 0.4 mendekati ruang cairan ekstraseluler yang terpengaruh repletion akut. Inilah dosis IV praktis — BUKAN defisit total tubuh (yang bisa 200–400 mEq per 1 mEq/L penurunan, dan diisi bertahap via oral/makanan). Untuk 70 kg, K 2.5 → 4.0: 1.5 × 70 × 0.4 = 42 mEq ≈ 1 vial KCl 7.46% (50 mL).',
+    helpPIV: "Peripheral Intravenous — kanul standar di vena lengan/tangan. Lebih aman dipasang namun membatasi konsentrasi dan kecepatan infus KCl. Maksimum: konsentrasi 40 mEq/L, kecepatan 10 mEq/jam (batas aman konsensus untuk menghindari cedera endotel dan aritmia).",
+    helpTextbookSafe: "Batas atas konsensus internasional untuk infus KCl perifer: dilusi ≤40 mEq/L (mis. 20 mEq dalam 500 mL NS), kecepatan ≤10 mEq/jam. Iritasi vena minimal, standar guideline (Kruse, UpToDate, NEJM).",
+    helpIndoPractice: "Pada praktik IGD/ICU Indonesia, KCl 50 mEq dalam NS 500 mL (= 100 mEq/L) lazim digunakan via kanul perifer large-bore (18G di vena kubital/lengan) bila CVC tidak tersedia. Melebihi batas textbook namun diterima klinis dengan kehati-hatian. Trade-off: koreksi lebih cepat vs. risiko nyeri, flebitis, dan infiltrasi. Gunakan hanya bila: IV large-bore, monitoring site sering, pasien dapat mengkomunikasikan nyeri, dan tanpa aritmia berat.",
+    helpCustomRateTerm: "Kecepatan Kustom / Infus Lambat",
+    helpCustomRateDesc: 'Bila pasien tidak dapat mentoleransi kecepatan infus standar (rasa terbakar KCl, nyeri, flebitis), gunakan input "Kecepatan lambat" pada kartu rekomendasi untuk memperpanjang durasi per botol. Contoh: ubah 50 mEq + NS 500 mL dari 8 jam → 24 jam. Aliran mL/jam turun dari 62 → 21 (iritasi vena lebih rendah) namun mEq/jam turun ke 2.1. Berguna saat: nyeri KCl di lokasi infus, vena kecil/rapuh, suplementasi oral diberikan paralel, atau koreksi non-urgen.',
+    helpFooter: "Semua perhitungan hanya untuk pendukung keputusan klinis. Selalu verifikasi terhadap pedoman terkini dan gambaran klinis pasien secara utuh.",
+    customRate: "Kecepatan lambat (per botol):",
+    resetRate: "Reset",
+    customWarnSlow: "Kecepatan kustom: botol berjalan {h} jam. Aliran {flow} mL/jam · laju K {rate} mEq/jam · total waktu pemberian {total} jam. Gunakan hanya untuk pasien yang tidak toleran kecepatan standar.",
+    customWarnFast: "⚠ Kecepatan kustom terlalu cepat untuk PIV — melebihi batas 10 mEq/jam. Perpanjang ke {minH} jam per botol untuk perifer, atau gunakan CVC.",
     mild: "Ringan", moderate: "Sedang", severe: "Berat",
     routeOralPIV: "Oral / PIV", routeIVPIV: "IV (PIV)", routeIVCVC: "IV (CVC)",
     hourShort: "jam", cycle: "siklus", cycles: "siklus",
@@ -642,6 +803,28 @@ function switchTab(tab) {
     ts.classList.toggle('tab-inactive', key !== tab);
   });
 }
+
+// ==================== HELP MODAL ====================
+function openHelp() {
+  document.getElementById('help-modal').classList.remove('hidden');
+  document.body.style.overflow = 'hidden';
+}
+function closeHelp() {
+  document.getElementById('help-modal').classList.add('hidden');
+  document.body.style.overflow = '';
+}
+function closeHelpOnBackdrop(e) {
+  if (e.target.id === 'help-modal') closeHelp();
+}
+function switchHelpTab(tab) {
+  document.getElementById('help-content-na').classList.toggle('hidden', tab !== 'na');
+  document.getElementById('help-content-k').classList.toggle('hidden', tab !== 'k');
+  document.getElementById('help-tab-na').classList.toggle('active', tab === 'na');
+  document.getElementById('help-tab-k').classList.toggle('active', tab === 'k');
+}
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') closeHelp();
+});
 
 // ==================== UTILS ====================
 const round = (n, d=1) => {
@@ -852,7 +1035,6 @@ function calculateK(rerender=false) {
       recType = 'single'; recCfg = CVC;
       recTitleKey = 'recCVC'; recSubKey = 'recCVCSub';
     } else {
-      // Use dual line only if single STD would require ≥2 cycles (meaningful speedup)
       const stdCycles = Math.ceil(defMid / STD.mEq);
       if (stdCycles >= 2) {
         recType = 'dual'; recCfg = STD;
@@ -881,28 +1063,21 @@ function calculateK(rerender=false) {
     ctxBadge.classList.add('hidden');
   }
 
-  if (recType === 'single') {
-    document.getElementById('k-rec-single').classList.remove('hidden');
-    document.getElementById('k-rec-dual').classList.add('hidden');
-    const r = buildSingle(recCfg, defMid);
-    document.getElementById('k-rec-order').textContent = r.orderString;
-    document.getElementById('k-rec-note').textContent =
-      fill(t('recSingleNote'), { dose: round(r.totalDose, 0), dur: round(r.totalTime, 1), conc: round(r.conc, 0), rate: round(r.rate, 1) });
-    document.getElementById('k-rec-conc').textContent = round(r.conc, 0);
-    document.getElementById('k-rec-rate').textContent = round(r.rate, 1);
-    document.getElementById('k-rec-duration').textContent = round(r.totalTime, 1);
-  } else {
-    document.getElementById('k-rec-single').classList.add('hidden');
-    document.getElementById('k-rec-dual').classList.remove('hidden');
-    const r = buildDual(recCfg, defMid);
-    document.getElementById('k-rec-line1').textContent = r.line1;
-    document.getElementById('k-rec-line2').textContent = r.line2;
-    document.getElementById('k-rec-dual-note').textContent =
-      fill(t('recDualNote'), { combined: round(r.combined, 1), rate: round(r.rate, 1) });
-    document.getElementById('k-rec-conc').textContent = round(r.conc, 0);
-    document.getElementById('k-rec-rate').textContent = round(r.combined, 1);
-    document.getElementById('k-rec-duration').textContent = round(r.totalTime, 1);
-  }
+  // Store state globally for custom rate override
+  window._recState = {
+    recType, recCfg: { ...recCfg }, defMid,
+    isCVC: (recCfg === CVC),
+    builders: { single: buildSingle, dual: buildDual }
+  };
+
+  // Initialize custom rate input to default value
+  const customInput = document.getElementById('k-custom-hpb');
+  customInput.value = recCfg.hpb;
+  customInput.dataset.default = recCfg.hpb;
+  document.getElementById('k-custom-warn').classList.add('hidden');
+
+  // Render the recommended card (using default hpb)
+  renderRecommendedRegimen(recCfg.hpb);
 
   // ===== ALTERNATIVES =====
   const safe = buildSingle(SAFE, defMid);
@@ -961,6 +1136,85 @@ function resetK() {
   document.getElementById('k-results').classList.add('hidden');
   document.getElementById('k-empty').classList.remove('hidden');
 }
+
+// ==================== CUSTOM K RATE OVERRIDE ====================
+function renderRecommendedRegimen(hpb) {
+  const s = window._recState;
+  if (!s) return;
+  const cfgCustom = { ...s.recCfg, hpb };
+
+  if (s.recType === 'single') {
+    document.getElementById('k-rec-single').classList.remove('hidden');
+    document.getElementById('k-rec-dual').classList.add('hidden');
+    const r = s.builders.single(cfgCustom, s.defMid);
+    document.getElementById('k-rec-order').textContent = r.orderString;
+    document.getElementById('k-rec-note').textContent =
+      fill(t('recSingleNote'), { dose: round(r.totalDose, 0), dur: round(r.totalTime, 1), conc: round(r.conc, 0), rate: round(r.rate, 1) });
+    document.getElementById('k-rec-conc').textContent = round(r.conc, 0);
+    document.getElementById('k-rec-rate').textContent = round(r.rate, 1);
+    document.getElementById('k-rec-duration').textContent = round(r.totalTime, 1);
+  } else {
+    document.getElementById('k-rec-single').classList.add('hidden');
+    document.getElementById('k-rec-dual').classList.remove('hidden');
+    const r = s.builders.dual(cfgCustom, s.defMid);
+    document.getElementById('k-rec-line1').textContent = r.line1;
+    document.getElementById('k-rec-line2').textContent = r.line2;
+    document.getElementById('k-rec-dual-note').textContent =
+      fill(t('recDualNote'), { combined: round(r.combined, 1), rate: round(r.rate, 1) });
+    document.getElementById('k-rec-conc').textContent = round(r.conc, 0);
+    document.getElementById('k-rec-rate').textContent = round(r.combined, 1);
+    document.getElementById('k-rec-duration').textContent = round(r.totalTime, 1);
+  }
+
+  // Validation warning for the custom rate
+  const warnEl = document.getElementById('k-custom-warn');
+  const ratePerLine = cfgCustom.mEq / hpb;
+  const flowMLh    = cfgCustom.mL / hpb;
+  const totalTime  = s.recType === 'dual'
+    ? (Math.ceil(s.defMid / cfgCustom.mEq) / 2) * hpb
+    : Math.ceil(s.defMid / cfgCustom.mEq) * hpb;
+  const defaultHpb = parseInt(document.getElementById('k-custom-hpb').dataset.default, 10);
+
+  // Only warn when not using default
+  if (hpb !== defaultHpb) {
+    warnEl.classList.remove('hidden');
+    // For PIV regimens (not CVC): warn if rate would exceed 10 mEq/h per line
+    if (!s.isCVC && ratePerLine > 10) {
+      const minH = Math.ceil(cfgCustom.mEq / 10);
+      warnEl.style.color = '#fca5a5';
+      warnEl.textContent = fill(t('customWarnFast'), { minH });
+    } else {
+      warnEl.style.color = '#fbbf24';
+      warnEl.textContent = fill(t('customWarnSlow'), {
+        h: hpb,
+        flow: round(flowMLh, 1),
+        rate: round(ratePerLine, 2),
+        total: round(totalTime, 1)
+      });
+    }
+  } else {
+    warnEl.classList.add('hidden');
+  }
+}
+
+function applyCustomRate() {
+  const input = document.getElementById('k-custom-hpb');
+  let val = parseInt(input.value, 10);
+  if (isNaN(val) || val < 1)  val = 1;
+  if (val > 48) val = 48;
+  input.value = val;
+  renderRecommendedRegimen(val);
+}
+
+function resetCustomRate() {
+  const input = document.getElementById('k-custom-hpb');
+  const def = parseInt(input.dataset.default, 10);
+  input.value = def;
+  renderRecommendedRegimen(def);
+}
+
+// Wire up live updates
+document.getElementById('k-custom-hpb').addEventListener('input', applyCustomRate);
 
 setLang('en');
 </script>
