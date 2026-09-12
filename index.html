@@ -527,10 +527,15 @@
   </div>
 </div>
 
-<footer class="fixed bottom-0 left-0 right-0 bg-[#0c1117]/95 backdrop-blur border-t border-slate-800 py-3 px-4 z-40">
-  <div class="max-w-6xl mx-auto text-center text-xs text-slate-400 leading-relaxed">
-    <span class="text-amber-400 font-semibold" data-i18n="disclaimerLead">⚠ For Clinical Decision Support only.</span>
-    <span data-i18n="disclaimerBody">Results must be verified by a licensed professional. Not for direct patient use.</span>
+<footer class="fixed bottom-0 left-0 right-0 bg-[#0c1117]/95 backdrop-blur border-t border-slate-800 py-2.5 px-4 z-40">
+  <div class="max-w-6xl mx-auto text-center leading-relaxed">
+    <div class="text-xs text-slate-400">
+      <span class="text-amber-400 font-semibold" data-i18n="disclaimerLead">⚠ For Clinical Decision Support only.</span>
+      <span data-i18n="disclaimerBody">Results must be verified by a licensed professional. Not for direct patient use.</span>
+    </div>
+    <div class="text-[10px] text-slate-600 mt-0.5 font-mono tracking-wide">
+      <span data-i18n="devCredit">Developed by</span> <span class="gold font-semibold">Avicenna</span>
+    </div>
   </div>
 </footer>
 
@@ -602,6 +607,7 @@ const I18N = {
     kPearls: '<div><span class="text-blue-300 font-semibold">Always check Mg:</span> hypomagnesemia causes refractory hypokalemia. Replace MgSO₄ in parallel.</div><div><span class="text-blue-300 font-semibold">Renal function:</span> reduce dose if eGFR &lt;30 or oliguric — risk of hyperkalemia.</div><div><span class="text-blue-300 font-semibold">Diluent:</span> use NS over D5W (dextrose → insulin → intracellular K shift, paradoxical drop).</div><div><span class="text-blue-300 font-semibold">Recheck K</span> 2–4h after each replacement; sooner if ECG changes or rate &gt;10 mEq/h.</div>',
     disclaimerLead: "⚠ For Clinical Decision Support only.",
     disclaimerBody: "Results must be verified by a licensed professional. Not for direct patient use.",
+    devCredit: "Developed by",
     // Help modal
     helpTitle: "Help & Glossary",
     helpTabNa: "Hyponatremia",
@@ -715,6 +721,7 @@ const I18N = {
     kPearls: '<div><span class="text-blue-300 font-semibold">Selalu periksa Mg:</span> hipomagnesemia menyebabkan hipokalemia refrakter. Berikan MgSO₄ paralel.</div><div><span class="text-blue-300 font-semibold">Fungsi ginjal:</span> kurangi dosis bila eGFR &lt;30 atau oliguria — risiko hiperkalemia.</div><div><span class="text-blue-300 font-semibold">Pelarut:</span> gunakan NS, bukan D5W (dekstrosa → insulin → K masuk intraseluler, K bisa turun paradoksal).</div><div><span class="text-blue-300 font-semibold">Periksa K ulang</span> 2–4j setelah tiap penggantian; lebih cepat bila ada perubahan EKG atau kecepatan &gt;10 mEq/j.</div>',
     disclaimerLead: "⚠ Hanya untuk Pendukung Keputusan Klinis.",
     disclaimerBody: "Hasil harus diverifikasi oleh tenaga medis berlisensi. Bukan untuk penggunaan langsung pada pasien.",
+    devCredit: "Dikembangkan oleh",
     // Help modal
     helpTitle: "Bantuan & Glosarium",
     helpTabNa: "Hiponatremia",
