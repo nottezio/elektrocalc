@@ -233,6 +233,25 @@ select.input-field{font-family:var(--sans);font-size:16px;font-weight:600;paddin
 .oral .tot{font-size:14px;color:var(--ink-2);margin-top:4px}
 .sheet .label-foot{margin-top:12px}
 
+/* Answer card */
+.answer{background:var(--paper);border:2px solid var(--shell);border-radius:var(--r);padding:16px;box-shadow:var(--lift)}
+@media (min-width:640px){.answer{padding:20px}}
+.ans-order{font-family:var(--mono);font-weight:600;font-size:clamp(17px,4.9vw,22px);line-height:1.35;color:var(--ink);white-space:pre-line;overflow-wrap:anywhere;padding-bottom:14px;border-bottom:1px solid var(--rule)}
+.ans-list{list-style:none;margin:12px 0 0;padding:0;display:grid;gap:8px;font-size:15px;line-height:1.5;color:var(--ink)}
+.ans-list li{position:relative;padding-left:22px}
+.ans-list li::before{content:"";position:absolute;left:4px;top:.55em;width:8px;height:8px;border-radius:2px;background:var(--accent)}
+.ans-alt{margin-top:12px;font-size:14px;color:var(--ink-2)}
+
+/* Collapsible calculation details */
+.more{background:var(--paper);border:1px solid var(--rule);border-radius:var(--r)}
+.more>summary{cursor:pointer;list-style:none;display:flex;align-items:center;justify-content:space-between;gap:10px;padding:14px 16px;font-weight:700;font-size:16px;min-height:48px}
+.more>summary::-webkit-details-marker{display:none}
+.more>summary::after{content:"";width:9px;height:9px;border-right:2px solid var(--ink-3);border-bottom:2px solid var(--ink-3);transform:rotate(45deg);margin-top:-4px;transition:transform .2s var(--ease)}
+.more[open]>summary::after{transform:rotate(-135deg);margin-top:4px}
+.more-body{padding:0 16px 16px}
+.more-body .sheet-head{margin-bottom:12px}
+.more-body .h2{font-size:16px;color:var(--ink-2)}
+
 /* Notes (pearls) */
 .notes{display:flex;gap:12px;padding:14px 16px;border-radius:var(--r);background:var(--accent-tint);color:var(--ink);font-size:14px;line-height:1.55}
 .notes>.icon{color:var(--accent);margin-top:1px}
@@ -359,20 +378,20 @@ select.input-field{font-family:var(--sans);font-size:16px;font-weight:600;paddin
       </div>
 
       <div id="na-results" class="hidden stack fade-in">
-        <div class="sheet pad">
+        <section class="answer">
           <div class="sheet-head">
-            <h3 data-i18n="deficitSummary" class="h2">Deficit Summary</h3>
+            <h3 data-i18n="ansTitle" class="h2">What to give</h3>
             <span id="na-severity-badge" class="badge b-amber">Mild</span>
           </div>
-          <div class="metrics m4">
-            <div><div data-i18n="tbw" class="m-label">TBW</div><div class="m-val"><span id="na-tbw">—</span><span class="m-unit">L</span></div></div>
-            <div><div data-i18n="deltaNa" class="m-label">ΔNa</div><div class="m-val"><span id="na-delta">—</span><span class="m-unit">mEq/L</span></div></div>
-            <div><div data-i18n="naDeficitLabel" class="m-label">Na Deficit</div><div class="m-val"><span id="na-deficit">—</span><span class="m-unit">mEq</span></div></div>
-            <div><div data-i18n="safeTarget" class="m-label">Safe 24h Target</div><div class="m-val"><span id="na-safe-target">—</span><span class="m-unit">mEq/L</span></div></div>
-          </div>
-          <div data-i18n="formulaNa" class="formula">Na Deficit = TBW × (Target Na − Current Na)</div>
-          <div id="na-multiday-note" class="hidden multiday">—</div>
-        </div>
+          <div id="na-ans-order" class="ans-order">—</div>
+          <ul class="ans-list">
+            <li id="na-ans-effect">—</li>
+            <li id="na-ans-bags">—</li>
+            <li id="na-ans-days" class="hidden">—</li>
+            <li data-i18n="ansNaRecheck">Recheck Na every 2–4 h at first. If it rises faster than planned, stop the drip and call a senior.</li>
+          </ul>
+          <p class="ans-alt" data-i18n="ansNaAlt">Patient dehydrated (hypovolemic)? See the NaCl 0.9% option below. It raises Na much less.</p>
+        </section>
 
         <div class="alert" role="note">
           <div class="alert-head">
@@ -431,6 +450,24 @@ select.input-field{font-family:var(--sans);font-size:16px;font-weight:600;paddin
             </div>
           </article>
         </div>
+
+        <details class="more">
+          <summary data-i18n="howCalc">How this was calculated</summary>
+        <div class="more-body">
+          <div class="sheet-head">
+            <h3 data-i18n="deficitSummary" class="h2">Deficit Summary</h3>
+          </div>
+          <div class="metrics m4">
+            <div><div data-i18n="tbw" class="m-label">TBW</div><div class="m-val"><span id="na-tbw">—</span><span class="m-unit">L</span></div></div>
+            <div><div data-i18n="deltaNa" class="m-label">ΔNa</div><div class="m-val"><span id="na-delta">—</span><span class="m-unit">mEq/L</span></div></div>
+            <div><div data-i18n="naDeficitLabel" class="m-label">Na Deficit</div><div class="m-val"><span id="na-deficit">—</span><span class="m-unit">mEq</span></div></div>
+            <div><div data-i18n="safeTarget" class="m-label">Safe 24h Target</div><div class="m-val"><span id="na-safe-target">—</span><span class="m-unit">mEq/L</span></div></div>
+          </div>
+          <div data-i18n="formulaNa" class="formula">Na Deficit = TBW × (Target Na − Current Na)</div>
+          <div id="na-multiday-note" class="hidden multiday">—</div>
+        </div>
+
+                </details>
 
         <div class="notes">
           <svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
@@ -501,17 +538,21 @@ select.input-field{font-family:var(--sans);font-size:16px;font-weight:600;paddin
       </div>
 
       <div id="k-results" class="hidden stack fade-in">
-        <div class="sheet pad">
+        <section class="answer">
           <div class="sheet-head">
-            <h3 data-i18n="severityDeficit" class="h2">Severity &amp; Deficit</h3>
+            <h3 data-i18n="ansTitle" class="h2">What to give</h3>
             <span id="k-severity-badge" class="badge b-amber">Mild</span>
           </div>
-          <div class="metrics m3">
-            <div><div data-i18n="deltaK" class="m-label">ΔK Target</div><div class="m-val"><span id="k-delta">—</span><span class="m-unit">mEq/L</span></div></div>
-            <div><div data-i18n="estDeficit" class="m-label">Estimated Deficit</div><div class="m-val"><span id="k-deficit">—</span><span class="m-unit">mEq</span></div></div>
-            <div class="span2"><div data-i18n="recRoute" class="m-label">Recommended Route</div><div class="m-val sm" id="k-route">—</div></div>
-          </div>
-          <div data-i18n="deficitRule" class="formula">Formula: K Deficit (mEq) = (Target K − Current K) × Weight × 0.4. Restores ECF/redistribution need; intracellular pool replenishes over days via oral intake.</div>
+          <div id="k-ans-order" class="ans-order">—</div>
+          <ul class="ans-list">
+            <li id="k-ans-effect">—</li>
+            <li data-i18n="ansKRecheck">Recheck K 2–4 h after each bag. Check magnesium too.</li>
+          </ul>
+        </section>
+
+        <div id="k-dka-warning" class="hidden alert" role="note">
+          <div class="alert-head"><span data-i18n="dkaTitle">⚠ DKA: DO NOT GIVE INSULIN YET</span></div>
+          <div class="alert-body" data-i18n="dkaDesc">K is below 3.3 mEq/L. Hold insulin and give KCl first; start insulin only when K ≥3.3 mEq/L. Recheck K every 2 h.</div>
         </div>
 
         <div id="k-cvc-warning" class="hidden alert" role="note">
@@ -618,10 +659,26 @@ select.input-field{font-family:var(--sans);font-size:16px;font-weight:600;paddin
           </div>
           <div class="oral">
             <div><div class="m-label">KSR (Slow-K)</div><div class="dose">600 mg = <b>8 mEq</b> K⁺</div><div class="tot" id="k-oral-ksr">Total: —</div></div>
-            <div><div class="m-label">Aspar-K</div><div class="dose">1 tab ≈ <b>3.5 mEq</b> K⁺</div><div class="tot" id="k-oral-aspar">Total: —</div></div>
+            <div><div class="m-label">Aspar-K</div><div class="dose">1 tab (300 mg) ≈ <b>1.8 mEq</b> K⁺</div><div class="tot" id="k-oral-aspar">Total: —</div></div>
           </div>
           <div data-i18n="oralUsage" class="label-foot">Oral preferred when K ≥3.0, asymptomatic, intact GI absorption. Max 40 mEq/dose; split across day. Take with food.</div>
         </div>
+
+        <details class="more">
+          <summary data-i18n="howCalc">How this was calculated</summary>
+        <div class="more-body">
+          <div class="sheet-head">
+            <h3 data-i18n="severityDeficit" class="h2">Severity &amp; Deficit</h3>
+          </div>
+          <div class="metrics m3">
+            <div><div data-i18n="deltaK" class="m-label">ΔK Target</div><div class="m-val"><span id="k-delta">—</span><span class="m-unit">mEq/L</span></div></div>
+            <div><div data-i18n="estDeficit" class="m-label">Estimated Deficit</div><div class="m-val"><span id="k-deficit">—</span><span class="m-unit">mEq</span></div></div>
+            <div class="span2"><div data-i18n="recRoute" class="m-label">Recommended Route</div><div class="m-val sm" id="k-route">—</div></div>
+          </div>
+          <div data-i18n="deficitRule" class="formula">Formula: K Deficit (mEq) = (Target K − Current K) × Weight × 0.4. Restores ECF/redistribution need; intracellular pool replenishes over days via oral intake.</div>
+        </div>
+
+                </details>
 
         <div class="notes">
           <svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
@@ -760,15 +817,15 @@ const I18N = {
     awaitingNaDesc: "Enter patient data and press Calculate to generate the replacement plan.",
     awaitingKDesc: "Enter current K and target to generate the replacement strategy.",
     deficitSummary: "Deficit Summary",
-    tbw: "TBW", deltaNa: "ΔNa", naDeficitLabel: "Na Deficit", safeTarget: "Safe 24h Target",
+    tbw: "Total body water", deltaNa: "Na rise needed", naDeficitLabel: "Na deficit", safeTarget: "Max Na after 24 h",
     formulaNa: "Na Deficit = TBW × (Target Na − Current Na)",
     odsTitle: "⚠ OSMOTIC DEMYELINATION SYNDROME (ODS) RISK",
     odsDesc: '<span class="text-red-300 font-semibold">Maximum correction rate: &lt;8 mEq/L per 24h</span> (absolute ceiling 10 mEq/L/24h, 18 mEq/L/48h). Risk highest in chronic hyponatremia, alcoholism, malnutrition, hypokalemia, liver disease. Overcorrection: <span class="font-mono">D5W ± DDAVP</span> to re-lower. Recheck Na q4–6h.',
     hypertonicLabel: "Hypertonic", hypertonicBadge: "Hypertonic",
     isotonicLabel: "Isotonic", isotonicBadge: "Isotonic",
-    totalVolFull: "Total Volume (full deficit)",
-    safe24Vol: "Safe 24h Volume", rate24: "Rate (24h)",
-    adrogue: "Adrogué-Madias ΔNa",
+    totalVolFull: "Full correction (over several days)",
+    safe24Vol: "Give in first 24 h", rate24: "Pump rate",
+    adrogue: "Na rise per 1 L (Adrogué)",
     suggestedOrder: "Suggested Order", orderReady: "Ready to write",
     bolusOption: "Bolus option: 100–150 mL over 10 min × up to 3 doses for symptomatic severe hyponatremia (seizures, coma).",
     nsUsage: "Preferred for hypovolemic hyponatremia. Avoid in SIADH/euvolemic states.",
@@ -789,7 +846,7 @@ const I18N = {
     altDualPIV: "Dual-Line PIV",
     altDualPIVDesc: "High deficit, no CVC · 2 simultaneous peripheral lines",
     altCVC: "CVC High-Concentration",
-    altCVCDesc: "Severe / monitored · 500 mEq/L · continuous ECG",
+    altCVCDesc: "Severe / monitored · 200 mEq/L · continuous ECG",
     safeBadge: "Safe", cautionBadge: "Caution", cvcOnly: "CVC only",
     line: "Line", piv: "PIV",
     conc: "Concentration", rate: "Rate", duration: "Duration",
@@ -822,6 +879,8 @@ const I18N = {
     resetRate: "Reset",
     customWarnSlow: "Custom rate: bag runs over {h}h. Flow {flow} mL/h · K rate {rate} mEq/h · total replacement time {total}h. Use this only for patients intolerant to standard rate.",
     customWarnFast: "⚠ Custom rate too fast for PIV — exceeds 10 mEq/h limit. Reduce to {minH}h or longer per bag for peripheral, or use CVC.",
+    customWarnDual: "⚠ Combined rate {combined} mEq/h across 2 lines exceeds 10 mEq/h. Use {minH}h or longer per bag, or keep continuous ECG monitoring.",
+    customWarnCVC: "⚠ Too fast even for a central line — exceeds 20 mEq/h. Use {minH}h or longer per bag.",
     mild: "Mild", moderate: "Moderate", severe: "Severe",
     routeOralPIV: "Oral / PIV", routeIVPIV: "IV (PIV)", routeIVCVC: "IV (CVC)",
     hourShort: "h", cycle: "cycle", cycles: "cycles",
@@ -833,19 +892,32 @@ const I18N = {
     recDualPIVSub: "High deficit, CVC unavailable · 2 simultaneous PIV lines",
     recCVC: "Central Line (CVC)",
     recCVCSub: "Severe / monitored · high-concentration via CVC",
-    naOrderNote: "Deliver {vol} mL of {fluid} over 24h. Rate ≈ {rate} mL/h.",
+    naOrderNote: "Total {vol} mL in 24 h. Bags needed: {bags} × 500 mL (stop at {vol} mL). Expected Na rise ≈ {rise} mEq/L.",
+    nsShortfall: "Reaching +{goal} with NS alone would need ≈ {need} L — use NaCl 3% if Na must rise.",
     recSingleNote: "Total dose: {dose} mEq over {dur} h · concentration {conc} mEq/L · rate {rate} mEq/h.",
-    recDualNote: "Combined rate ≈ {combined} mEq/h via 2 separate peripheral access points. Each line stays within peripheral safety limits ({rate} mEq/h per line).",
+    recDualNote: "Combined rate ≈ {combined} mEq/h via 2 separate peripheral lines ({rate} mEq/h each). Combined rate is above 10 mEq/h: continuous ECG monitoring required.",
     altSafeNote: "Rate {rate} mEq/h · {dose} mEq total over {dur} h.",
     altStdNote: "Rate {rate} mEq/h · {dose} mEq total over {dur} h.",
-    altDualNote: "Combined rate {combined} mEq/h · {dose} mEq total over {dur} h.",
+    altDualNote: "Combined rate {combined} mEq/h · {dose} mEq total over {dur} h · ECG monitoring required.",
     altCVCNote: "Rate {rate} mEq/h · {dose} mEq total over {dur} h · ECG required.",
     cvcReasonSevere: "Severe hypokalemia (K &lt;2.5 mEq/L) typically requires faster correction than peripheral route allows.",
     cvcReasonECG: "ECG changes / arrhythmia present — rapid replacement via CVC indicated.",
     cvcRateClause: "Required when rate &gt;10 mEq/h or concentration &gt;40 mEq/L. Continuous ECG monitoring.",
     cvcUnavailable: "CVC unavailable — using Dual-Line PIV",
+    cvcUnavailableSingle: "CVC unavailable — single peripheral line",
     oralKsrText: "Total ≈ {n} tablets (≈ {dose} mEq), split 2–3 doses/day",
-    oralAsparText: "Total ≈ {n} tablets — adjunct only (lower mEq/tab)"
+    oralAsparText: "Total ≈ {n} tablets — adjunct only (lower mEq/tab)",
+    dkaTitle: "⚠ DKA: DO NOT GIVE INSULIN YET",
+    dkaDesc: "K is below 3.3 mEq/L. Hold insulin and give KCl first; start insulin only when K ≥3.3 mEq/L. Recheck K every 2 h.",
+    ansTitle: "What to give",
+    ansNaEffect: "Should raise Na from {cur} to about {exp} mEq/L in 24 h. Safe limit: {max}.",
+    ansNaDays: "Day 1 of about {days}. Repeat each day until Na reaches {tgt}.",
+    ansNaRecheck: "Recheck Na every 2–4 h at first. If it rises faster than planned, stop the drip and call a senior.",
+    ansNaAlt: "Patient dehydrated (hypovolemic)? See the NaCl 0.9% option below. It raises Na much less.",
+    ansKEffect: "Gives {dose} mEq of potassium over {dur} h ({rate} mEq/h) through {route}.",
+    ansKRecheck: "Recheck K 2–4 h after each bag. Check magnesium too.",
+    routePeripheral: "a peripheral line", routeTwoPeripheral: "two separate peripheral lines", routeCentral: "a central line (CVC)",
+    howCalc: "How this was calculated"
   },
   id: {
     title: "ElektroCalc",
@@ -874,15 +946,15 @@ const I18N = {
     awaitingNaDesc: "Masukkan data pasien dan tekan Hitung untuk membuat rencana penggantian.",
     awaitingKDesc: "Masukkan K saat ini dan target untuk membuat strategi penggantian.",
     deficitSummary: "Ringkasan Defisit",
-    tbw: "TBW", deltaNa: "ΔNa", naDeficitLabel: "Defisit Na", safeTarget: "Target Aman 24 jam",
+    tbw: "Cairan tubuh total", deltaNa: "Kenaikan Na yang dibutuhkan", naDeficitLabel: "Defisit Na", safeTarget: "Na maks. setelah 24 jam",
     formulaNa: "Defisit Na = TBW × (Na Target − Na Saat Ini)",
     odsTitle: "⚠ RISIKO SINDROM DEMIELINISASI OSMOTIK (ODS)",
     odsDesc: '<span class="text-red-300 font-semibold">Kecepatan koreksi maksimum: &lt;8 mEq/L per 24 jam</span> (batas mutlak 10 mEq/L/24j, 18 mEq/L/48j). Risiko tertinggi pada hiponatremia kronis, alkoholisme, malnutrisi, hipokalemia, penyakit hati. Bila overkoreksi: <span class="font-mono">D5W ± DDAVP</span> untuk menurunkan kembali. Periksa Na ulang tiap 4–6 jam.',
     hypertonicLabel: "Hipertonis", hypertonicBadge: "Hipertonis",
     isotonicLabel: "Isotonis", isotonicBadge: "Isotonis",
-    totalVolFull: "Volume Total (defisit penuh)",
-    safe24Vol: "Volume Aman 24 jam", rate24: "Kecepatan (24j)",
-    adrogue: "Adrogué-Madias ΔNa",
+    totalVolFull: "Koreksi penuh (beberapa hari)",
+    safe24Vol: "Berikan dalam 24 jam pertama", rate24: "Kecepatan pompa",
+    adrogue: "Kenaikan Na per 1 L (Adrogué)",
     suggestedOrder: "Resep Saran", orderReady: "Siap ditulis",
     bolusOption: "Opsi bolus: 100–150 mL dalam 10 menit × hingga 3 dosis untuk hiponatremia berat simptomatik (kejang, koma).",
     nsUsage: "Pilihan utama untuk hiponatremia hipovolemik. Hindari pada SIADH/euvolemik.",
@@ -903,7 +975,7 @@ const I18N = {
     altDualPIV: "PIV Dua Jalur",
     altDualPIVDesc: "Defisit tinggi, tanpa CVC · 2 jalur perifer simultan",
     altCVC: "CVC Konsentrasi Tinggi",
-    altCVCDesc: "Berat / termonitor · 500 mEq/L · EKG kontinu",
+    altCVCDesc: "Berat / termonitor · 200 mEq/L · EKG kontinu",
     safeBadge: "Aman", cautionBadge: "Hati-hati", cvcOnly: "Hanya CVC",
     line: "Jalur", piv: "PIV",
     conc: "Konsentrasi", rate: "Kecepatan", duration: "Durasi",
@@ -936,6 +1008,8 @@ const I18N = {
     resetRate: "Reset",
     customWarnSlow: "Kecepatan kustom: botol berjalan {h} jam. Aliran {flow} mL/jam · laju K {rate} mEq/jam · total waktu pemberian {total} jam. Gunakan hanya untuk pasien yang tidak toleran kecepatan standar.",
     customWarnFast: "⚠ Kecepatan kustom terlalu cepat untuk PIV — melebihi batas 10 mEq/jam. Perpanjang ke {minH} jam per botol untuk perifer, atau gunakan CVC.",
+    customWarnDual: "⚠ Kecepatan gabungan {combined} mEq/jam di 2 jalur melebihi 10 mEq/jam. Gunakan {minH} jam atau lebih per botol, atau pantau EKG kontinu.",
+    customWarnCVC: "⚠ Terlalu cepat bahkan untuk jalur sentral — melebihi 20 mEq/jam. Gunakan {minH} jam atau lebih per botol.",
     mild: "Ringan", moderate: "Sedang", severe: "Berat",
     routeOralPIV: "Oral / PIV", routeIVPIV: "IV (PIV)", routeIVCVC: "IV (CVC)",
     hourShort: "jam", cycle: "siklus", cycles: "siklus",
@@ -947,19 +1021,32 @@ const I18N = {
     recDualPIVSub: "Defisit tinggi, CVC tidak tersedia · 2 jalur PIV simultan",
     recCVC: "Jalur Sentral (CVC)",
     recCVCSub: "Berat / termonitor · konsentrasi tinggi via CVC",
-    naOrderNote: "Berikan {vol} mL {fluid} selama 24 jam. Kecepatan ≈ {rate} mL/j.",
+    naOrderNote: "Total {vol} mL dalam 24 jam. Botol yang dibutuhkan: {bags} × 500 mL (hentikan pada {vol} mL). Perkiraan kenaikan Na ≈ {rise} mEq/L.",
+    nsShortfall: "Untuk naik +{goal} dengan NS saja butuh ≈ {need} L — gunakan NaCl 3% bila Na harus naik.",
     recSingleNote: "Dosis total: {dose} mEq selama {dur} jam · konsentrasi {conc} mEq/L · kecepatan {rate} mEq/jam.",
-    recDualNote: "Kecepatan gabungan ≈ {combined} mEq/jam via 2 akses perifer terpisah. Setiap jalur tetap dalam batas aman perifer ({rate} mEq/jam per jalur).",
+    recDualNote: "Kecepatan gabungan ≈ {combined} mEq/jam via 2 jalur perifer terpisah ({rate} mEq/jam per jalur). Kecepatan gabungan di atas 10 mEq/jam: wajib pantau EKG kontinu.",
     altSafeNote: "Kecepatan {rate} mEq/j · total {dose} mEq selama {dur} jam.",
     altStdNote: "Kecepatan {rate} mEq/j · total {dose} mEq selama {dur} jam.",
-    altDualNote: "Kecepatan gabungan {combined} mEq/j · total {dose} mEq selama {dur} jam.",
+    altDualNote: "Kecepatan gabungan {combined} mEq/j · total {dose} mEq selama {dur} jam · wajib pantau EKG.",
     altCVCNote: "Kecepatan {rate} mEq/j · total {dose} mEq selama {dur} jam · EKG wajib.",
     cvcReasonSevere: "Hipokalemia berat (K &lt;2.5 mEq/L) umumnya memerlukan koreksi lebih cepat dari batas perifer.",
     cvcReasonECG: "Terdapat perubahan EKG / aritmia — penggantian cepat via CVC diindikasikan.",
     cvcRateClause: "Wajib bila kecepatan &gt;10 mEq/j atau konsentrasi &gt;40 mEq/L. Pantau EKG kontinu.",
     cvcUnavailable: "CVC tidak tersedia — gunakan PIV Dua Jalur",
+    cvcUnavailableSingle: "CVC tidak tersedia — satu jalur perifer",
     oralKsrText: "Total ≈ {n} tablet (≈ {dose} mEq), dibagi 2–3 dosis/hari",
-    oralAsparText: "Total ≈ {n} tablet — adjuvan saja (mEq/tablet lebih rendah)"
+    oralAsparText: "Total ≈ {n} tablet — adjuvan saja (mEq/tablet lebih rendah)",
+    dkaTitle: "⚠ KAD: JANGAN BERI INSULIN DULU",
+    dkaDesc: "K di bawah 3.3 mEq/L. Tunda insulin dan berikan KCl lebih dulu; mulai insulin hanya bila K ≥3.3 mEq/L. Periksa K ulang tiap 2 jam.",
+    ansTitle: "Yang diberikan",
+    ansNaEffect: "Diperkirakan menaikkan Na dari {cur} menjadi sekitar {exp} mEq/L dalam 24 jam. Batas aman: {max}.",
+    ansNaDays: "Hari ke-1 dari sekitar {days} hari. Ulangi tiap hari sampai Na mencapai {tgt}.",
+    ansNaRecheck: "Periksa Na tiap 2–4 jam di awal. Bila naik lebih cepat dari rencana, hentikan infus dan hubungi senior.",
+    ansNaAlt: "Pasien dehidrasi (hipovolemik)? Lihat opsi NaCl 0.9% di bawah. Kenaikan Na-nya jauh lebih kecil.",
+    ansKEffect: "Memberikan {dose} mEq kalium selama {dur} jam ({rate} mEq/jam) melalui {route}.",
+    ansKRecheck: "Periksa K 2–4 jam setelah tiap botol. Periksa juga magnesium.",
+    routePeripheral: "jalur perifer", routeTwoPeripheral: "dua jalur perifer terpisah", routeCentral: "jalur sentral (CVC)",
+    howCalc: "Cara perhitungan"
   }
 };
 
@@ -1033,20 +1120,20 @@ const round = (n, d=1) => {
 const pluralCycles = (n) => `${n} ${t(n === 1 ? 'cycle' : 'cycles')}`;
 
 // ==================== NA REGIMEN BUILDER ====================
-function buildNaRegimen(volume24h, fluidLabel, bagSize=500) {
+// Continuous pump order that never exceeds the safe 24h volume:
+// the rate is rounded DOWN, so the delivered volume is always <= volume24h.
+// (Previously the order rounded to whole 500 mL bags, which could exceed the
+//  safe volume, e.g. 246 mL safe -> 500 mL ordered.)
+function buildNaRegimen(volume24h, fluidLabel, infusateNa, curNa, tbw, bagSize=500) {
   if (!isFinite(volume24h) || volume24h <= 0) return null;
-  let numBags = Math.max(1, Math.round(volume24h / bagSize));
-  if (numBags > 6) numBags = 6;
-  const candidates = [24, 12, 8, 6, 4];
-  const ideal = 24 / numBags;
-  const chosenHours = candidates.reduce((p, c) =>
-    Math.abs(c - ideal) < Math.abs(p - ideal) ? c : p, 24);
-  const cycles = Math.round(24 / chosenHours);
-  const actualVol = cycles * bagSize;
-  const rate = bagSize / chosenHours;
+  const rate = Math.floor((volume24h / 24) * 10) / 10;
+  const actualVol = Math.round(rate * 24);
+  const bags = Math.max(1, Math.ceil(actualVol / bagSize));
+  // Adrogue-Madias expected rise for the volume actually ordered
+  const rise = ((infusateNa - curNa) / (tbw + 1)) * (actualVol / 1000);
   return {
-    orderString: `${fluidLabel} ${bagSize} mL / ${chosenHours} ${t('hourShort')} (${pluralCycles(cycles)})`,
-    actualVol, rate, cycles
+    orderString: `${fluidLabel} ${rate} mL/${t('hourShort')} × 24 ${t('hourShort')}`,
+    actualVol, rate, bags, rise
   };
 }
 
@@ -1118,10 +1205,22 @@ function calculateNa(rerender=false) {
   document.getElementById('nacl3-rate').textContent    = round(nacl3Rate, 1);
   document.getElementById('nacl3-adrogue').textContent = round(adrogueNaCl3, 1);
 
-  const nacl3Reg = buildNaRegimen(nacl3Vol24, 'NaCl 3%', 500);
+  const nacl3Reg = buildNaRegimen(nacl3Vol24, 'NaCl 3%', NACL3_NA, curNa, tbw);
+  document.getElementById('nacl3-rate').textContent = round(nacl3Reg.rate, 1);
   document.getElementById('nacl3-order').textContent = nacl3Reg.orderString;
   document.getElementById('nacl3-order-note').textContent =
-    fill(t('naOrderNote'), { vol: round(nacl3Reg.actualVol, 0), fluid: 'NaCl 3%', rate: round(nacl3Reg.rate, 1) });
+    fill(t('naOrderNote'), { vol: round(nacl3Reg.actualVol, 0), bags: nacl3Reg.bags, rise: round(nacl3Reg.rise, 1) });
+
+  // ----- Answer card (plain language) -----
+  const goal = safe24Tgt - curNa;
+  document.getElementById('na-ans-order').textContent = nacl3Reg.orderString;
+  document.getElementById('na-ans-effect').textContent =
+    fill(t('ansNaEffect'), { cur: curNa, exp: round(curNa + nacl3Reg.rise, 0), max: round(safe24Tgt, 0) });
+  document.getElementById('na-ans-bags').textContent =
+    fill(t('naOrderNote'), { vol: round(nacl3Reg.actualVol, 0), bags: nacl3Reg.bags, rise: round(nacl3Reg.rise, 1) });
+  const ansDays = document.getElementById('na-ans-days');
+  ansDays.classList.toggle('hidden', daysNeeded <= 1);
+  ansDays.textContent = fill(t('ansNaDays'), { days: daysNeeded, tgt: tgtNa });
 
   if (nsVolFull !== null) {
     document.getElementById('ns-applicable').classList.remove('hidden');
@@ -1130,10 +1229,15 @@ function calculateNa(rerender=false) {
     document.getElementById('ns-vol24').textContent   = round(nsVol24, 0);
     document.getElementById('ns-rate').textContent    = round(nsRate, 1);
     document.getElementById('ns-adrogue').textContent = round(adrogueNS, 1);
-    const nsReg = buildNaRegimen(nsVol24, 'NaCl 0.9%', 500);
+    const nsReg = buildNaRegimen(nsVol24, 'NaCl 0.9%', NS_NA, curNa, tbw);
+    document.getElementById('ns-rate').textContent = round(nsReg.rate, 1);
     document.getElementById('ns-order').textContent = nsReg.orderString;
-    document.getElementById('ns-order-note').textContent =
-      fill(t('naOrderNote'), { vol: round(nsReg.actualVol, 0), fluid: 'NaCl 0.9%', rate: round(nsReg.rate, 1) });
+    let nsNote = fill(t('naOrderNote'), { vol: round(nsReg.actualVol, 0), bags: nsReg.bags, rise: round(nsReg.rise, 1) });
+    // The deficit method ignores the water that comes with NS, so NS raises Na far less than the deficit implies.
+    if (adrogueNS > 0 && nsReg.rise < 0.75 * goal) {
+      nsNote += ' ' + fill(t('nsShortfall'), { rise: round(nsReg.rise, 1), goal: round(goal, 0), need: round(goal / adrogueNS, 1) });
+    }
+    document.getElementById('ns-order-note').textContent = nsNote;
   } else {
     document.getElementById('ns-applicable').classList.add('hidden');
     document.getElementById('ns-not-applicable').classList.remove('hidden');
@@ -1192,9 +1296,9 @@ function calculateK(rerender=false) {
   else if (context === 'cardiac') { cvcNeeded = true; cvcReason = t('cvcReasonECG');    }
 
   // ===== REGIMEN TEMPLATES =====
-  const SAFE = { mEq: 25, mL: 500, hpb: 4 };   // 50 mEq/L, 6.25 mEq/h
+  const SAFE = { mEq: 20, mL: 500, hpb: 4 };   // 40 mEq/L, 5 mEq/h (textbook peripheral limit)
   const STD  = { mEq: 50, mL: 500, hpb: 8 };   // 100 mEq/L, 6.25 mEq/h (single line peripheral, Indonesian standard)
-  const CVC  = { mEq: 50, mL: 100, hpb: 2 };   // 500 mEq/L, 25 mEq/h
+  const CVC  = { mEq: 20, mL: 100, hpb: 1 };   // 200 mEq/L, 20 mEq/h (usual CVC maximum)
 
   const buildSingle = (cfg, deficit) => {
     const cycles = Math.max(1, Math.ceil(deficit / cfg.mEq));
@@ -1241,7 +1345,7 @@ function calculateK(rerender=false) {
         recType = 'single'; recCfg = STD;
         recTitleKey = 'recStdPIV'; recSubKey = 'recStdPIVSub';
       }
-      contextBadgeKey = 'cvcUnavailable';
+      contextBadgeKey = recType === 'dual' ? 'cvcUnavailable' : 'cvcUnavailableSingle';
     }
   } else if (sevKey === 'moderate') {
     recType = 'single'; recCfg = STD;
@@ -1301,7 +1405,7 @@ function calculateK(rerender=false) {
 
   // ===== ORAL =====
   const ksrTabs = Math.ceil(defMid / 8);
-  const asparTabs = Math.ceil(defMid / 3.5);
+  const asparTabs = Math.ceil(defMid / 1.8);   // Aspar-K 300 mg = 1.8 mEq K (package insert)
   document.getElementById('k-oral-ksr').textContent =
     fill(t('oralKsrText'), { n: ksrTabs, dose: round(defMid, 0) });
   document.getElementById('k-oral-aspar').textContent =
@@ -1314,6 +1418,9 @@ function calculateK(rerender=false) {
   document.getElementById('k-delta').textContent   = round(delta, 2);
   document.getElementById('k-deficit').textContent = round(defMid, 0);
   document.getElementById('k-route').textContent   = t(routeKey);
+
+  // DKA: insulin drives K into cells; hold insulin until K >= 3.3 mEq/L (ADA)
+  document.getElementById('k-dka-warning').classList.toggle('hidden', !(context === 'dka' && curK < 3.3));
 
   if (cvcNeeded) {
     document.getElementById('k-cvc-warning').classList.remove('hidden');
@@ -1351,6 +1458,10 @@ function renderRecommendedRegimen(hpb) {
     document.getElementById('k-rec-conc').textContent = round(r.conc, 0);
     document.getElementById('k-rec-rate').textContent = round(r.rate, 1);
     document.getElementById('k-rec-duration').textContent = round(r.totalTime, 1);
+    document.getElementById('k-ans-order').textContent = r.orderString;
+    document.getElementById('k-ans-effect').textContent = fill(t('ansKEffect'), {
+      dose: round(r.totalDose, 0), dur: round(r.totalTime, 1), rate: round(r.rate, 1),
+      route: t(s.isCVC ? 'routeCentral' : 'routePeripheral') });
   } else {
     document.getElementById('k-rec-single').classList.add('hidden');
     document.getElementById('k-rec-dual').classList.remove('hidden');
@@ -1362,6 +1473,10 @@ function renderRecommendedRegimen(hpb) {
     document.getElementById('k-rec-conc').textContent = round(r.conc, 0);
     document.getElementById('k-rec-rate').textContent = round(r.combined, 1);
     document.getElementById('k-rec-duration').textContent = round(r.totalTime, 1);
+    document.getElementById('k-ans-order').textContent = `${t('line')} 1: ${r.line1}\n${t('line')} 2: ${r.line2}`;
+    document.getElementById('k-ans-effect').textContent = fill(t('ansKEffect'), {
+      dose: round(r.totalDose, 0), dur: round(r.totalTime, 1), rate: round(r.combined, 1),
+      route: t('routeTwoPeripheral') });
   }
 
   // Validation warning for the custom rate
@@ -1376,8 +1491,16 @@ function renderRecommendedRegimen(hpb) {
   // Only warn when not using default
   if (hpb !== defaultHpb) {
     warnEl.classList.remove('hidden');
-    // For PIV regimens (not CVC): warn if rate would exceed 10 mEq/h per line
-    if (!s.isCVC && ratePerLine > 10) {
+    if (s.isCVC && ratePerLine > 20) {
+      // CVC: usual maximum 20 mEq/h
+      warnEl.style.color = 'var(--crit-ink)';
+      warnEl.textContent = fill(t('customWarnCVC'), { minH: Math.ceil(cfgCustom.mEq / 20) });
+    } else if (!s.isCVC && s.recType === 'dual' && ratePerLine * 2 > 10) {
+      // Dual peripheral lines: the patient receives the COMBINED rate
+      warnEl.style.color = 'var(--crit-ink)';
+      warnEl.textContent = fill(t('customWarnDual'), { combined: round(ratePerLine * 2, 1), minH: Math.ceil(cfgCustom.mEq * 2 / 10) });
+    } else if (!s.isCVC && ratePerLine > 10) {
+      // Single PIV: warn if rate would exceed 10 mEq/h
       const minH = Math.ceil(cfgCustom.mEq / 10);
       warnEl.style.color = 'var(--crit-ink)';
       warnEl.textContent = fill(t('customWarnFast'), { minH });
