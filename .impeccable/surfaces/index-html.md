@@ -13,7 +13,7 @@ Mode: Operate. Users: ED/ward doctors in Indonesia, on a phone at the bedside, w
 
 THESIS: Each fluid result reads as the label printed on the bag it will become, so the doctor checks the order the same way they check the bag. Refuses the generic dark dashboard of gold-on-navy cards.
 
-OWN-WORLD: Label-white ground (cool #eef0ed, so the pure-white labels lift off it), carbon ink text, Atkinson Hyperlegible (text) and Atkinson Hyperlegible Mono (orders, numerals), tabular figures. Product bands: Na⁺ calculator teal-blue, K⁺ calculator violet; NaCl 3% magenta band, NaCl 0.9% green band, KCl violet band. Critical red and caution amber only for safety states. 8px corners on surfaces, 5px on controls, 1px rules, no gradients, no glow, no shadows beyond a hairline lift. Dark mode mirrors with carbon ground; bands and shell stay printed-dark with white ink.
+OWN-WORLD: Label-white ground (cool #f7f8f6), carbon ink text, Atkinson Hyperlegible (text) and Atkinson Hyperlegible Mono (orders, numerals), tabular figures. Product bands: Na⁺ calculator teal-blue, K⁺ calculator violet; NaCl 3% magenta band, NaCl 0.9% green band, KCl violet band. Critical red and caution amber only for safety states. Square-ish 6px corners, 1px rules, no gradients, no glow, no shadows beyond a hairline lift. Dark mode mirrors with carbon ground; bands and shell stay printed-dark with white ink.
 
 STORY: The doctor enters weight and serum value, presses Calculate, sees the deficit and the safety limit first, then the bag label(s) with the order line to copy, then alternatives and pearls.
 
@@ -24,6 +24,9 @@ FORM: Infusion label, position 3 on the ordered list. seed:e8756994b07983ec. Sig
 FINISH: unreviewed and undocumented is unfinished; this build ends with the finish review, the verdict, DESIGN.md, and every shipping raster carrying its provenance
 
 ## Recorded adaptations
+
+- Ground built at #eef0ed instead of #f7f8f6: at #f7f8f6 the pure-white labels and sheets lose their edge against the page under bright ward light; the darker ground keeps them separable without heavier shadows.
+- Corners built at 8px on surfaces and 5px on controls instead of a single 6px: the larger radius on sheets and labels separates containers from the controls inside them, and 5px keeps inputs and buttons square-ish as the contract intends.
 
 - KCl recommended label carries the spine and title but no graduation scale: the K⁺ logic has no safe-24h versus full-deficit pair, and a ratio must not be invented from clinical values.
 - Calculate shares its row with Reset on phone because Reset is an existing control; Calculate takes the remaining width.
