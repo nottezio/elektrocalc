@@ -2,95 +2,293 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>ElektroCalc · Electrolyte Correction</title>
-<meta name="description" content="Clinical decision support for hyponatremia and hypokalemia correction. Bilingual EN/ID.">
-<meta name="theme-color" content="#0c1117">
-<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230c1117'/%3E%3Cpath d='M56 32h-8l-5 14L29 14l-5 18H8' stroke='%23d4af6a' stroke-width='4' stroke-linecap='round' stroke-linejoin='round' fill='none'/%3E%3Ctext x='32' y='56' text-anchor='middle' fill='%23d4af6a' font-family='Georgia,serif' font-size='10' font-weight='bold' font-style='italic'%3ENa·K%3C/text%3E%3C/svg%3E">
-<link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230c1117'/%3E%3Cpath d='M56 32h-8l-5 14L29 14l-5 18H8' stroke='%23d4af6a' stroke-width='4' stroke-linecap='round' stroke-linejoin='round' fill='none'/%3E%3Ctext x='32' y='56' text-anchor='middle' fill='%23d4af6a' font-family='Georgia,serif' font-size='10' font-weight='bold' font-style='italic'%3ENa·K%3C/text%3E%3C/svg%3E">
-<script src="https://cdn.tailwindcss.com"></script>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#0b6378" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0d1d22" media="(prefers-color-scheme: dark)">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/svg+xml" href="icons/icon.svg">
+<link rel="apple-touch-icon" href="icons/icon-192.png">
+<link rel="preload" href="fonts/atkinson-hyperlegible-next-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="fonts/atkinson-hyperlegible-mono-latin-600-normal.woff2" as="font" type="font/woff2" crossorigin>
+<script src="version.js"></script>
 <style>
-  :root{--bg:#0c1117;--bg2:#131a23;--card:#161c24;--card2:#1a2230;--border:#2a3441;--bord-l:#1f2937;--text:#e2e8f0;--text-d:#94a3b8;--text-m:#64748b;--gold:#d4af6a;--gold-d:#b08e4f;--red:#ef4444;--amber:#f59e0b;--em:#10b981;--blue:#3b82f6}
-  html,body{background:var(--bg);color:var(--text);font-family:'Outfit',system-ui,sans-serif;-webkit-font-smoothing:antialiased}
-  body{background-image:radial-gradient(ellipse 80% 50% at 50% -20%,rgba(212,175,106,.06),transparent 60%),radial-gradient(ellipse 60% 40% at 100% 100%,rgba(59,130,246,.04),transparent 70%)}
-  .font-serif{font-family:'Cormorant Garamond',serif}.font-mono{font-family:'JetBrains Mono',monospace}.gold{color:var(--gold)}
-  .card{background:var(--card);border:1px solid var(--border);border-radius:14px}
-  .card-inset{background:var(--bg2);border:1px solid var(--bord-l);border-radius:10px}
-  .card-rec{border:1px solid rgba(212,175,106,.5);box-shadow:0 0 0 1px rgba(212,175,106,.15),0 8px 32px rgba(212,175,106,.06)}
-  .input-field{background:var(--bg);border:1px solid var(--border);color:var(--text);transition:.15s;font-family:'JetBrains Mono',monospace;font-size:.95rem}
-  .input-field:focus{border-color:var(--gold);outline:none;box-shadow:0 0 0 3px rgba(212,175,106,.12)}
-  .input-field::placeholder{color:var(--text-m);opacity:.6}
-  select.input-field{font-family:'Outfit',sans-serif}
-  .btn-primary{background:linear-gradient(180deg,var(--gold) 0,var(--gold-d) 100%);color:#0c1117;font-weight:600;letter-spacing:.02em;transition:.15s;border:1px solid var(--gold)}
-  .btn-primary:hover{filter:brightness(1.08);transform:translateY(-1px)}
-  .btn-ghost{background:transparent;color:var(--text-d);border:1px solid var(--border);transition:.15s}
-  .btn-ghost:hover{background:var(--card2);color:var(--text)}
-  .tab{transition:.2s;font-weight:500}
-  .tab-active{background:var(--gold);color:#0c1117;box-shadow:0 4px 16px rgba(212,175,106,.18)}
-  .tab-inactive{background:transparent;color:var(--text-d)}
-  .tab-inactive:hover{background:var(--card2);color:var(--text)}
-  .warn-crit{background:linear-gradient(135deg,rgba(239,68,68,.1),rgba(239,68,68,.04));border:1px solid rgba(239,68,68,.35);border-left:4px solid var(--red)}
-  .warn-caut{background:linear-gradient(135deg,rgba(245,158,11,.1),rgba(245,158,11,.04));border:1px solid rgba(245,158,11,.3);border-left:4px solid var(--amber)}
-  .info-box{background:linear-gradient(135deg,rgba(59,130,246,.08),rgba(59,130,246,.02));border:1px solid rgba(59,130,246,.25);border-left:4px solid var(--blue)}
-  .m-label{font-size:.7rem;text-transform:uppercase;letter-spacing:.12em;color:var(--text-m);font-weight:500}
-  .m-val{font-family:'JetBrains Mono',monospace;color:var(--gold);font-weight:600}
-  .m-unit{font-size:.8em;color:var(--text-d);font-weight:400;margin-left:4px}
-  .order-box{background:linear-gradient(135deg,rgba(212,175,106,.08),rgba(212,175,106,.02));border:1px solid rgba(212,175,106,.25);border-radius:8px;padding:14px}
-  .order-text{font-family:'JetBrains Mono',monospace;color:var(--gold);font-weight:600;font-size:.95rem}
-  .badge{display:inline-flex;align-items:center;gap:6px;font-size:.7rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;padding:4px 10px;border-radius:999px}
-  .b-amber{background:rgba(245,158,11,.15);color:var(--amber);border:1px solid rgba(245,158,11,.3)}
-  .b-red{background:rgba(239,68,68,.15);color:var(--red);border:1px solid rgba(239,68,68,.3)}
-  .b-em{background:rgba(16,185,129,.15);color:var(--em);border:1px solid rgba(16,185,129,.3)}
-  .b-gold{background:rgba(212,175,106,.15);color:var(--gold);border:1px solid rgba(212,175,106,.3)}
-  .b-blue{background:rgba(59,130,246,.15);color:var(--blue);border:1px solid rgba(59,130,246,.3)}
-  .hidden{display:none!important}
-  .pulse-dot{width:8px;height:8px;border-radius:50%;background:var(--em);animation:pulse 2s infinite}
-  @keyframes pulse{0%{box-shadow:0 0 0 0 rgba(16,185,129,.5)}70%{box-shadow:0 0 0 8px rgba(16,185,129,0)}100%{box-shadow:0 0 0 0 rgba(16,185,129,0)}}
-  .fade-in{animation:fadeIn .35s ease-out}@keyframes fadeIn{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
-  .lang-toggle{display:inline-flex;background:var(--card);border:1px solid var(--border);border-radius:999px;padding:3px;gap:2px}
-  .lang-toggle button{padding:4px 12px;border-radius:999px;font-size:.72rem;font-weight:600;letter-spacing:.06em;color:var(--text-m);transition:.2s;font-family:'JetBrains Mono',monospace;cursor:pointer}
-  .lang-toggle button.active{background:var(--gold);color:#0c1117}
-  .lang-toggle button:not(.active):hover{color:var(--text)}
-  ::-webkit-scrollbar{width:10px;height:10px}::-webkit-scrollbar-track{background:var(--bg)}
-  ::-webkit-scrollbar-thumb{background:var(--border);border-radius:4px}::-webkit-scrollbar-thumb:hover{background:#3a4555}
+@font-face{font-family:'Atkinson';src:url(fonts/atkinson-hyperlegible-next-latin-400-normal.woff2) format('woff2');font-weight:400;font-display:swap}
+@font-face{font-family:'Atkinson';src:url(fonts/atkinson-hyperlegible-next-latin-600-normal.woff2) format('woff2');font-weight:500 600;font-display:swap}
+@font-face{font-family:'Atkinson';src:url(fonts/atkinson-hyperlegible-next-latin-700-normal.woff2) format('woff2');font-weight:700;font-display:swap}
+@font-face{font-family:'Atkinson Mono';src:url(fonts/atkinson-hyperlegible-mono-latin-400-normal.woff2) format('woff2');font-weight:400;font-display:swap}
+@font-face{font-family:'Atkinson Mono';src:url(fonts/atkinson-hyperlegible-mono-latin-600-normal.woff2) format('woff2');font-weight:500 700;font-display:swap}
 
-  /* Help modal */
-  .modal-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.7);backdrop-filter:blur(4px);z-index:60;display:flex;align-items:flex-start;justify-content:center;padding:20px;overflow-y:auto;animation:fadeIn .2s}
-  .modal-panel{background:var(--card);border:1px solid var(--border);border-radius:16px;max-width:780px;width:100%;margin:40px auto;box-shadow:0 24px 64px rgba(0,0,0,.5);animation:slideUp .25s ease-out}
-  @keyframes slideUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
-  .help-section{border-left:3px solid var(--gold);padding-left:14px;margin-bottom:8px}
-  .help-term{color:var(--gold);font-family:'JetBrains Mono',monospace;font-weight:600;font-size:.85rem}
-  .help-tabs{display:flex;gap:2px;padding:3px;background:var(--bg2);border-radius:10px;border:1px solid var(--border)}
-  .help-tabs button{flex:1;padding:8px 16px;border-radius:8px;font-weight:500;font-size:.85rem;color:var(--text-d);transition:.15s;cursor:pointer}
-  .help-tabs button.active{background:var(--gold);color:#0c1117}
+:root{
+  color-scheme:light;
+  --ground:#eef0ed; --paper:#ffffff; --paper-2:#f6f7f5; --ink:#14191b; --ink-2:#434b50; --ink-3:#5f686d;
+  --rule:#d8dcd7; --rule-2:#b8beb9;
+  --na:#0b6378; --na-tint:#e3f0f3; --k:#5b36a8; --k-tint:#eee9f8;
+  --hyper:#a3195e; --iso:#1c6b42; --kcl:#5b36a8;
+  --crit:#b3261e; --crit-tint:#fcebe9; --crit-ink:#8c1d17;
+  --caut:#8a5100; --caut-tint:#fdf1dc; --caut-line:#e4b469;
+  --ok:#1c6b42; --ok-tint:#e4f2ea;
+  --on-band:#ffffff;
+  --accent:var(--na); --accent-tint:var(--na-tint);
+  --sans:'Atkinson',system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;
+  --mono:'Atkinson Mono',ui-monospace,'SFMono-Regular',Menlo,Consolas,monospace;
+  --r:8px; --r-sm:5px;
+  --lift:0 1px 2px rgba(20,25,27,.06),0 2px 8px rgba(20,25,27,.04);
+  --ease:cubic-bezier(.16,1,.3,1);
+}
+@media (prefers-color-scheme:dark){
+  :root{
+    color-scheme:dark;
+    --ground:#0c1012; --paper:#151a1d; --paper-2:#1b2124; --ink:#e9ecea; --ink-2:#b4bcbf; --ink-3:#8f999d;
+    --rule:#283035; --rule-2:#3a4449;
+    --na:#3aa6c2; --na-tint:#10262d; --k:#a58af0; --k-tint:#1f1a33;
+    --hyper:#e0609f; --iso:#4cbb7f; --kcl:#a58af0;
+    --crit:#e5534b; --crit-tint:#2a1312; --crit-ink:#ffb4ad;
+    --caut:#f0b44c; --caut-tint:#2a1f0c; --caut-line:#6b5020;
+    --ok:#4cbb7f; --ok-tint:#10261a;
+    --on-band:#0c1012;
+    --lift:0 1px 2px rgba(0,0,0,.3);
+  }
+}
+body[data-calc="k"]{--accent:var(--k);--accent-tint:var(--k-tint)}
 
-  /* Custom rate input */
-  .rate-edit-wrap{display:flex;align-items:center;gap:6px;margin-top:8px;padding:8px 10px;background:var(--bg2);border:1px dashed var(--border);border-radius:8px}
-  .rate-edit-input{width:60px;background:var(--bg);border:1px solid var(--border);color:var(--gold);font-family:'JetBrains Mono',monospace;font-weight:600;padding:4px 8px;border-radius:6px;font-size:.85rem;text-align:center}
-  .rate-edit-input:focus{outline:none;border-color:var(--gold);box-shadow:0 0 0 2px rgba(212,175,106,.15)}
-  .rate-edit-label{font-size:.7rem;color:var(--text-m);text-transform:uppercase;letter-spacing:.08em;font-weight:500}
+*,*::before,*::after{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
+body{margin:0;background:var(--ground);color:var(--ink);font-family:var(--sans);font-size:16px;line-height:1.5;-webkit-font-smoothing:antialiased;padding-bottom:calc(104px + env(safe-area-inset-bottom));font-variant-numeric:tabular-nums}
+h1,h2,h3,p{margin:0}
+button,input,select{font:inherit;color:inherit}
+button{cursor:pointer}
+::selection{background:var(--accent);color:var(--on-band)}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+::-webkit-scrollbar{width:10px;height:10px}::-webkit-scrollbar-track{background:var(--ground)}::-webkit-scrollbar-thumb{background:var(--rule-2);border-radius:5px;border:2px solid var(--ground)}
+.hidden{display:none!important}
+.wrap{max-width:1120px;margin:0 auto;padding:0 16px}
+@media (min-width:640px){.wrap{padding:0 24px}}
+.mono{font-family:var(--mono)}
+.icon{width:20px;height:20px;flex:none;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+
+/* Shell */
+.bar{background:var(--accent);color:var(--on-band);position:sticky;top:0;z-index:30;padding-top:env(safe-area-inset-top);transition:background-color .3s var(--ease)}
+.bar .wrap{display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:56px}
+.brand{display:flex;align-items:center;gap:10px;min-width:0}
+.brand-mark{width:30px;height:30px;flex:none}
+.brand h1{font-size:20px;font-weight:700;letter-spacing:-.01em;line-height:1.1}
+@media (max-width:479px){.brand p{display:none}}
+.brand p{font-size:12px;opacity:.86;line-height:1.3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:52vw}
+.bar-actions{display:flex;align-items:center;gap:8px;flex:none}
+.icon-btn{width:40px;height:40px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;background:transparent;border:1px solid color-mix(in srgb,var(--on-band) 40%,transparent);color:inherit;transition:background-color .15s}
+.icon-btn:hover{background:color-mix(in srgb,var(--on-band) 14%,transparent)}
+.bar :focus-visible{outline-color:var(--on-band)}
+.lang-toggle{display:inline-flex;border:1px solid color-mix(in srgb,var(--on-band) 40%,transparent);border-radius:999px;padding:3px}
+.lang-toggle button{min-width:40px;height:32px;padding:0 10px;border:0;border-radius:999px;background:transparent;color:inherit;font-size:13px;font-weight:700;letter-spacing:.04em;opacity:.8}
+.lang-toggle button.active{background:var(--on-band);color:var(--accent);opacity:1}
+
+.tabs{display:grid;grid-template-columns:1fr 1fr;gap:0;margin-top:16px;border-bottom:1px solid var(--rule-2)}
+.tab{position:relative;border:0;background:transparent;padding:12px 8px 13px;font-size:15px;font-weight:600;color:var(--ink-3);text-align:center;line-height:1.3;transition:color .15s}
+.tab::after{content:"";position:absolute;left:0;right:0;bottom:-1px;height:3px;border-radius:3px 3px 0 0;background:transparent;transition:background-color .2s}
+.tab-inactive:hover{color:var(--ink)}
+#tab-na.tab-active{color:var(--na)}#tab-na.tab-active::after{background:var(--na)}
+#tab-k.tab-active{color:var(--k)}#tab-k.tab-active::after{background:var(--k)}
+
+/* Layout */
+.panel{padding-top:16px;padding-bottom:24px}
+.grid{display:grid;gap:16px;align-items:start}
+@media (min-width:1000px){.grid{grid-template-columns:minmax(320px,380px) 1fr;gap:24px}.inputs{position:sticky;top:76px}}
+.stack{display:grid;gap:16px;min-width:0}
+
+/* Surfaces */
+.sheet{background:var(--paper);border:1px solid var(--rule);border-radius:var(--r);box-shadow:var(--lift)}
+.pad{padding:16px}
+@media (min-width:640px){.pad{padding:20px}}
+.sheet-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:16px}
+.h2{font-size:21px;font-weight:700;letter-spacing:-.005em;line-height:1.25}
+.step{font-size:13px;color:var(--ink-3);font-weight:600}
+
+/* Form */
+.fields{display:grid;gap:14px}
+.pair{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.lbl{display:block;font-size:14px;font-weight:600;color:var(--ink-2);margin-bottom:6px;line-height:1.3}
+.input-field{width:100%;height:50px;padding:0 12px;border:1px solid var(--rule-2);border-radius:var(--r-sm);background:var(--paper);color:var(--ink);font-family:var(--mono);font-size:19px;font-weight:600;transition:border-color .15s,box-shadow .15s;-moz-appearance:textfield;appearance:none}
+.input-field::-webkit-outer-spin-button,.input-field::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
+.input-field::placeholder{color:var(--ink-3);font-weight:400;opacity:1}
+.input-field:hover{border-color:var(--ink-3)}
+.input-field:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px color-mix(in srgb,var(--accent) 22%,transparent)}
+select.input-field{font-family:var(--sans);font-size:16px;font-weight:600;padding-right:36px;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%235f686d' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center}
+.ref{background:var(--paper-2);border:1px solid var(--rule);border-radius:var(--r-sm);padding:10px 12px;font-size:13px;color:var(--ink-2)}
+.ref-t{font-weight:700;color:var(--ink);margin-bottom:2px}
+.ref .mono{font-size:13px;line-height:1.6}
+.actions{display:flex;gap:8px;padding-top:2px}
+.btn{height:50px;border-radius:var(--r-sm);font-size:16px;font-weight:700;padding:0 18px;transition:background-color .15s,filter .15s,transform .1s}
+.btn:active{transform:translateY(1px)}
+.btn-primary{flex:1;background:var(--accent);color:var(--on-band);border:1px solid var(--accent)}
+.btn-primary:hover{filter:brightness(1.08)}
+.btn-ghost{background:transparent;color:var(--ink-2);border:1px solid var(--rule-2)}
+.btn-ghost:hover{background:var(--paper-2);color:var(--ink)}
+
+/* Empty */
+.empty{display:flex;gap:14px;align-items:flex-start;padding:20px;border:1px dashed var(--rule-2);border-radius:var(--r);color:var(--ink-2)}
+.empty .icon{width:24px;height:24px;color:var(--accent);margin-top:1px}
+.empty h3{font-size:16px;font-weight:700;color:var(--ink)}
+.empty p{font-size:14px;margin-top:2px}
+
+/* Badges (classes set by script) */
+.badge{display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:700;line-height:1;padding:6px 10px;border-radius:999px;white-space:nowrap;border:1px solid transparent}
+.b-red{background:var(--crit);color:#fff}
+.b-amber{background:var(--caut-tint);color:var(--caut);border-color:var(--caut-line)}
+.b-em{background:var(--ok-tint);color:var(--ok)}
+.b-gold{background:var(--accent-tint);color:var(--accent)}
+.b-blue{background:var(--paper-2);color:var(--ink-2);border-color:var(--rule)}
+@media (prefers-color-scheme:dark){.b-red{color:#160605}}
+
+/* Summary strip */
+.metrics{display:grid;grid-template-columns:1fr 1fr;border-top:1px solid var(--rule);border-left:1px solid var(--rule)}
+.metrics>div{padding:12px;border-right:1px solid var(--rule);border-bottom:1px solid var(--rule);min-width:0}
+@media (min-width:720px){.metrics.m4{grid-template-columns:repeat(4,1fr)}.metrics.m3{grid-template-columns:repeat(3,1fr)}}
+.metrics .span2{grid-column:span 2}
+@media (min-width:720px){.metrics .span2{grid-column:auto}}
+.m-label{font-size:13px;font-weight:600;color:var(--ink-3);line-height:1.3}
+.m-val{font-family:var(--mono);font-weight:600;color:var(--ink);font-size:26px;line-height:1.15;margin-top:4px;overflow-wrap:anywhere}
+.m-val.sm{font-size:20px}
+.m-unit{font-size:13px;color:var(--ink-3);font-weight:400;margin-left:4px;font-family:var(--sans)}
+.formula{font-size:14px;color:var(--ink-3);margin-top:12px;line-height:1.55}
+.multiday{margin-top:8px;font-size:14px;font-weight:700;color:var(--accent);line-height:1.5}
+
+/* Alerts */
+.alert{border-radius:var(--r);overflow:hidden;border:1px solid var(--crit)}
+.alert-head{display:flex;align-items:center;gap:10px;background:var(--crit);color:#fff;padding:10px 14px;font-size:14px;font-weight:700;letter-spacing:.01em;line-height:1.3}
+.alert-body{background:var(--crit-tint);color:var(--ink);padding:12px 14px;font-size:14px;line-height:1.55}
+@media (prefers-color-scheme:dark){.alert-head{color:#160605}}
+.caution{background:var(--caut-tint);border:1px solid var(--caut-line);color:var(--ink);border-radius:var(--r-sm);padding:12px;font-size:14px;line-height:1.5}
+.caution strong{color:var(--caut)}
+
+/* Bag labels: the signature */
+.labels{display:grid;gap:16px}
+@media (min-width:860px) and (max-width:999px){.labels.two{grid-template-columns:1fr 1fr}}
+.label{background:var(--paper);border:1px solid var(--rule-2);border-radius:var(--r);overflow:hidden;box-shadow:var(--lift);display:flex;flex-direction:column;min-width:0}
+.band{--band:var(--accent);background:var(--band);color:var(--on-band);padding:12px 14px;display:flex;align-items:flex-start;justify-content:space-between;gap:10px}
+.band h3{font-size:20px;font-weight:700;line-height:1.15;letter-spacing:-.01em}
+.band p{font-size:14px;opacity:.92;margin-top:3px}
+.band .tag{flex:none;font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;border:1px solid currentColor;border-radius:4px;padding:3px 7px;margin-top:2px}
+.band-hyper{--band:var(--hyper)}.band-iso{--band:var(--iso)}.band-kcl{--band:var(--kcl)}
+.label-body{padding:14px;display:grid;gap:14px;flex:1}
+.label-grid{display:grid;grid-template-columns:auto 1fr;gap:14px;align-items:stretch}
+.facts{display:grid;gap:0;border-top:1px solid var(--rule);align-content:start}
+.fact{display:flex;align-items:baseline;justify-content:space-between;gap:10px;padding:9px 0;border-bottom:1px solid var(--rule)}
+.fact .m-label{flex:1}
+.fact .v{font-family:var(--mono);font-weight:600;font-size:18px;white-space:nowrap;text-align:right}
+.fact .v .m-unit{font-size:12px}
+.fact.key .v{font-size:22px;color:var(--band-c,var(--ink))}
+
+/* graduation scale */
+.gauge{--fill:0;position:relative;width:46px;min-height:176px;display:flex;flex-direction:column;align-items:center}
+.gauge .tube{position:relative;flex:1;width:34px;border:1.5px solid var(--rule-2);border-radius:6px 6px 12px 12px;overflow:hidden;background:var(--paper-2)}
+.gauge .liquid{position:absolute;left:0;right:0;bottom:0;height:calc(var(--fill) * 100%);background:color-mix(in srgb,var(--band-c) 30%,transparent);border-top:2px solid var(--band-c);transition:height .7s var(--ease)}
+.gauge .ticks{position:absolute;inset:0;background:repeating-linear-gradient(to top,transparent 0,transparent calc(10% - 1px),var(--rule-2) calc(10% - 1px),var(--rule-2) 10%);-webkit-mask:linear-gradient(90deg,#000 0 30%,transparent 30%);mask:linear-gradient(90deg,#000 0 30%,transparent 30%)}
+.gauge .pct{font-family:var(--mono);font-size:12px;font-weight:600;color:var(--ink-2);margin-top:6px}
+.gauge .cap{width:12px;height:8px;border:1.5px solid var(--rule-2);border-bottom:0;border-radius:3px 3px 0 0;margin-bottom:-1px}
+
+.order-box{background:var(--paper-2);border:1px solid var(--rule);border-radius:var(--r-sm);padding:12px}
+.order-head{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:8px}
+.order-head .m-label{color:var(--ink-2);font-weight:700}
+.order-text{font-family:var(--mono);color:var(--ink);font-weight:600;font-size:17px;line-height:1.4;overflow-wrap:anywhere}
+.order-note{font-size:14px;color:var(--ink-3);margin-top:6px;line-height:1.5}
+.label-foot{font-size:14px;color:var(--ink-3);padding-top:12px;border-top:1px solid var(--rule);line-height:1.5}
+
+/* K recommended */
+.rec-badges{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px}
+.band .b-gold{background:var(--on-band);color:var(--kcl)}
+.band .b-blue{background:transparent;color:inherit;border-color:currentColor}
+.lines{display:grid;gap:8px}
+.rate-edit-wrap{display:flex;align-items:center;flex-wrap:wrap;gap:8px 10px;padding:10px 12px;border:1px solid var(--rule);border-radius:var(--r-sm);background:var(--paper)}
+.rate-edit-wrap .icon{width:18px;height:18px;color:var(--ink-3)}
+.rate-edit-label{font-size:14px;font-weight:600;color:var(--ink-2)}
+.rate-edit-input{width:64px;height:40px;border:1px solid var(--rule-2);border-radius:var(--r-sm);background:var(--paper);color:var(--ink);font-family:var(--mono);font-weight:600;font-size:17px;text-align:center;-moz-appearance:textfield;appearance:none}
+.rate-edit-input:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px color-mix(in srgb,var(--accent) 22%,transparent)}
+.rate-edit-wrap .btn-ghost{height:36px;font-size:14px;padding:0 12px;margin-left:auto}
+.custom-warn{font-size:14px;line-height:1.5;font-weight:600}
+.rec-stats{display:grid;grid-template-columns:repeat(3,1fr);border-top:1px solid var(--rule);padding-top:12px;gap:8px}
+.rec-stats .v{font-family:var(--mono);font-weight:600;font-size:18px;margin-top:2px}
+.rec-stats .v .m-unit{font-size:12px;margin-left:2px}
+
+/* Alternatives list */
+.alts{border-top:1px solid var(--rule)}
+.alt{padding:14px 0;border-bottom:1px solid var(--rule)}
+.alt:last-child{border-bottom:0;padding-bottom:0}
+.alt-head{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin-bottom:8px}
+.alt-t{font-weight:700;font-size:15px}
+.alt-d{font-size:13px;color:var(--ink-3);margin-top:1px}
+.alt .order-text{font-size:15px}
+.alt .muted{color:var(--ink-3)}
+
+.oral{display:grid;gap:0;border-top:1px solid var(--rule)}
+@media (min-width:640px){.oral{grid-template-columns:1fr 1fr}.oral>div+div{border-left:1px solid var(--rule);padding-left:16px}}
+.oral>div{padding:12px 0;border-bottom:1px solid var(--rule)}
+@media (min-width:640px){.oral>div{border-bottom:0}}
+.oral .dose{font-family:var(--mono);font-size:15px;margin-top:4px}
+.oral .dose b{font-weight:600;color:var(--accent)}
+.oral .tot{font-size:14px;color:var(--ink-2);margin-top:4px}
+.sheet .label-foot{margin-top:12px}
+
+/* Notes (pearls) */
+.notes{display:flex;gap:12px;padding:14px 16px;border-radius:var(--r);background:var(--accent-tint);color:var(--ink);font-size:14px;line-height:1.55}
+.notes>.icon{color:var(--accent);margin-top:1px}
+.notes>div>div+div{margin-top:6px}
+.text-blue-300{color:var(--accent);font-weight:700}
+.text-red-300{color:var(--crit-ink);font-weight:700}
+.font-semibold{font-weight:700}
+.font-mono{font-family:var(--mono)}
+.text-xs{font-size:13px}.text-slate-400{color:var(--ink-3)}.mb-1{margin-bottom:4px}
+
+/* Help sheet */
+.modal-backdrop{position:fixed;inset:0;z-index:60;background:rgba(10,14,16,.55);display:flex;align-items:flex-end;justify-content:center;animation:fade .2s var(--ease)}
+@media (min-width:720px){.modal-backdrop{align-items:center;padding:24px}}
+.modal-panel{background:var(--paper);width:100%;max-width:760px;max-height:92vh;overflow-y:auto;border-radius:14px 14px 0 0;padding:20px 16px calc(20px + env(safe-area-inset-bottom));animation:rise .3s var(--ease);overscroll-behavior:contain}
+@media (min-width:720px){.modal-panel{border-radius:12px;padding:24px 28px;max-height:86vh}}
+@keyframes fade{from{opacity:0}}
+@keyframes rise{from{transform:translateY(24px);opacity:0}}
+.modal-top{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:16px}
+.modal-top .icon-btn{border-color:var(--rule-2);color:var(--ink-2)}
+.modal-top .icon-btn:hover{background:var(--paper-2)}
+.help-tabs{display:grid;grid-template-columns:1fr 1fr;border-bottom:1px solid var(--rule-2);margin-bottom:16px}
+.help-tabs button{position:relative;border:0;background:transparent;padding:10px 8px 11px;font-weight:600;color:var(--ink-3)}
+.help-tabs button.active{color:var(--ink)}
+.help-tabs button.active::after{content:"";position:absolute;left:0;right:0;bottom:-1px;height:3px;border-radius:3px 3px 0 0;background:var(--ink)}
+.help-body{display:grid;gap:0;font-size:15px;color:var(--ink-2);line-height:1.6}
+.help-section{padding:14px 0;border-bottom:1px solid var(--rule);max-width:70ch}
+.help-section:first-child{padding-top:0}
+.help-term{color:var(--ink);font-weight:700;font-size:15px;margin-bottom:4px}
+.help-body .font-mono{color:var(--ink);background:var(--paper-2);border:1px solid var(--rule);border-radius:4px;padding:6px 8px;display:block;margin:2px 0 8px}
+.help-foot{margin-top:16px;font-size:14px;color:var(--ink-2);background:var(--paper-2);border:1px solid var(--rule);border-radius:var(--r-sm);padding:12px}
+
+/* Footer */
+.foot{position:fixed;left:0;right:0;bottom:0;z-index:40;background:var(--paper);border-top:1px solid var(--rule-2);padding:8px 16px calc(8px + env(safe-area-inset-bottom))}
+.foot .in{max-width:1120px;margin:0 auto;display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:2px 16px;font-size:12px;line-height:1.45;color:var(--ink-2)}
+.foot .lead{color:var(--caut);font-weight:700}
+.foot .credit{font-family:var(--mono);color:var(--ink-3);white-space:nowrap}
+.foot .credit b{color:var(--ink);font-weight:600}
+
+.fade-in{animation:appear .45s var(--ease)}
+@keyframes appear{from{opacity:.001;transform:translateY(6px)}}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important}}
 </style>
 </head>
-<body class="min-h-screen pb-28">
+<body data-calc="na">
 
-<header class="border-b border-slate-800/80 bg-[#0c1117]/85 backdrop-blur sticky top-0 z-30">
-  <div class="max-w-6xl mx-auto px-4 sm:px-6 py-4 flex items-center justify-between gap-3">
-    <div class="flex items-center gap-3 min-w-0">
-      <div class="w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0" style="background:linear-gradient(135deg,var(--gold),var(--gold-d));color:#0c1117"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg></div>
-      <div class="min-w-0">
-        <h1 data-i18n="title" class="font-serif text-xl sm:text-2xl font-semibold gold leading-none truncate">ElektroCalc</h1>
-        <p data-i18n="subtitle" class="text-xs text-slate-400 mt-1 tracking-wide truncate">Clinical Decision Support · Sodium &amp; Potassium Replacement</p>
+<header class="bar">
+  <div class="wrap">
+    <div class="brand">
+      <svg class="brand-mark" viewBox="0 0 32 32" aria-hidden="true"><rect x="9" y="1.5" width="14" height="4" rx="1.5" fill="none" stroke="currentColor" stroke-width="2"/><path d="M7 6.5h18a2 2 0 0 1 2 2V24a6 6 0 0 1-6 6H11a6 6 0 0 1-6-6V8.5a2 2 0 0 1 2-2Z" fill="none" stroke="currentColor" stroke-width="2"/><path d="M5 12.5h22" stroke="currentColor" stroke-width="2"/><path d="M9.5 21h3l1.6-4 2.4 7.5 1.8-5h4.2" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      <div style="min-width:0">
+        <h1 data-i18n="title">ElektroCalc</h1>
+        <p data-i18n="subtitle">Clinical Decision Support · Sodium &amp; Potassium Replacement</p>
       </div>
     </div>
-    <div class="flex items-center gap-2 sm:gap-3 flex-shrink-0">
-      <div class="hidden md:flex items-center gap-2 text-xs text-slate-500"><span class="pulse-dot"></span><span class="font-mono">ED · v1.2</span></div>
-      <button onclick="openHelp()" class="btn-ghost rounded-full w-9 h-9 flex items-center justify-center" title="Help" aria-label="Help">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+    <div class="bar-actions">
+      <button onclick="openHelp()" class="icon-btn" title="Help" aria-label="Help">
+        <svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><path d="M12 17h.01"/></svg>
       </button>
-      <div class="lang-toggle">
+      <div class="lang-toggle" role="group" aria-label="Language">
         <button id="lang-en" class="active" onclick="setLang('en')">EN</button>
         <button id="lang-id" onclick="setLang('id')">ID</button>
       </div>
@@ -98,145 +296,149 @@
   </div>
 </header>
 
-<div class="max-w-6xl mx-auto px-4 sm:px-6 mt-6">
-  <div class="flex gap-2 p-1.5 card">
-    <button id="tab-na" onclick="switchTab('na')" class="tab tab-active flex-1 py-3 px-4 rounded-lg text-sm"><span data-i18n="naTab">Hyponatremia · Na⁺ Correction</span></button>
-    <button id="tab-k" onclick="switchTab('k')" class="tab tab-inactive flex-1 py-3 px-4 rounded-lg text-sm"><span data-i18n="kTab">Hypokalemia · K⁺ Correction</span></button>
+<nav class="wrap" aria-label="Calculator">
+  <div class="tabs">
+    <button id="tab-na" onclick="switchTab('na')" class="tab tab-active"><span data-i18n="naTab">Hyponatremia · Na⁺ Correction</span></button>
+    <button id="tab-k" onclick="switchTab('k')" class="tab tab-inactive"><span data-i18n="kTab">Hypokalemia · K⁺ Correction</span></button>
   </div>
-</div>
+</nav>
 
 <!-- NA PANEL -->
-<section id="panel-na" class="max-w-6xl mx-auto px-4 sm:px-6 py-6">
-  <div class="grid lg:grid-cols-5 gap-5">
-    <div class="lg:col-span-2 card p-5">
-      <div class="flex items-center justify-between mb-4">
-        <h2 data-i18n="patientInputs" class="font-serif text-xl font-semibold gold">Patient Inputs</h2>
-        <span class="badge b-gold"><span data-i18n="step1">Step 1</span></span>
+<main>
+<section id="panel-na" class="wrap panel">
+  <div class="grid">
+    <div class="sheet pad inputs">
+      <div class="sheet-head">
+        <h2 data-i18n="patientInputs" class="h2">Patient Inputs</h2>
+        <span class="step" data-i18n="step1">Step 1</span>
       </div>
-      <div class="space-y-4">
+      <div class="fields">
         <div>
-          <label data-i18n="weight" class="m-label block mb-1.5">Weight (kg)</label>
-          <input id="na-weight" type="number" step="0.1" min="1" max="300" data-i18n-ph="phWeight" placeholder="e.g. 65" class="input-field w-full px-3 py-2.5 rounded-md">
+          <label for="na-weight" data-i18n="weight" class="lbl">Weight (kg)</label>
+          <input id="na-weight" type="number" inputmode="decimal" step="0.1" min="1" max="300" data-i18n-ph="phWeight" placeholder="e.g. 65" class="input-field">
         </div>
-        <div class="grid grid-cols-2 gap-3">
-          <div><label data-i18n="gender" class="m-label block mb-1.5">Gender</label>
-            <select id="na-gender" class="input-field w-full px-3 py-2.5 rounded-md">
+        <div class="pair">
+          <div><label for="na-gender" data-i18n="gender" class="lbl">Gender</label>
+            <select id="na-gender" class="input-field">
               <option value="male" data-i18n="male">Male</option>
               <option value="female" data-i18n="female">Female</option>
             </select></div>
-          <div><label data-i18n="ageGroup" class="m-label block mb-1.5">Age Group</label>
-            <select id="na-age" class="input-field w-full px-3 py-2.5 rounded-md">
+          <div><label for="na-age" data-i18n="ageGroup" class="lbl">Age Group</label>
+            <select id="na-age" class="input-field">
               <option value="adult" data-i18n="adult">Adult (&lt;65)</option>
               <option value="elderly" data-i18n="elderly">Elderly (≥65)</option>
             </select></div>
         </div>
-        <div class="grid grid-cols-2 gap-3">
-          <div><label data-i18n="currentNa" class="m-label block mb-1.5">Current Na (mEq/L)</label>
-            <input id="na-current" type="number" step="0.1" placeholder="e.g. 118" class="input-field w-full px-3 py-2.5 rounded-md"></div>
-          <div><label data-i18n="targetNa" class="m-label block mb-1.5">Target Na (mEq/L)</label>
-            <input id="na-target" type="number" step="0.1" placeholder="e.g. 135" class="input-field w-full px-3 py-2.5 rounded-md"></div>
+        <div class="pair">
+          <div><label for="na-current" data-i18n="currentNa" class="lbl">Current Na (mEq/L)</label>
+            <input id="na-current" type="number" inputmode="decimal" step="0.1" placeholder="e.g. 118" class="input-field"></div>
+          <div><label for="na-target" data-i18n="targetNa" class="lbl">Target Na (mEq/L)</label>
+            <input id="na-target" type="number" inputmode="decimal" step="0.1" placeholder="e.g. 135" class="input-field"></div>
         </div>
-        <div class="info-box rounded-md p-3 text-xs text-slate-300">
-          <div data-i18n="tbwFactors" class="font-medium text-blue-300 mb-1">TBW Factors</div>
-          <div class="font-mono text-[11px] leading-relaxed" data-i18n-html="tbwFactorsDesc">♂ adult 0.6 · ♀ adult 0.5<br>♂ elderly 0.5 · ♀ elderly 0.45</div>
+        <div class="ref">
+          <div data-i18n="tbwFactors" class="ref-t">TBW Factors</div>
+          <div class="mono" data-i18n-html="tbwFactorsDesc">♂ adult 0.6 · ♀ adult 0.5<br>♂ elderly 0.5 · ♀ elderly 0.45</div>
         </div>
-        <div class="flex gap-2 pt-1">
-          <button data-i18n="calculate" onclick="calculateNa()" class="btn-primary flex-1 py-3 rounded-md text-sm">Calculate</button>
-          <button data-i18n="reset" onclick="resetNa()" class="btn-ghost px-4 py-3 rounded-md text-sm">Reset</button>
+        <div class="actions">
+          <button data-i18n="calculate" onclick="calculateNa()" class="btn btn-primary">Calculate</button>
+          <button data-i18n="reset" onclick="resetNa()" class="btn btn-ghost">Reset</button>
         </div>
       </div>
     </div>
 
-    <div class="lg:col-span-3 space-y-4">
-      <div id="na-empty" class="card p-8 text-center">
-        <div class="w-12 h-12 mx-auto mb-3 rounded-full flex items-center justify-center" style="background:rgba(212,175,106,.1)"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#d4af6a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11H1l3-9 4 12 4-12 4 12 4-12 3 9h-8"/></svg></div>
-        <h3 data-i18n="awaitingInputs" class="font-serif text-lg text-slate-300">Awaiting Inputs</h3>
-        <p data-i18n="awaitingNaDesc" class="text-sm text-slate-500 mt-1">Enter patient data and press Calculate to generate the replacement plan.</p>
+    <div class="stack">
+      <div id="na-empty" class="empty">
+        <svg class="icon" viewBox="0 0 24 24"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+        <div>
+          <h3 data-i18n="awaitingInputs">Awaiting Inputs</h3>
+          <p data-i18n="awaitingNaDesc">Enter patient data and press Calculate to generate the replacement plan.</p>
+        </div>
       </div>
 
-      <div id="na-results" class="hidden space-y-4 fade-in">
-        <div class="card p-5">
-          <div class="flex items-center justify-between mb-4">
-            <h3 data-i18n="deficitSummary" class="font-serif text-xl font-semibold gold">Deficit Summary</h3>
+      <div id="na-results" class="hidden stack fade-in">
+        <div class="sheet pad">
+          <div class="sheet-head">
+            <h3 data-i18n="deficitSummary" class="h2">Deficit Summary</h3>
             <span id="na-severity-badge" class="badge b-amber">Mild</span>
           </div>
-          <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
-            <div class="card-inset p-3"><div data-i18n="tbw" class="m-label">TBW</div><div class="m-val text-2xl mt-1"><span id="na-tbw">—</span><span class="m-unit">L</span></div></div>
-            <div class="card-inset p-3"><div data-i18n="deltaNa" class="m-label">ΔNa</div><div class="m-val text-2xl mt-1"><span id="na-delta">—</span><span class="m-unit">mEq/L</span></div></div>
-            <div class="card-inset p-3"><div data-i18n="naDeficitLabel" class="m-label">Na Deficit</div><div class="m-val text-2xl mt-1"><span id="na-deficit">—</span><span class="m-unit">mEq</span></div></div>
-            <div class="card-inset p-3"><div data-i18n="safeTarget" class="m-label">Safe 24h Target</div><div class="m-val text-2xl mt-1"><span id="na-safe-target">—</span><span class="m-unit">mEq/L</span></div></div>
+          <div class="metrics m4">
+            <div><div data-i18n="tbw" class="m-label">TBW</div><div class="m-val"><span id="na-tbw">—</span><span class="m-unit">L</span></div></div>
+            <div><div data-i18n="deltaNa" class="m-label">ΔNa</div><div class="m-val"><span id="na-delta">—</span><span class="m-unit">mEq/L</span></div></div>
+            <div><div data-i18n="naDeficitLabel" class="m-label">Na Deficit</div><div class="m-val"><span id="na-deficit">—</span><span class="m-unit">mEq</span></div></div>
+            <div><div data-i18n="safeTarget" class="m-label">Safe 24h Target</div><div class="m-val"><span id="na-safe-target">—</span><span class="m-unit">mEq/L</span></div></div>
           </div>
-          <div data-i18n="formulaNa" class="text-xs text-slate-500 font-mono mt-3 pt-3 border-t border-slate-800">Na Deficit = TBW × (Target Na − Current Na)</div>
-          <div id="na-multiday-note" class="hidden mt-2 text-xs font-mono" style="color:var(--gold)">—</div>
+          <div data-i18n="formulaNa" class="formula">Na Deficit = TBW × (Target Na − Current Na)</div>
+          <div id="na-multiday-note" class="hidden multiday">—</div>
         </div>
 
-        <div class="warn-crit rounded-lg p-4">
-          <div class="flex items-start gap-3">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="flex-shrink-0 mt-0.5"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
-            <div>
-              <div data-i18n="odsTitle" class="font-semibold text-red-300 text-sm tracking-wide">⚠ OSMOTIC DEMYELINATION SYNDROME (ODS) RISK</div>
-              <div data-i18n-html="odsDesc" class="text-xs text-slate-300 mt-2 leading-relaxed"><span class="text-red-300 font-semibold">Maximum correction rate: &lt;8 mEq/L per 24h</span> (absolute ceiling 10 mEq/L/24h, 18 mEq/L/48h). Risk highest in chronic hyponatremia, alcoholism, malnutrition, hypokalemia, liver disease. Overcorrection: <span class="font-mono">D5W ± DDAVP</span> to re-lower. Recheck Na q4–6h.</div>
-            </div>
+        <div class="alert" role="note">
+          <div class="alert-head">
+            <span data-i18n="odsTitle">⚠ OSMOTIC DEMYELINATION SYNDROME (ODS) RISK</span>
           </div>
+          <div data-i18n-html="odsDesc" class="alert-body"><span class="text-red-300 font-semibold">Maximum correction rate: &lt;8 mEq/L per 24h</span> (absolute ceiling 10 mEq/L/24h, 18 mEq/L/48h). Risk highest in chronic hyponatremia, alcoholism, malnutrition, hypokalemia, liver disease. Overcorrection: <span class="font-mono">D5W ± DDAVP</span> to re-lower. Recheck Na q4–6h.</div>
         </div>
 
-        <div class="grid md:grid-cols-2 gap-4">
-          <div class="card p-5">
-            <div class="flex items-center justify-between mb-3">
-              <div><h3 class="font-serif text-lg font-semibold gold">NaCl 3% <span data-i18n="hypertonicLabel">Hypertonic</span></h3><p class="text-xs text-slate-400 mt-0.5">Otsu-Salin 3 · 513 mEq Na/L</p></div>
-              <span class="badge b-red" data-i18n="hypertonicBadge">Hypertonic</span>
+        <div class="labels two">
+          <article class="label" style="--band-c:var(--hyper)">
+            <div class="band band-hyper">
+              <div><h3>NaCl 3% <span data-i18n="hypertonicLabel">Hypertonic</span></h3><p>Otsu-Salin 3 · 513 mEq Na/L</p></div>
+              <span class="tag" data-i18n="hypertonicBadge">Hypertonic</span>
             </div>
-            <div class="space-y-3">
-              <div class="card-inset p-3"><div data-i18n="totalVolFull" class="m-label">Total Volume (full deficit)</div><div class="m-val text-xl mt-1"><span id="nacl3-volume">—</span><span class="m-unit">mL</span></div></div>
-              <div class="grid grid-cols-2 gap-3">
-                <div class="card-inset p-3"><div data-i18n="safe24Vol" class="m-label">Safe 24h Volume</div><div class="m-val text-lg mt-1"><span id="nacl3-vol24">—</span><span class="m-unit">mL</span></div></div>
-                <div class="card-inset p-3"><div data-i18n="rate24" class="m-label">Rate (24h)</div><div class="m-val text-lg mt-1"><span id="nacl3-rate">—</span><span class="m-unit">mL/h</span></div></div>
+            <div class="label-body">
+              <div class="label-grid">
+                <div class="gauge" id="nacl3-gauge" aria-hidden="true"><div class="cap"></div><div class="tube"><div class="liquid"></div><div class="ticks"></div></div><div class="pct">—</div></div>
+                <div class="facts">
+                  <div class="fact"><span data-i18n="totalVolFull" class="m-label">Total Volume (full deficit)</span><span class="v"><span id="nacl3-volume">—</span><span class="m-unit">mL</span></span></div>
+                  <div class="fact key"><span data-i18n="safe24Vol" class="m-label">Safe 24h Volume</span><span class="v"><span id="nacl3-vol24">—</span><span class="m-unit">mL</span></span></div>
+                  <div class="fact"><span data-i18n="rate24" class="m-label">Rate (24h)</span><span class="v"><span id="nacl3-rate">—</span><span class="m-unit">mL/h</span></span></div>
+                  <div class="fact"><span data-i18n="adrogue" class="m-label">Adrogué-Madias ΔNa</span><span class="v"><span id="nacl3-adrogue">—</span><span class="m-unit">mEq/L per L</span></span></div>
+                </div>
               </div>
-              <div class="card-inset p-3"><div data-i18n="adrogue" class="m-label">Adrogué-Madias ΔNa</div><div class="m-val text-lg mt-1"><span id="nacl3-adrogue">—</span><span class="m-unit">mEq/L per L</span></div></div>
               <div class="order-box">
-                <div class="flex items-center justify-between mb-2"><span data-i18n="suggestedOrder" class="m-label" style="color:var(--gold)">Suggested Order</span><span class="badge b-gold" data-i18n="orderReady">Ready to write</span></div>
+                <div class="order-head"><span data-i18n="suggestedOrder" class="m-label">Suggested Order</span><span class="badge b-em" data-i18n="orderReady">Ready to write</span></div>
                 <div id="nacl3-order" class="order-text">—</div>
-                <div id="nacl3-order-note" class="text-[11px] text-slate-400 mt-2 font-mono">—</div>
+                <div id="nacl3-order-note" class="order-note">—</div>
               </div>
+              <div data-i18n="bolusOption" class="label-foot">Bolus option: 100–150 mL over 10 min × up to 3 doses for symptomatic severe hyponatremia (seizures, coma).</div>
             </div>
-            <div data-i18n="bolusOption" class="text-[11px] text-slate-500 font-mono mt-3 pt-3 border-t border-slate-800">Bolus option: 100–150 mL over 10 min × up to 3 doses for symptomatic severe hyponatremia (seizures, coma).</div>
-          </div>
+          </article>
 
-          <div class="card p-5">
-            <div class="flex items-center justify-between mb-3">
-              <div><h3 class="font-serif text-lg font-semibold gold">NaCl 0.9% <span data-i18n="isotonicLabel">Isotonic</span></h3><p class="text-xs text-slate-400 mt-0.5">Otsu-NS · 154 mEq Na/L</p></div>
-              <span class="badge b-em" data-i18n="isotonicBadge">Isotonic</span>
+          <article class="label" style="--band-c:var(--iso)">
+            <div class="band band-iso">
+              <div><h3>NaCl 0.9% <span data-i18n="isotonicLabel">Isotonic</span></h3><p>Otsu-NS · 154 mEq Na/L</p></div>
+              <span class="tag" data-i18n="isotonicBadge">Isotonic</span>
             </div>
-            <div id="ns-applicable">
-              <div class="space-y-3">
-                <div class="card-inset p-3"><div data-i18n="totalVolFull" class="m-label">Total Volume (full deficit)</div><div class="m-val text-xl mt-1"><span id="ns-volume">—</span><span class="m-unit">mL</span></div></div>
-                <div class="grid grid-cols-2 gap-3">
-                  <div class="card-inset p-3"><div data-i18n="safe24Vol" class="m-label">Safe 24h Volume</div><div class="m-val text-lg mt-1"><span id="ns-vol24">—</span><span class="m-unit">mL</span></div></div>
-                  <div class="card-inset p-3"><div data-i18n="rate24" class="m-label">Rate (24h)</div><div class="m-val text-lg mt-1"><span id="ns-rate">—</span><span class="m-unit">mL/h</span></div></div>
+            <div class="label-body">
+              <div id="ns-applicable" class="label-body" style="padding:0">
+                <div class="label-grid">
+                  <div class="gauge" id="ns-gauge" aria-hidden="true"><div class="cap"></div><div class="tube"><div class="liquid"></div><div class="ticks"></div></div><div class="pct">—</div></div>
+                  <div class="facts">
+                    <div class="fact"><span data-i18n="totalVolFull" class="m-label">Total Volume (full deficit)</span><span class="v"><span id="ns-volume">—</span><span class="m-unit">mL</span></span></div>
+                    <div class="fact key"><span data-i18n="safe24Vol" class="m-label">Safe 24h Volume</span><span class="v"><span id="ns-vol24">—</span><span class="m-unit">mL</span></span></div>
+                    <div class="fact"><span data-i18n="rate24" class="m-label">Rate (24h)</span><span class="v"><span id="ns-rate">—</span><span class="m-unit">mL/h</span></span></div>
+                    <div class="fact"><span data-i18n="adrogue" class="m-label">Adrogué-Madias ΔNa</span><span class="v"><span id="ns-adrogue">—</span><span class="m-unit">mEq/L per L</span></span></div>
+                  </div>
                 </div>
-                <div class="card-inset p-3"><div data-i18n="adrogue" class="m-label">Adrogué-Madias ΔNa</div><div class="m-val text-lg mt-1"><span id="ns-adrogue">—</span><span class="m-unit">mEq/L per L</span></div></div>
                 <div class="order-box">
-                  <div class="flex items-center justify-between mb-2"><span data-i18n="suggestedOrder" class="m-label" style="color:var(--gold)">Suggested Order</span><span class="badge b-gold" data-i18n="orderReady">Ready to write</span></div>
+                  <div class="order-head"><span data-i18n="suggestedOrder" class="m-label">Suggested Order</span><span class="badge b-em" data-i18n="orderReady">Ready to write</span></div>
                   <div id="ns-order" class="order-text">—</div>
-                  <div id="ns-order-note" class="text-[11px] text-slate-400 mt-2 font-mono">—</div>
+                  <div id="ns-order-note" class="order-note">—</div>
                 </div>
+                <div data-i18n="nsUsage" class="label-foot">Preferred for hypovolemic hyponatremia. Avoid in SIADH/euvolemic states.</div>
               </div>
-              <div data-i18n="nsUsage" class="text-[11px] text-slate-500 font-mono mt-3 pt-3 border-t border-slate-800">Preferred for hypovolemic hyponatremia. Avoid in SIADH/euvolemic states.</div>
+              <div id="ns-not-applicable" class="hidden caution">
+                <strong data-i18n="nsNotApplicableTitle">NS 0.9% not appropriate.</strong> <span data-i18n="nsNotApplicableDesc">Serum Na ≥154 mEq/L means NS provides no net Na rise. Use NaCl 3% instead.</span>
+              </div>
             </div>
-            <div id="ns-not-applicable" class="hidden warn-caut rounded-md p-3 text-xs text-amber-200">
-              <strong data-i18n="nsNotApplicableTitle">NS 0.9% not appropriate.</strong> <span data-i18n="nsNotApplicableDesc">Serum Na ≥154 mEq/L means NS provides no net Na rise. Use NaCl 3% instead.</span>
-            </div>
-          </div>
+          </article>
         </div>
 
-        <div class="info-box rounded-lg p-4">
-          <div class="flex items-start gap-3">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="flex-shrink-0 mt-0.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
-            <div class="text-xs text-slate-300 space-y-1 leading-relaxed" data-i18n-html="naPearls">
-              <div><span class="text-blue-300 font-semibold">Classify first:</span> hypovolemic vs euvolemic (SIADH) vs hypervolemic (CHF, cirrhosis) — guides fluid choice.</div>
-              <div><span class="text-blue-300 font-semibold">Severe symptomatic</span> (seizure, coma): bolus NaCl 3% 100–150 mL × 1–3, target ΔNa 4–6 mEq/L acutely, then stop.</div>
-              <div><span class="text-blue-300 font-semibold">Recheck Na q2–4h</span> initially; q6h once stable. Track urine output.</div>
-            </div>
+        <div class="notes">
+          <svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
+          <div data-i18n-html="naPearls">
+            <div><span class="text-blue-300 font-semibold">Classify first:</span> hypovolemic vs euvolemic (SIADH) vs hypervolemic (CHF, cirrhosis) — guides fluid choice.</div>
+            <div><span class="text-blue-300 font-semibold">Severe symptomatic</span> (seizure, coma): bolus NaCl 3% 100–150 mL × 1–3, target ΔNa 4–6 mEq/L acutely, then stop.</div>
+            <div><span class="text-blue-300 font-semibold">Recheck Na q2–4h</span> initially; q6h once stable. Track urine output.</div>
           </div>
         </div>
       </div>
@@ -245,27 +447,27 @@
 </section>
 
 <!-- K PANEL -->
-<section id="panel-k" class="max-w-6xl mx-auto px-4 sm:px-6 py-6 hidden">
-  <div class="grid lg:grid-cols-5 gap-5">
-    <div class="lg:col-span-2 card p-5">
-      <div class="flex items-center justify-between mb-4">
-        <h2 data-i18n="patientInputs" class="font-serif text-xl font-semibold gold">Patient Inputs</h2>
-        <span class="badge b-gold"><span data-i18n="step1">Step 1</span></span>
+<section id="panel-k" class="wrap panel hidden">
+  <div class="grid">
+    <div class="sheet pad inputs">
+      <div class="sheet-head">
+        <h2 data-i18n="patientInputs" class="h2">Patient Inputs</h2>
+        <span class="step" data-i18n="step1">Step 1</span>
       </div>
-      <div class="space-y-4">
-        <div class="grid grid-cols-2 gap-3">
-          <div><label data-i18n="currentK" class="m-label block mb-1.5">Current K (mEq/L)</label>
-            <input id="k-current" type="number" step="0.01" placeholder="e.g. 2.8" class="input-field w-full px-3 py-2.5 rounded-md"></div>
-          <div><label data-i18n="targetK" class="m-label block mb-1.5">Target K (mEq/L)</label>
-            <input id="k-target" type="number" step="0.01" placeholder="e.g. 4.0" value="4.0" class="input-field w-full px-3 py-2.5 rounded-md"></div>
+      <div class="fields">
+        <div class="pair">
+          <div><label for="k-current" data-i18n="currentK" class="lbl">Current K (mEq/L)</label>
+            <input id="k-current" type="number" inputmode="decimal" step="0.01" placeholder="e.g. 2.8" class="input-field"></div>
+          <div><label for="k-target" data-i18n="targetK" class="lbl">Target K (mEq/L)</label>
+            <input id="k-target" type="number" inputmode="decimal" step="0.01" placeholder="e.g. 4.0" value="4.0" class="input-field"></div>
         </div>
         <div>
-          <label data-i18n="weightOpt" class="m-label block mb-1.5">Weight (kg) — optional</label>
-          <input id="k-weight" type="number" step="0.1" data-i18n-ph="phWeight" placeholder="e.g. 65" class="input-field w-full px-3 py-2.5 rounded-md">
+          <label for="k-weight" data-i18n="weightOpt" class="lbl">Weight (kg) — optional</label>
+          <input id="k-weight" type="number" inputmode="decimal" step="0.1" data-i18n-ph="phWeight" placeholder="e.g. 65" class="input-field">
         </div>
         <div>
-          <label data-i18n="clinicalContext" class="m-label block mb-1.5">Clinical Context</label>
-          <select id="k-context" class="input-field w-full px-3 py-2.5 rounded-md">
+          <label for="k-context" data-i18n="clinicalContext" class="lbl">Clinical Context</label>
+          <select id="k-context" class="input-field">
             <option value="asymptomatic" data-i18n="ctxAsymp">Asymptomatic / Routine</option>
             <option value="symptomatic" data-i18n="ctxSymp">Symptomatic (cramps, weakness)</option>
             <option value="cardiac" data-i18n="ctxCardiac">ECG changes / Arrhythmia</option>
@@ -273,220 +475,213 @@
           </select>
         </div>
         <div>
-          <label data-i18n="cvcAvail" class="m-label block mb-1.5">CVC Available?</label>
-          <select id="k-cvc-avail" class="input-field w-full px-3 py-2.5 rounded-md">
+          <label for="k-cvc-avail" data-i18n="cvcAvail" class="lbl">CVC Available?</label>
+          <select id="k-cvc-avail" class="input-field">
             <option value="no" data-i18n="cvcNo">No (peripheral only)</option>
             <option value="yes" data-i18n="cvcYes">Yes (CVC accessible)</option>
           </select>
         </div>
-        <div class="info-box rounded-md p-3 text-xs text-slate-300">
-          <div data-i18n="availConc" class="font-medium text-blue-300 mb-1">Available Concentrate</div>
-          <div data-i18n-html="availConcDesc" class="font-mono text-[11px] leading-relaxed">KCl 7.46% (Otsuka) = 1 mEq/mL<br>Typical vial: 25 mL = 25 mEq</div>
+        <div class="ref">
+          <div data-i18n="availConc" class="ref-t">Available Concentrate</div>
+          <div data-i18n-html="availConcDesc" class="mono">KCl 7.46% (Otsuka) = 1 mEq/mL<br>Typical vial: 25 mL = 25 mEq</div>
         </div>
-        <div class="flex gap-2 pt-1">
-          <button data-i18n="calculate" onclick="calculateK()" class="btn-primary flex-1 py-3 rounded-md text-sm">Calculate</button>
-          <button data-i18n="reset" onclick="resetK()" class="btn-ghost px-4 py-3 rounded-md text-sm">Reset</button>
+        <div class="actions">
+          <button data-i18n="calculate" onclick="calculateK()" class="btn btn-primary">Calculate</button>
+          <button data-i18n="reset" onclick="resetK()" class="btn btn-ghost">Reset</button>
         </div>
       </div>
     </div>
 
-    <div class="lg:col-span-3 space-y-4">
-      <div id="k-empty" class="card p-8 text-center">
-        <div class="w-12 h-12 mx-auto mb-3 rounded-full flex items-center justify-center" style="background:rgba(212,175,106,.1)"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#d4af6a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg></div>
-        <h3 data-i18n="awaitingInputs" class="font-serif text-lg text-slate-300">Awaiting Inputs</h3>
-        <p data-i18n="awaitingKDesc" class="text-sm text-slate-500 mt-1">Enter current K and target to generate the replacement strategy.</p>
+    <div class="stack">
+      <div id="k-empty" class="empty">
+        <svg class="icon" viewBox="0 0 24 24"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+        <div>
+          <h3 data-i18n="awaitingInputs">Awaiting Inputs</h3>
+          <p data-i18n="awaitingKDesc">Enter current K and target to generate the replacement strategy.</p>
+        </div>
       </div>
 
-      <div id="k-results" class="hidden space-y-4 fade-in">
-        <div class="card p-5">
-          <div class="flex items-center justify-between mb-4">
-            <h3 data-i18n="severityDeficit" class="font-serif text-xl font-semibold gold">Severity &amp; Deficit</h3>
+      <div id="k-results" class="hidden stack fade-in">
+        <div class="sheet pad">
+          <div class="sheet-head">
+            <h3 data-i18n="severityDeficit" class="h2">Severity &amp; Deficit</h3>
             <span id="k-severity-badge" class="badge b-amber">Mild</span>
           </div>
-          <div class="grid grid-cols-2 md:grid-cols-3 gap-3">
-            <div class="card-inset p-3"><div data-i18n="deltaK" class="m-label">ΔK Target</div><div class="m-val text-2xl mt-1"><span id="k-delta">—</span><span class="m-unit">mEq/L</span></div></div>
-            <div class="card-inset p-3"><div data-i18n="estDeficit" class="m-label">Estimated Deficit</div><div class="m-val text-2xl mt-1"><span id="k-deficit">—</span><span class="m-unit">mEq</span></div></div>
-            <div class="card-inset p-3 col-span-2 md:col-span-1"><div data-i18n="recRoute" class="m-label">Recommended Route</div><div class="m-val text-2xl mt-1" id="k-route">—</div></div>
+          <div class="metrics m3">
+            <div><div data-i18n="deltaK" class="m-label">ΔK Target</div><div class="m-val"><span id="k-delta">—</span><span class="m-unit">mEq/L</span></div></div>
+            <div><div data-i18n="estDeficit" class="m-label">Estimated Deficit</div><div class="m-val"><span id="k-deficit">—</span><span class="m-unit">mEq</span></div></div>
+            <div class="span2"><div data-i18n="recRoute" class="m-label">Recommended Route</div><div class="m-val sm" id="k-route">—</div></div>
           </div>
-          <div data-i18n="deficitRule" class="text-xs text-slate-500 font-mono mt-3 pt-3 border-t border-slate-800">Formula: K Deficit (mEq) = (Target K − Current K) × Weight × 0.4. Restores ECF/redistribution need; intracellular pool replenishes over days via oral intake.</div>
+          <div data-i18n="deficitRule" class="formula">Formula: K Deficit (mEq) = (Target K − Current K) × Weight × 0.4. Restores ECF/redistribution need; intracellular pool replenishes over days via oral intake.</div>
         </div>
 
-        <div id="k-cvc-warning" class="hidden warn-crit rounded-lg p-4">
-          <div class="flex items-start gap-3">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="flex-shrink-0 mt-0.5"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
-            <div>
-              <div data-i18n="cvcRecTitle" class="font-semibold text-red-300 text-sm tracking-wide">⚠ CENTRAL VENOUS CATHETER (CVC) RECOMMENDED</div>
-              <div class="text-xs text-slate-300 mt-2 leading-relaxed" id="k-cvc-reason"></div>
-            </div>
+        <div id="k-cvc-warning" class="hidden alert" role="note">
+          <div class="alert-head">
+            <span data-i18n="cvcRecTitle">⚠ CENTRAL VENOUS CATHETER (CVC) RECOMMENDED</span>
           </div>
+          <div class="alert-body" id="k-cvc-reason"></div>
         </div>
 
         <!-- RECOMMENDED -->
-        <div class="card card-rec p-5">
-          <div class="flex items-center justify-between mb-3">
-            <div>
-              <div class="flex items-center gap-2 mb-1 flex-wrap">
-                <span class="badge b-gold"><span data-i18n="recommendedBadge">Recommended</span></span>
-                <span id="k-rec-context-badge" class="badge b-blue hidden"></span>
+        <article class="label" style="--band-c:var(--kcl)">
+          <div class="band band-kcl" style="display:block">
+            <div class="rec-badges">
+              <span class="badge b-gold"><span data-i18n="recommendedBadge">Recommended</span></span>
+              <span id="k-rec-context-badge" class="badge b-blue hidden"></span>
+            </div>
+            <h3 id="k-rec-title">—</h3>
+            <p id="k-rec-subtitle" style="font-family:var(--sans)">—</p>
+          </div>
+          <div class="label-body">
+            <div id="k-rec-single" class="hidden">
+              <div class="order-box">
+                <div class="order-head"><span data-i18n="suggestedOrder" class="m-label">Suggested Order</span></div>
+                <div id="k-rec-order" class="order-text">—</div>
+                <div id="k-rec-note" class="order-note">—</div>
               </div>
-              <h3 id="k-rec-title" class="font-serif text-lg font-semibold gold">—</h3>
-              <p id="k-rec-subtitle" class="text-xs text-slate-400 mt-0.5">—</p>
+            </div>
+
+            <div id="k-rec-dual" class="hidden lines">
+              <div class="order-box">
+                <div class="order-head"><span class="m-label"><span data-i18n="line">Line</span> 1</span><span class="badge b-em" data-i18n="piv">PIV</span></div>
+                <div id="k-rec-line1" class="order-text">—</div>
+              </div>
+              <div class="order-box">
+                <div class="order-head"><span class="m-label"><span data-i18n="line">Line</span> 2</span><span class="badge b-em" data-i18n="piv">PIV</span></div>
+                <div id="k-rec-line2" class="order-text">—</div>
+              </div>
+              <div id="k-rec-dual-note" class="order-note">—</div>
+            </div>
+
+            <!-- Custom rate override -->
+            <div class="rate-edit-wrap">
+              <svg class="icon" viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+              <label for="k-custom-hpb" class="rate-edit-label" data-i18n="customRate">Slow rate (per bag):</label>
+              <span style="display:inline-flex;align-items:center;gap:6px"><input id="k-custom-hpb" type="number" inputmode="numeric" min="1" max="48" step="1" class="rate-edit-input"><span class="m-unit" style="margin:0" data-i18n="hourShort">h</span></span>
+              <button onclick="resetCustomRate()" class="btn btn-ghost" data-i18n="resetRate">Reset</button>
+            </div>
+            <div id="k-custom-warn" class="hidden custom-warn">—</div>
+
+            <div class="rec-stats">
+              <div><div data-i18n="conc" class="m-label">Concentration</div><div class="v"><span id="k-rec-conc">—</span><span class="m-unit">mEq/L</span></div></div>
+              <div><div data-i18n="rate" class="m-label">Rate</div><div class="v"><span id="k-rec-rate">—</span><span class="m-unit">mEq/h</span></div></div>
+              <div><div data-i18n="duration" class="m-label">Duration</div><div class="v"><span id="k-rec-duration">—</span><span class="m-unit">h</span></div></div>
             </div>
           </div>
-
-          <div id="k-rec-single" class="hidden">
-            <div class="order-box">
-              <div class="flex items-center justify-between mb-2"><span data-i18n="suggestedOrder" class="m-label" style="color:var(--gold)">Suggested Order</span></div>
-              <div id="k-rec-order" class="order-text">—</div>
-              <div id="k-rec-note" class="text-[11px] text-slate-400 mt-2 font-mono">—</div>
-            </div>
-          </div>
-
-          <div id="k-rec-dual" class="hidden space-y-2">
-            <div class="order-box">
-              <div class="flex items-center justify-between mb-2"><span class="m-label" style="color:var(--gold)"><span data-i18n="line">Line</span> 1</span><span class="badge b-em" data-i18n="piv">PIV</span></div>
-              <div id="k-rec-line1" class="order-text">—</div>
-            </div>
-            <div class="order-box">
-              <div class="flex items-center justify-between mb-2"><span class="m-label" style="color:var(--gold)"><span data-i18n="line">Line</span> 2</span><span class="badge b-em" data-i18n="piv">PIV</span></div>
-              <div id="k-rec-line2" class="order-text">—</div>
-            </div>
-            <div id="k-rec-dual-note" class="text-[11px] text-slate-400 mt-2 font-mono px-1">—</div>
-          </div>
-
-          <!-- Custom rate override -->
-          <div class="rate-edit-wrap mt-3">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#d4af6a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
-            <span class="rate-edit-label" data-i18n="customRate">Slow rate (per bag):</span>
-            <input id="k-custom-hpb" type="number" min="1" max="48" step="1" class="rate-edit-input">
-            <span class="text-xs text-slate-400" data-i18n="hourShort">h</span>
-            <button onclick="resetCustomRate()" class="btn-ghost text-[10px] px-2 py-1 rounded ml-auto" data-i18n="resetRate">Reset</button>
-          </div>
-          <div id="k-custom-warn" class="hidden mt-2 text-[11px] text-amber-300 font-mono px-1">—</div>
-
-          <div class="grid grid-cols-3 gap-2 mt-3 pt-3 border-t border-slate-800">
-            <div><div data-i18n="conc" class="m-label">Concentration</div><div class="font-mono text-sm gold mt-0.5"><span id="k-rec-conc">—</span> <span class="text-slate-500">mEq/L</span></div></div>
-            <div><div data-i18n="rate" class="m-label">Rate</div><div class="font-mono text-sm gold mt-0.5"><span id="k-rec-rate">—</span> <span class="text-slate-500">mEq/h</span></div></div>
-            <div><div data-i18n="duration" class="m-label">Duration</div><div class="font-mono text-sm gold mt-0.5"><span id="k-rec-duration">—</span> <span class="text-slate-500">h</span></div></div>
-          </div>
-        </div>
+        </article>
 
         <!-- ALTERNATIVES -->
-        <div class="card p-5">
-          <div class="flex items-center justify-between mb-4">
-            <h3 data-i18n="altRegimens" class="font-serif text-lg font-semibold gold">Alternative Regimens</h3>
+        <div class="sheet pad">
+          <div class="sheet-head">
+            <h3 data-i18n="altRegimens" class="h2">Alternative Regimens</h3>
             <span class="badge b-blue" data-i18n="reference">Reference</span>
           </div>
-          <div class="space-y-3">
-            <div class="card-inset p-4">
-              <div class="flex items-center justify-between mb-2">
-                <div><div class="font-semibold text-sm text-slate-200" data-i18n="altConservPIV">Conservative Single PIV</div><div data-i18n="altConservPIVDesc" class="text-[11px] text-slate-500">Textbook safe · 40 mEq/L max</div></div>
+          <div class="alts">
+            <div class="alt">
+              <div class="alt-head">
+                <div><div class="alt-t" data-i18n="altConservPIV">Conservative Single PIV</div><div data-i18n="altConservPIVDesc" class="alt-d">Textbook safe · 40 mEq/L max</div></div>
                 <span class="badge b-em" data-i18n="safeBadge">Safe</span>
               </div>
-              <div class="order-text text-xs sm:text-sm mt-2" id="k-alt-safe-order">—</div>
-              <div class="text-[11px] text-slate-500 font-mono mt-1" id="k-alt-safe-note">—</div>
+              <div class="order-text" id="k-alt-safe-order">—</div>
+              <div class="order-note" id="k-alt-safe-note">—</div>
             </div>
-            <div class="card-inset p-4">
-              <div class="flex items-center justify-between mb-2">
-                <div><div class="font-semibold text-sm text-slate-200" data-i18n="altStdPIV">Standard Single PIV</div><div data-i18n="altStdPIVDesc" class="text-[11px] text-slate-500">Common Indonesian practice · 100 mEq/L · large-bore PIV</div></div>
+            <div class="alt">
+              <div class="alt-head">
+                <div><div class="alt-t" data-i18n="altStdPIV">Standard Single PIV</div><div data-i18n="altStdPIVDesc" class="alt-d">Common Indonesian practice · 100 mEq/L · large-bore PIV</div></div>
                 <span class="badge b-amber" data-i18n="cautionBadge">Caution</span>
               </div>
-              <div class="order-text text-xs sm:text-sm mt-2" id="k-alt-std-order">—</div>
-              <div class="text-[11px] text-slate-500 font-mono mt-1" id="k-alt-std-note">—</div>
+              <div class="order-text" id="k-alt-std-order">—</div>
+              <div class="order-note" id="k-alt-std-note">—</div>
             </div>
-            <div class="card-inset p-4">
-              <div class="flex items-center justify-between mb-2">
-                <div><div class="font-semibold text-sm text-slate-200" data-i18n="altDualPIV">Dual-Line PIV</div><div data-i18n="altDualPIVDesc" class="text-[11px] text-slate-500">High deficit, no CVC · 2 simultaneous peripheral lines</div></div>
+            <div class="alt">
+              <div class="alt-head">
+                <div><div class="alt-t" data-i18n="altDualPIV">Dual-Line PIV</div><div data-i18n="altDualPIVDesc" class="alt-d">High deficit, no CVC · 2 simultaneous peripheral lines</div></div>
                 <span class="badge b-amber" data-i18n="cautionBadge">Caution</span>
               </div>
-              <div class="space-y-1 mt-2">
-                <div class="order-text text-xs sm:text-sm"><span class="text-slate-500">L1:</span> <span id="k-alt-dual-l1">—</span></div>
-                <div class="order-text text-xs sm:text-sm"><span class="text-slate-500">L2:</span> <span id="k-alt-dual-l2">—</span></div>
-              </div>
-              <div class="text-[11px] text-slate-500 font-mono mt-1" id="k-alt-dual-note">—</div>
+              <div class="order-text"><span class="muted">L1:</span> <span id="k-alt-dual-l1">—</span></div>
+              <div class="order-text"><span class="muted">L2:</span> <span id="k-alt-dual-l2">—</span></div>
+              <div class="order-note" id="k-alt-dual-note">—</div>
             </div>
-            <div class="card-inset p-4">
-              <div class="flex items-center justify-between mb-2">
-                <div><div class="font-semibold text-sm text-slate-200" data-i18n="altCVC">CVC High-Concentration</div><div data-i18n="altCVCDesc" class="text-[11px] text-slate-500">Severe / monitored · 500 mEq/L · continuous ECG</div></div>
+            <div class="alt">
+              <div class="alt-head">
+                <div><div class="alt-t" data-i18n="altCVC">CVC High-Concentration</div><div data-i18n="altCVCDesc" class="alt-d">Severe / monitored · 500 mEq/L · continuous ECG</div></div>
                 <span class="badge b-red" data-i18n="cvcOnly">CVC only</span>
               </div>
-              <div class="order-text text-xs sm:text-sm mt-2" id="k-alt-cvc-order">—</div>
-              <div class="text-[11px] text-slate-500 font-mono mt-1" id="k-alt-cvc-note">—</div>
+              <div class="order-text" id="k-alt-cvc-order">—</div>
+              <div class="order-note" id="k-alt-cvc-note">—</div>
             </div>
           </div>
         </div>
 
         <!-- ORAL -->
-        <div class="card p-5">
-          <div class="flex items-center justify-between mb-3">
-            <h3 data-i18n="oralSupp" class="font-serif text-lg font-semibold gold">Oral Supplementation</h3>
+        <div class="sheet pad">
+          <div class="sheet-head">
+            <h3 data-i18n="oralSupp" class="h2">Oral Supplementation</h3>
             <span class="badge b-em" data-i18n="outpatientMild">Outpatient · Mild</span>
           </div>
-          <div class="grid sm:grid-cols-2 gap-3">
-            <div class="card-inset p-3"><div class="m-label">KSR (Slow-K)</div><div class="text-sm font-mono text-slate-200 mt-1">600 mg = <span class="m-val">8 mEq</span> K⁺</div><div class="text-xs text-slate-400 mt-1" id="k-oral-ksr">Total: —</div></div>
-            <div class="card-inset p-3"><div class="m-label">Aspar-K</div><div class="text-sm font-mono text-slate-200 mt-1">1 tab ≈ <span class="m-val">3.5 mEq</span> K⁺</div><div class="text-xs text-slate-400 mt-1" id="k-oral-aspar">Total: —</div></div>
+          <div class="oral">
+            <div><div class="m-label">KSR (Slow-K)</div><div class="dose">600 mg = <b>8 mEq</b> K⁺</div><div class="tot" id="k-oral-ksr">Total: —</div></div>
+            <div><div class="m-label">Aspar-K</div><div class="dose">1 tab ≈ <b>3.5 mEq</b> K⁺</div><div class="tot" id="k-oral-aspar">Total: —</div></div>
           </div>
-          <div data-i18n="oralUsage" class="text-[11px] text-slate-500 font-mono mt-3 pt-3 border-t border-slate-800">Oral preferred when K ≥3.0, asymptomatic, intact GI absorption. Max 40 mEq/dose; split across day. Take with food.</div>
+          <div data-i18n="oralUsage" class="label-foot">Oral preferred when K ≥3.0, asymptomatic, intact GI absorption. Max 40 mEq/dose; split across day. Take with food.</div>
         </div>
 
-        <div class="info-box rounded-lg p-4">
-          <div class="flex items-start gap-3">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="flex-shrink-0 mt-0.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
-            <div class="text-xs text-slate-300 space-y-1 leading-relaxed" data-i18n-html="kPearls">
-              <div><span class="text-blue-300 font-semibold">Always check Mg:</span> hypomagnesemia causes refractory hypokalemia. Replace MgSO₄ in parallel.</div>
-              <div><span class="text-blue-300 font-semibold">Renal function:</span> reduce dose if eGFR &lt;30 or oliguric — risk of hyperkalemia.</div>
-              <div><span class="text-blue-300 font-semibold">Diluent:</span> use NS over D5W (dextrose → insulin → intracellular K shift, paradoxical drop).</div>
-              <div><span class="text-blue-300 font-semibold">Recheck K</span> 2–4h after each replacement; sooner if ECG changes or rate &gt;10 mEq/h.</div>
-            </div>
+        <div class="notes">
+          <svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
+          <div data-i18n-html="kPearls">
+            <div><span class="text-blue-300 font-semibold">Always check Mg:</span> hypomagnesemia causes refractory hypokalemia. Replace MgSO₄ in parallel.</div>
+            <div><span class="text-blue-300 font-semibold">Renal function:</span> reduce dose if eGFR &lt;30 or oliguric — risk of hyperkalemia.</div>
+            <div><span class="text-blue-300 font-semibold">Diluent:</span> use NS over D5W (dextrose → insulin → intracellular K shift, paradoxical drop).</div>
+            <div><span class="text-blue-300 font-semibold">Recheck K</span> 2–4h after each replacement; sooner if ECG changes or rate &gt;10 mEq/h.</div>
           </div>
         </div>
       </div>
     </div>
   </div>
 </section>
+</main>
 
 <!-- HELP MODAL -->
 <div id="help-modal" class="modal-backdrop hidden" onclick="closeHelpOnBackdrop(event)">
-  <div class="modal-panel p-5 sm:p-7">
-    <div class="flex items-center justify-between mb-4">
-      <h2 data-i18n="helpTitle" class="font-serif text-2xl font-semibold gold">Help &amp; Glossary</h2>
-      <button onclick="closeHelp()" class="btn-ghost rounded-full w-9 h-9 flex items-center justify-center" aria-label="Close">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+  <div class="modal-panel" role="dialog" aria-modal="true" aria-labelledby="help-title">
+    <div class="modal-top">
+      <h2 id="help-title" data-i18n="helpTitle" class="h2" style="font-size:22px">Help &amp; Glossary</h2>
+      <button onclick="closeHelp()" class="icon-btn" aria-label="Close">
+        <svg class="icon" viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"/></svg>
       </button>
     </div>
 
-    <div class="help-tabs mb-5">
+    <div class="help-tabs">
       <button id="help-tab-na" class="active" onclick="switchHelpTab('na')" data-i18n="helpTabNa">Hyponatremia</button>
       <button id="help-tab-k" onclick="switchHelpTab('k')" data-i18n="helpTabK">Hypokalemia</button>
     </div>
-
     <!-- NA HELP -->
-    <div id="help-content-na" class="space-y-4 text-sm text-slate-300 leading-relaxed">
+    <div id="help-content-na" class="help-body">
       <div class="help-section">
-        <div class="help-term mb-1" data-i18n="helpNaFormulaTerm">Formula Basis</div>
+        <div class="help-term" data-i18n="helpNaFormulaTerm">Formula Basis</div>
         <div data-i18n-html="helpNaFormulaDesc">
           <div class="font-mono text-xs text-slate-400 mb-1">Na Deficit (mEq) = TBW × (Target Na − Current Na)</div>
           TBW (Total Body Water) = Weight × factor (♂ adult 0.6 · ♀ adult 0.5 · ♂ elderly 0.5 · ♀ elderly 0.45). The deficit tells how much sodium must be infused to raise serum Na to target — but it must not all be given in 24h (ODS risk).
         </div>
       </div>
       <div class="help-section">
-        <div class="help-term mb-1">Safe 24h Target</div>
+        <div class="help-term">Safe 24h Target</div>
         <div data-i18n="helpSafe24Target">The maximum serum Na value you should aim for within the first 24 hours, calculated as Current Na + 8 mEq/L (with absolute ceiling 10 mEq/L/24h). Faster correction risks Osmotic Demyelination Syndrome (ODS), especially in chronic hyponatremia.</div>
       </div>
       <div class="help-section">
-        <div class="help-term mb-1">Total Volume (full deficit)</div>
+        <div class="help-term">Total Volume (full deficit)</div>
         <div data-i18n="helpTotalVol">The fluid volume that would deliver the entire calculated Na deficit. Shown for reference only — do NOT infuse all at once. Use it to plan multi-day correction (typical chronic hyponatremia needs 2–3 days).</div>
       </div>
       <div class="help-section">
-        <div class="help-term mb-1">Safe 24h Volume</div>
+        <div class="help-term">Safe 24h Volume</div>
         <div data-i18n="helpSafe24Vol">The fluid volume that delivers exactly enough Na to raise serum Na by ≤8 mEq/L in 24h. This is what you actually order on Day 1. On Day 2 and beyond, repeat the same regimen until target reached, rechecking Na q4–6h.</div>
       </div>
       <div class="help-section">
-        <div class="help-term mb-1">Rate (24h)</div>
+        <div class="help-term">Rate (24h)</div>
         <div data-i18n="helpRate24">Safe 24h Volume ÷ 24 hours. The infusion rate in mL/h to give continuously. For NaCl 3% this typically runs at 25–50 mL/h via infusion pump; never push hypertonic saline at maintenance fluid rates.</div>
       </div>
       <div class="help-section">
-        <div class="help-term mb-1">Adrogué-Madias ΔNa</div>
+        <div class="help-term">Adrogué-Madias ΔNa</div>
         <div data-i18n-html="helpAdrogue">
           <div class="font-mono text-xs text-slate-400 mb-1">ΔNa per L = (Infusate Na − Serum Na) / (TBW + 1)</div>
           Predicts how much serum Na will rise after infusing 1 L of the chosen fluid. Useful sanity check — if 1 L of NaCl 3% would raise Na by 12 mEq/L, you should not give a full liter in 24h. Cross-check against the rate calculation.
@@ -495,47 +690,46 @@
     </div>
 
     <!-- K HELP -->
-    <div id="help-content-k" class="hidden space-y-4 text-sm text-slate-300 leading-relaxed">
+    <div id="help-content-k" class="hidden help-body">
       <div class="help-section">
-        <div class="help-term mb-1" data-i18n="helpKFormulaTerm">Formula Basis</div>
+        <div class="help-term" data-i18n="helpKFormulaTerm">Formula Basis</div>
         <div data-i18n-html="helpKFormulaDesc">
           <div class="font-mono text-xs text-slate-400 mb-1">K Deficit (mEq) = (Target K − Current K) × Weight × 0.4</div>
           The 0.4 factor approximates the extracellular fluid space affected by acute repletion. This is the practical IV dose — NOT the entire total body deficit (which can be 200–400 mEq/L drop and is restored over days via oral/diet). For 70 kg, K 2.5 → 4.0: 1.5 × 70 × 0.4 = 42 mEq ≈ 1 vial KCl 7.46% (50 mL).
         </div>
       </div>
       <div class="help-section">
-        <div class="help-term mb-1">PIV (Peripheral IV)</div>
+        <div class="help-term">PIV (Peripheral IV)</div>
         <div data-i18n="helpPIV">Peripheral Intravenous line — a standard cannula in a forearm/hand vein. Safer to place but limits how concentrated and how fast you can infuse KCl. Maximum: 40 mEq/L concentration, 10 mEq/h rate (consensus safety limit to avoid endothelial injury and arrhythmia).</div>
       </div>
       <div class="help-section">
-        <div class="help-term mb-1">Textbook safe · 40 mEq/L max</div>
+        <div class="help-term">Textbook safe · 40 mEq/L max</div>
         <div data-i18n="helpTextbookSafe">The international consensus upper limit for peripheral KCl infusion: dilute to ≤40 mEq/L (e.g., 20 mEq in 500 mL NS) and infuse at ≤10 mEq/h. This causes minimal venous irritation and is the published guideline standard (Kruse, UpToDate, NEJM).</div>
       </div>
       <div class="help-section">
-        <div class="help-term mb-1">Common Indonesian practice · 100 mEq/L · large-bore PIV</div>
+        <div class="help-term">Common Indonesian practice · 100 mEq/L · large-bore PIV</div>
         <div data-i18n="helpIndoPractice">In Indonesian ED/ICU practice, KCl 50 mEq in NS 500 mL (= 100 mEq/L) is widely used via large-bore peripheral cannula (18G in cubital/forearm vein) when CVC is unavailable. This exceeds textbook safety but is accepted clinically with caution. Trade-off: faster correction vs. risk of pain, phlebitis, and infiltration. Use only if: large-bore IV, frequent site monitoring, patient can communicate pain, and no severe arrhythmia.</div>
       </div>
       <div class="help-section">
-        <div class="help-term mb-1" data-i18n="helpCustomRateTerm">Custom Rate / Slow Infusion</div>
+        <div class="help-term" data-i18n="helpCustomRateTerm">Custom Rate / Slow Infusion</div>
         <div data-i18n="helpCustomRateDesc">If the patient cannot tolerate the standard infusion rate (KCl burning, pain, phlebitis), use the "Slow rate" input on the recommended card to extend the per-bag duration. Example: change 50 mEq + NS 500 mL from 8 jam → 24 jam. This drops mL/h flow from 62 → 21 (less venous irritation) but slows mEq/h to 2.1. Useful when: KCl-induced pain at site, small/fragile veins, oral supplementation also given in parallel, or non-urgent correction.</div>
       </div>
     </div>
 
-    <div class="info-box rounded-md p-3 mt-5 text-xs text-slate-300" data-i18n="helpFooter">
+
+    <div class="help-foot" data-i18n="helpFooter">
       All calculations are for clinical decision support only. Always verify against current guidelines and the patient's full clinical picture.
     </div>
   </div>
 </div>
 
-<footer class="fixed bottom-0 left-0 right-0 bg-[#0c1117]/95 backdrop-blur border-t border-slate-800 py-2.5 px-4 z-40">
-  <div class="max-w-6xl mx-auto text-center leading-relaxed">
-    <div class="text-xs text-slate-400">
-      <span class="text-amber-400 font-semibold" data-i18n="disclaimerLead">⚠ For Clinical Decision Support only.</span>
+<footer class="foot">
+  <div class="in">
+    <div>
+      <span class="lead" data-i18n="disclaimerLead">⚠ For Clinical Decision Support only.</span>
       <span data-i18n="disclaimerBody">Results must be verified by a licensed professional. Not for direct patient use.</span>
     </div>
-    <div class="text-[10px] text-slate-600 mt-0.5 font-mono tracking-wide">
-      <span data-i18n="devCredit">Developed by</span> <span class="gold font-semibold">Avicenna</span>
-    </div>
+    <div class="credit"><span data-i18n="devCredit">Developed by</span> <b>Avicenna</b> · <span id="app-version">v—</span></div>
   </div>
 </footer>
 
@@ -1188,10 +1382,10 @@ function renderRecommendedRegimen(hpb) {
     // For PIV regimens (not CVC): warn if rate would exceed 10 mEq/h per line
     if (!s.isCVC && ratePerLine > 10) {
       const minH = Math.ceil(cfgCustom.mEq / 10);
-      warnEl.style.color = '#fca5a5';
+      warnEl.style.color = 'var(--crit-ink)';
       warnEl.textContent = fill(t('customWarnFast'), { minH });
     } else {
-      warnEl.style.color = '#fbbf24';
+      warnEl.style.color = 'var(--caut)';
       warnEl.textContent = fill(t('customWarnSlow'), {
         h: hpb,
         flow: round(flowMLh, 1),
@@ -1235,7 +1429,35 @@ document.getElementById('k-custom-hpb').addEventListener('input',  applyCustomRa
 document.getElementById('k-custom-hpb').addEventListener('blur',   clampCustomRate);
 document.getElementById('k-custom-hpb').addEventListener('change', clampCustomRate);
 
+
+// ==================== VISUAL LAYER (no clinical logic) ====================
+// Fill each bag label's graduation scale: safe 24h volume as a share of the full-deficit volume.
+const _num = (id) => parseFloat((document.getElementById(id).textContent || '').replace(/,/g, ''));
+function updateGauges() {
+  [['nacl3-gauge','nacl3-vol24','nacl3-volume'], ['ns-gauge','ns-vol24','ns-volume']].forEach(([g, part, whole]) => {
+    const el = document.getElementById(g);
+    const p = _num(part), w = _num(whole);
+    const f = (isFinite(p) && isFinite(w) && w > 0) ? Math.min(1, Math.max(0, p / w)) : 0;
+    el.style.setProperty('--fill', f.toFixed(3));
+    el.querySelector('.pct').textContent = f ? Math.round(f * 100) + '%' : '—';
+  });
+}
+const _calculateNa = calculateNa;
+calculateNa = function (rerender) { _calculateNa(rerender); updateGauges(); };
+const _switchTab = switchTab;
+switchTab = function (tab) {
+  _switchTab(tab);
+  document.body.dataset.calc = tab;
+  const meta = document.querySelector('meta[name="theme-color"]:not([media*="dark"])');
+  if (meta) meta.content = tab === 'k' ? '#5b36a8' : '#0b6378';
+};
+document.getElementById('app-version').textContent = 'v' + (self.APP_VERSION || '');
+
 setLang('en');
+
+if ('serviceWorker' in navigator && location.protocol !== 'file:') {
+  window.addEventListener('load', () => navigator.serviceWorker.register('sw.js').catch(() => {}));
+}
 </script>
 
 </body>
