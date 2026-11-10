@@ -6,7 +6,7 @@
 <title>ElektroCalc · Electrolyte Correction</title>
 <meta name="robots" content="noindex, nofollow">
 <meta name="theme-color" content="#0b6378" media="(prefers-color-scheme: light)">
-<meta name="theme-color" content="#0d1d22" media="(prefers-color-scheme: dark)">
+<meta name="theme-color" content="#0e4a59" media="(prefers-color-scheme: dark)">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" type="image/svg+xml" href="icons/icon.svg">
 <link rel="apple-touch-icon" href="icons/icon-192.png">
@@ -30,7 +30,8 @@
   --caut:#8a5100; --caut-tint:#fdf1dc; --caut-line:#e4b469;
   --ok:#1c6b42; --ok-tint:#e4f2ea;
   --on-band:#ffffff;
-  --accent:var(--na); --accent-tint:var(--na-tint);
+  --na-shell:#0b6378; --k-shell:#5b36a8; --hyper-band:#a3195e; --iso-band:#1c6b42; --kcl-band:#5b36a8; --crit-band:#b3261e;
+  --accent:var(--na); --shell:var(--na-shell); --accent-tint:var(--na-tint);
   --sans:'Atkinson',system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;
   --mono:'Atkinson Mono',ui-monospace,'SFMono-Regular',Menlo,Consolas,monospace;
   --r:8px; --r-sm:5px;
@@ -47,11 +48,12 @@
     --crit:#e5534b; --crit-tint:#2a1312; --crit-ink:#ffb4ad;
     --caut:#f0b44c; --caut-tint:#2a1f0c; --caut-line:#6b5020;
     --ok:#4cbb7f; --ok-tint:#10261a;
-    --on-band:#0c1012;
+    --on-band:#ffffff;
+    --na-shell:#0e4a59; --k-shell:#46308a; --hyper-band:#8a1f55; --iso-band:#1a5c3a; --kcl-band:#4d3596; --crit-band:#9e2620;
     --lift:0 1px 2px rgba(0,0,0,.3);
   }
 }
-body[data-calc="k"]{--accent:var(--k);--accent-tint:var(--k-tint)}
+body[data-calc="k"]{--accent:var(--k);--accent-tint:var(--k-tint);--shell:var(--k-shell)}
 
 *,*::before,*::after{box-sizing:border-box}
 html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
@@ -59,7 +61,7 @@ body{margin:0;background:var(--ground);color:var(--ink);font-family:var(--sans);
 h1,h2,h3,p{margin:0}
 button,input,select{font:inherit;color:inherit}
 button{cursor:pointer}
-::selection{background:var(--accent);color:var(--on-band)}
+::selection{background:var(--shell);color:#fff}
 :focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 ::-webkit-scrollbar{width:10px;height:10px}::-webkit-scrollbar-track{background:var(--ground)}::-webkit-scrollbar-thumb{background:var(--rule-2);border-radius:5px;border:2px solid var(--ground)}
 .hidden{display:none!important}
@@ -69,7 +71,7 @@ button{cursor:pointer}
 .icon{width:20px;height:20px;flex:none;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
 
 /* Shell */
-.bar{background:var(--accent);color:var(--on-band);position:sticky;top:0;z-index:30;padding-top:env(safe-area-inset-top);transition:background-color .3s var(--ease)}
+.bar{background:var(--shell);color:var(--on-band);position:sticky;top:0;z-index:30;padding-top:env(safe-area-inset-top);transition:background-color .3s var(--ease)}
 .bar .wrap{display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:56px}
 .brand{display:flex;align-items:center;gap:10px;min-width:0}
 .brand-mark{width:30px;height:30px;flex:none}
@@ -82,7 +84,7 @@ button{cursor:pointer}
 .bar :focus-visible{outline-color:var(--on-band)}
 .lang-toggle{display:inline-flex;border:1px solid color-mix(in srgb,var(--on-band) 40%,transparent);border-radius:999px;padding:3px}
 .lang-toggle button{min-width:40px;height:32px;padding:0 10px;border:0;border-radius:999px;background:transparent;color:inherit;font-size:13px;font-weight:700;letter-spacing:.04em;opacity:.8}
-.lang-toggle button.active{background:var(--on-band);color:var(--accent);opacity:1}
+.lang-toggle button.active{background:var(--on-band);color:var(--shell);opacity:1}
 
 .tabs{display:grid;grid-template-columns:1fr 1fr;gap:0;margin-top:16px;border-bottom:1px solid var(--rule-2)}
 .tab{position:relative;border:0;background:transparent;padding:12px 8px 13px;font-size:15px;font-weight:600;color:var(--ink-3);text-align:center;line-height:1.3;transition:color .15s}
@@ -121,7 +123,8 @@ select.input-field{font-family:var(--sans);font-size:16px;font-weight:600;paddin
 .actions{display:flex;gap:8px;padding-top:2px}
 .btn{height:50px;border-radius:var(--r-sm);font-size:16px;font-weight:700;padding:0 18px;transition:background-color .15s,filter .15s,transform .1s}
 .btn:active{transform:translateY(1px)}
-.btn-primary{flex:1;background:var(--accent);color:var(--on-band);border:1px solid var(--accent)}
+.btn-primary{flex:1;background:var(--shell);color:var(--on-band);border:1px solid var(--shell)}
+@media (prefers-color-scheme:dark){.btn-primary{border-color:color-mix(in srgb,var(--accent) 55%,transparent)}}
 .btn-primary:hover{filter:brightness(1.08)}
 .btn-ghost{background:transparent;color:var(--ink-2);border:1px solid var(--rule-2)}
 .btn-ghost:hover{background:var(--paper-2);color:var(--ink)}
@@ -134,12 +137,11 @@ select.input-field{font-family:var(--sans);font-size:16px;font-weight:600;paddin
 
 /* Badges (classes set by script) */
 .badge{display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:700;line-height:1;padding:6px 10px;border-radius:999px;white-space:nowrap;border:1px solid transparent}
-.b-red{background:var(--crit);color:#fff}
+.b-red{background:var(--crit-band);color:#fff}
 .b-amber{background:var(--caut-tint);color:var(--caut);border-color:var(--caut-line)}
 .b-em{background:var(--ok-tint);color:var(--ok)}
 .b-gold{background:var(--accent-tint);color:var(--accent)}
 .b-blue{background:var(--paper-2);color:var(--ink-2);border-color:var(--rule)}
-@media (prefers-color-scheme:dark){.b-red{color:#160605}}
 
 /* Summary strip */
 .metrics{display:grid;grid-template-columns:1fr 1fr;border-top:1px solid var(--rule);border-left:1px solid var(--rule)}
@@ -155,22 +157,23 @@ select.input-field{font-family:var(--sans);font-size:16px;font-weight:600;paddin
 .multiday{margin-top:8px;font-size:14px;font-weight:700;color:var(--accent);line-height:1.5}
 
 /* Alerts */
-.alert{border-radius:var(--r);overflow:hidden;border:1px solid var(--crit)}
-.alert-head{display:flex;align-items:center;gap:10px;background:var(--crit);color:#fff;padding:10px 14px;font-size:14px;font-weight:700;letter-spacing:.01em;line-height:1.3}
+.alert{border-radius:var(--r);overflow:hidden;border:1px solid var(--crit-band)}
+.alert-head{display:flex;align-items:center;gap:10px;background:var(--crit-band);color:#fff;padding:10px 14px;font-size:14px;font-weight:700;letter-spacing:.01em;line-height:1.3}
 .alert-body{background:var(--crit-tint);color:var(--ink);padding:12px 14px;font-size:14px;line-height:1.55}
-@media (prefers-color-scheme:dark){.alert-head{color:#160605}}
 .caution{background:var(--caut-tint);border:1px solid var(--caut-line);color:var(--ink);border-radius:var(--r-sm);padding:12px;font-size:14px;line-height:1.5}
 .caution strong{color:var(--caut)}
 
 /* Bag labels: the signature */
 .labels{display:grid;gap:16px}
 @media (min-width:860px) and (max-width:999px){.labels.two{grid-template-columns:1fr 1fr}}
-.label{background:var(--paper);border:1px solid var(--rule-2);border-radius:var(--r);overflow:hidden;box-shadow:var(--lift);display:flex;flex-direction:column;min-width:0}
-.band{--band:var(--accent);background:var(--band);color:var(--on-band);padding:12px 14px;display:flex;align-items:flex-start;justify-content:space-between;gap:10px}
-.band h3{font-size:20px;font-weight:700;line-height:1.15;letter-spacing:-.01em}
-.band p{font-size:14px;opacity:.92;margin-top:3px}
-.band .tag{flex:none;font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;border:1px solid currentColor;border-radius:4px;padding:3px 7px;margin-top:2px}
-.band-hyper{--band:var(--hyper)}.band-iso{--band:var(--iso)}.band-kcl{--band:var(--kcl)}
+.label{background:var(--paper);border:1px solid var(--rule-2);border-radius:var(--r);overflow:hidden;box-shadow:var(--lift);display:grid;grid-template-columns:32px minmax(0,1fr);min-width:0}
+.spine{--band:var(--accent);background:var(--band);color:var(--on-band);display:flex;align-items:flex-start;justify-content:center;padding:14px 0}
+.spine span{writing-mode:vertical-rl;transform:rotate(180deg);font-family:var(--mono);font-weight:600;font-size:13px;letter-spacing:.08em;white-space:nowrap}
+.label-title{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;padding-bottom:12px;border-bottom:2px solid var(--band-c)}
+.label-title h3{font-size:21px;font-weight:700;line-height:1.15;letter-spacing:-.01em}
+.label-title p{font-size:14px;color:var(--ink-2);margin-top:3px}
+.label-title .tag{flex:none;font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--band-c);border:1.5px solid var(--band-c);border-radius:4px;padding:3px 7px;margin-top:3px}
+.band-hyper{--band:var(--hyper-band)}.band-iso{--band:var(--iso-band)}.band-kcl{--band:var(--kcl-band)}
 .label-body{padding:14px;display:grid;gap:14px;flex:1}
 .label-grid{display:grid;grid-template-columns:auto 1fr;gap:14px;align-items:stretch}
 .facts{display:grid;gap:0;border-top:1px solid var(--rule);align-content:start}
@@ -188,7 +191,8 @@ select.input-field{font-family:var(--sans);font-size:16px;font-weight:600;paddin
 .gauge .pct{font-family:var(--mono);font-size:12px;font-weight:600;color:var(--ink-2);margin-top:6px}
 .gauge .cap{width:12px;height:8px;border:1.5px solid var(--rule-2);border-bottom:0;border-radius:3px 3px 0 0;margin-bottom:-1px}
 
-.order-box{background:var(--paper-2);border:1px solid var(--rule);border-radius:var(--r-sm);padding:12px}
+.order-box{background:var(--paper);border:1.5px solid var(--ink);border-radius:var(--r-sm);padding:12px}
+.alts .order-text{font-size:15px}
 .order-head{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:8px}
 .order-head .m-label{color:var(--ink-2);font-weight:700}
 .order-text{font-family:var(--mono);color:var(--ink);font-weight:600;font-size:17px;line-height:1.4;overflow-wrap:anywhere}
@@ -196,9 +200,8 @@ select.input-field{font-family:var(--sans);font-size:16px;font-weight:600;paddin
 .label-foot{font-size:14px;color:var(--ink-3);padding-top:12px;border-top:1px solid var(--rule);line-height:1.5}
 
 /* K recommended */
-.rec-badges{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px}
-.band .b-gold{background:var(--on-band);color:var(--kcl)}
-.band .b-blue{background:transparent;color:inherit;border-color:currentColor}
+.rec-badges{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}
+.rec-badges .b-gold{background:var(--kcl-band);color:#fff}
 .lines{display:grid;gap:8px}
 .rate-edit-wrap{display:flex;align-items:center;flex-wrap:wrap;gap:8px 10px;padding:10px 12px;border:1px solid var(--rule);border-radius:var(--r-sm);background:var(--paper)}
 .rate-edit-wrap .icon{width:18px;height:18px;color:var(--ink-3)}
@@ -380,11 +383,9 @@ select.input-field{font-family:var(--sans);font-size:16px;font-weight:600;paddin
 
         <div class="labels two">
           <article class="label" style="--band-c:var(--hyper)">
-            <div class="band band-hyper">
-              <div><h3>NaCl 3% <span data-i18n="hypertonicLabel">Hypertonic</span></h3><p>Otsu-Salin 3 · 513 mEq Na/L</p></div>
-              <span class="tag" data-i18n="hypertonicBadge">Hypertonic</span>
-            </div>
+            <div class="spine band-hyper" aria-hidden="true"><span>NaCl 3%</span></div>
             <div class="label-body">
+              <div class="label-title"><div><h3>NaCl 3% <span data-i18n="hypertonicLabel">Hypertonic</span></h3><p>Otsu-Salin 3 · 513 mEq Na/L</p></div><span class="tag" data-i18n="hypertonicBadge">Hypertonic</span></div>
               <div class="label-grid">
                 <div class="gauge" id="nacl3-gauge" aria-hidden="true"><div class="cap"></div><div class="tube"><div class="liquid"></div><div class="ticks"></div></div><div class="pct">—</div></div>
                 <div class="facts">
@@ -404,11 +405,9 @@ select.input-field{font-family:var(--sans);font-size:16px;font-weight:600;paddin
           </article>
 
           <article class="label" style="--band-c:var(--iso)">
-            <div class="band band-iso">
-              <div><h3>NaCl 0.9% <span data-i18n="isotonicLabel">Isotonic</span></h3><p>Otsu-NS · 154 mEq Na/L</p></div>
-              <span class="tag" data-i18n="isotonicBadge">Isotonic</span>
-            </div>
+            <div class="spine band-iso" aria-hidden="true"><span>NaCl 0.9%</span></div>
             <div class="label-body">
+              <div class="label-title"><div><h3>NaCl 0.9% <span data-i18n="isotonicLabel">Isotonic</span></h3><p>Otsu-NS · 154 mEq Na/L</p></div><span class="tag" data-i18n="isotonicBadge">Isotonic</span></div>
               <div id="ns-applicable" class="label-body" style="padding:0">
                 <div class="label-grid">
                   <div class="gauge" id="ns-gauge" aria-hidden="true"><div class="cap"></div><div class="tube"><div class="liquid"></div><div class="ticks"></div></div><div class="pct">—</div></div>
@@ -524,15 +523,13 @@ select.input-field{font-family:var(--sans);font-size:16px;font-weight:600;paddin
 
         <!-- RECOMMENDED -->
         <article class="label" style="--band-c:var(--kcl)">
-          <div class="band band-kcl" style="display:block">
-            <div class="rec-badges">
-              <span class="badge b-gold"><span data-i18n="recommendedBadge">Recommended</span></span>
-              <span id="k-rec-context-badge" class="badge b-blue hidden"></span>
-            </div>
-            <h3 id="k-rec-title">—</h3>
-            <p id="k-rec-subtitle" style="font-family:var(--sans)">—</p>
-          </div>
+          <div class="spine band-kcl" aria-hidden="true"><span>KCl</span></div>
           <div class="label-body">
+            <div class="label-title"><div><h3 id="k-rec-title">—</h3><p id="k-rec-subtitle">—</p>
+              <div class="rec-badges">
+                <span class="badge b-gold"><span data-i18n="recommendedBadge">Recommended</span></span>
+                <span id="k-rec-context-badge" class="badge b-blue hidden"></span>
+              </div></div></div>
             <div id="k-rec-single" class="hidden">
               <div class="order-box">
                 <div class="order-head"><span data-i18n="suggestedOrder" class="m-label">Suggested Order</span></div>
@@ -1449,7 +1446,7 @@ switchTab = function (tab) {
   _switchTab(tab);
   document.body.dataset.calc = tab;
   const meta = document.querySelector('meta[name="theme-color"]:not([media*="dark"])');
-  if (meta) meta.content = tab === 'k' ? '#5b36a8' : '#0b6378';
+  if (meta) meta.content = getComputedStyle(document.body).getPropertyValue('--shell').trim() || '#0b6378';
 };
 document.getElementById('app-version').textContent = 'v' + (self.APP_VERSION || '');
 
