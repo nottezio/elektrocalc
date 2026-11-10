@@ -1,0 +1,742 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-11-10T02:19:35Z",
+  "title": "Design System: ElektroCalc",
+  "extensions": {
+    "colorMeta": {
+      "ground": {
+        "role": "neutral",
+        "displayName": "Ward Ground",
+        "canonical": "#eef0ed",
+        "oklch": "oklch(95.3% 0.005 135)",
+        "tonalRamp": [
+          "#0b0b0a",
+          "#242524",
+          "#414240",
+          "#60625f",
+          "#818380",
+          "#a4a5a3",
+          "#c8c9c8",
+          "#eeefed"
+        ],
+        "dark": "#0c1012"
+      },
+      "paper": {
+        "role": "neutral",
+        "displayName": "Label White",
+        "canonical": "#ffffff",
+        "oklch": "oklch(100.0% 0.000 90)",
+        "tonalRamp": [
+          "#0b0b0b",
+          "#252525",
+          "#424242",
+          "#616161",
+          "#828282",
+          "#a5a5a5",
+          "#c9c9c9",
+          "#eeeeee"
+        ],
+        "dark": "#151a1d"
+      },
+      "paper-2": {
+        "role": "neutral",
+        "displayName": "Tray Grey",
+        "canonical": "#f6f7f5",
+        "oklch": "oklch(97.5% 0.003 128)",
+        "tonalRamp": [
+          "#0b0b0b",
+          "#252524",
+          "#424241",
+          "#616160",
+          "#828381",
+          "#a4a5a4",
+          "#c9c9c8",
+          "#eeefee"
+        ],
+        "dark": "#1b2124"
+      },
+      "ink": {
+        "role": "neutral",
+        "displayName": "Carbon Ink",
+        "canonical": "#14191b",
+        "oklch": "oklch(20.9% 0.009 224)",
+        "tonalRamp": [
+          "#090c0c",
+          "#222627",
+          "#3e4345",
+          "#5d6265",
+          "#7d8386",
+          "#a1a6a8",
+          "#c5cacc",
+          "#eceff0"
+        ],
+        "dark": "#e9ecea"
+      },
+      "ink-2": {
+        "role": "neutral",
+        "displayName": "Ink 2",
+        "canonical": "#434b50",
+        "oklch": "oklch(40.7% 0.013 235)",
+        "tonalRamp": [
+          "#090c0e",
+          "#212629",
+          "#3d4347",
+          "#5b6267",
+          "#7c8489",
+          "#9fa6ab",
+          "#c4cace",
+          "#eaeff2"
+        ],
+        "dark": "#b4bcbf"
+      },
+      "ink-3": {
+        "role": "neutral",
+        "displayName": "Ink 3",
+        "canonical": "#5f686d",
+        "oklch": "oklch(51.1% 0.014 232)",
+        "tonalRamp": [
+          "#080c0d",
+          "#212629",
+          "#3d4347",
+          "#5a6367",
+          "#7b8489",
+          "#9fa6ab",
+          "#c4cace",
+          "#eaeff2"
+        ],
+        "dark": "#8f999d"
+      },
+      "rule": {
+        "role": "neutral",
+        "displayName": "Rule",
+        "canonical": "#d8dcd7",
+        "oklch": "oklch(89.0% 0.008 139)",
+        "tonalRamp": [
+          "#0a0c0a",
+          "#242623",
+          "#404340",
+          "#5f625e",
+          "#80837f",
+          "#a3a6a2",
+          "#c7cac7",
+          "#edefed"
+        ],
+        "dark": "#283035"
+      },
+      "rule-2": {
+        "role": "neutral",
+        "displayName": "Strong Rule",
+        "canonical": "#b8beb9",
+        "oklch": "oklch(79.5% 0.010 151)",
+        "tonalRamp": [
+          "#0a0c0a",
+          "#232623",
+          "#3f4340",
+          "#5e635f",
+          "#7f8480",
+          "#a2a6a3",
+          "#c6cac7",
+          "#ecefed"
+        ],
+        "dark": "#3a4449"
+      },
+      "na": {
+        "role": "primary",
+        "displayName": "Na⁺ Teal-Blue",
+        "canonical": "#0b6378",
+        "oklch": "oklch(46.3% 0.081 220)",
+        "tonalRamp": [
+          "#000e17",
+          "#002a36",
+          "#0d4a59",
+          "#246b7f",
+          "#498da1",
+          "#77afc1",
+          "#a4d2e1",
+          "#d2f5ff"
+        ],
+        "dark": "#3aa6c2",
+        "darkShell": "#0e4a59"
+      },
+      "na-tint": {
+        "role": "primary",
+        "displayName": "Na⁺ Tint",
+        "canonical": "#e3f0f3",
+        "oklch": "oklch(94.6% 0.014 213)",
+        "tonalRamp": [
+          "#080c0d",
+          "#202628",
+          "#3b4446",
+          "#596366",
+          "#7a8587",
+          "#9da7a9",
+          "#c3cbcd",
+          "#e9f0f1"
+        ],
+        "dark": "#10262d"
+      },
+      "k": {
+        "role": "primary",
+        "displayName": "K⁺ Violet",
+        "canonical": "#5b36a8",
+        "oklch": "oklch(44.4% 0.173 293)",
+        "tonalRamp": [
+          "#0f002a",
+          "#291354",
+          "#472d82",
+          "#6749b2",
+          "#886cd8",
+          "#a994f2",
+          "#cbbcff",
+          "#f0e5ff"
+        ],
+        "dark": "#a58af0",
+        "darkShell": "#46308a"
+      },
+      "k-tint": {
+        "role": "primary",
+        "displayName": "K⁺ Tint",
+        "canonical": "#eee9f8",
+        "oklch": "oklch(94.2% 0.021 301)",
+        "tonalRamp": [
+          "#0c0a0f",
+          "#26242b",
+          "#434049",
+          "#635f6b",
+          "#84808c",
+          "#a7a3ae",
+          "#cac7d1",
+          "#efedf4"
+        ],
+        "dark": "#1f1a33"
+      },
+      "hyper-band": {
+        "role": "secondary",
+        "displayName": "Hypertonic Magenta",
+        "canonical": "#a3195e",
+        "oklch": "oklch(47.7% 0.178 357)",
+        "tonalRamp": [
+          "#23000c",
+          "#4b0026",
+          "#761143",
+          "#a42a63",
+          "#cc4f84",
+          "#e97da6",
+          "#ffaaca",
+          "#ffd7ef"
+        ],
+        "dark": "#8a1f55",
+        "darkInk": "#e0609f"
+      },
+      "iso-band": {
+        "role": "secondary",
+        "displayName": "Isotonic Green",
+        "canonical": "#1c6b42",
+        "oklch": "oklch(47.0% 0.101 156)",
+        "tonalRamp": [
+          "#001103",
+          "#002e17",
+          "#154e30",
+          "#2c714a",
+          "#50936b",
+          "#7cb490",
+          "#a8d6b8",
+          "#d5f9e1"
+        ],
+        "dark": "#1a5c3a",
+        "darkInk": "#4cbb7f"
+      },
+      "kcl-band": {
+        "role": "secondary",
+        "displayName": "KCl Violet",
+        "canonical": "#5b36a8",
+        "oklch": "oklch(44.4% 0.173 293)",
+        "tonalRamp": [
+          "#0f002a",
+          "#291354",
+          "#472d82",
+          "#6749b2",
+          "#886cd8",
+          "#a994f2",
+          "#cbbcff",
+          "#f0e5ff"
+        ],
+        "dark": "#4d3596",
+        "darkInk": "#a58af0",
+        "note": "Same value as k in light mode; separate token so the KCl band can diverge."
+      },
+      "crit": {
+        "role": "tertiary",
+        "displayName": "Critical Red",
+        "canonical": "#b3261e",
+        "oklch": "oklch(50.1% 0.178 29)",
+        "tonalRamp": [
+          "#260000",
+          "#4f0000",
+          "#7c130e",
+          "#ab2c23",
+          "#d35245",
+          "#f08072",
+          "#ffad9f",
+          "#ffd9cd"
+        ],
+        "dark": "#e5534b",
+        "darkBand": "#9e2620"
+      },
+      "crit-tint": {
+        "role": "tertiary",
+        "displayName": "Critical Tint",
+        "canonical": "#fcebe9",
+        "oklch": "oklch(95.3% 0.019 26)",
+        "tonalRamp": [
+          "#0f0a09",
+          "#2b2322",
+          "#4a3f3e",
+          "#6b5e5c",
+          "#8d7f7d",
+          "#aea2a0",
+          "#d1c6c5",
+          "#f5eceb"
+        ],
+        "dark": "#2a1312"
+      },
+      "crit-ink": {
+        "role": "tertiary",
+        "displayName": "Critical Ink",
+        "canonical": "#8c1d17",
+        "oklch": "oklch(42.0% 0.147 28)",
+        "tonalRamp": [
+          "#220000",
+          "#490907",
+          "#73221b",
+          "#a03b31",
+          "#c75e52",
+          "#e4887b",
+          "#ffb2a7",
+          "#ffddd3"
+        ],
+        "dark": "#ffb4ad"
+      },
+      "caut": {
+        "role": "tertiary",
+        "displayName": "Caution Amber",
+        "canonical": "#8a5100",
+        "oklch": "oklch(49.0% 0.110 65)",
+        "tonalRamp": [
+          "#1a0500",
+          "#3b1c00",
+          "#603700",
+          "#885313",
+          "#ac753a",
+          "#cb9a6b",
+          "#eac09a",
+          "#ffe8c9"
+        ],
+        "dark": "#f0b44c"
+      },
+      "caut-tint": {
+        "role": "tertiary",
+        "displayName": "Caution Tint",
+        "canonical": "#fdf1dc",
+        "oklch": "oklch(96.2% 0.031 82)",
+        "tonalRamp": [
+          "#0e0b05",
+          "#2a241a",
+          "#484134",
+          "#69604f",
+          "#8b8170",
+          "#ada495",
+          "#d0c8bb",
+          "#f4eee3"
+        ],
+        "dark": "#2a1f0c"
+      },
+      "caut-line": {
+        "role": "tertiary",
+        "displayName": "Caution Line",
+        "canonical": "#e4b469",
+        "oklch": "oklch(79.8% 0.109 77)",
+        "tonalRamp": [
+          "#170700",
+          "#371f00",
+          "#5b3b00",
+          "#815806",
+          "#a47a35",
+          "#c39e67",
+          "#e3c497",
+          "#ffebc7"
+        ],
+        "dark": "#6b5020"
+      },
+      "ok": {
+        "role": "tertiary",
+        "displayName": "Safe Green",
+        "canonical": "#1c6b42",
+        "oklch": "oklch(47.0% 0.101 156)",
+        "tonalRamp": [
+          "#001103",
+          "#002e17",
+          "#154e30",
+          "#2c714a",
+          "#50936b",
+          "#7cb490",
+          "#a8d6b8",
+          "#d5f9e1"
+        ],
+        "dark": "#4cbb7f",
+        "note": "Same value as iso-band in light mode; safety meaning only."
+      },
+      "ok-tint": {
+        "role": "tertiary",
+        "displayName": "Safe Tint",
+        "canonical": "#e4f2ea",
+        "oklch": "oklch(94.9% 0.018 161)",
+        "tonalRamp": [
+          "#080c0a",
+          "#202723",
+          "#3c443f",
+          "#59645e",
+          "#7a867f",
+          "#9ea8a2",
+          "#c3ccc7",
+          "#eaf0ec"
+        ],
+        "dark": "#10261a"
+      },
+      "on-band": {
+        "role": "neutral",
+        "displayName": "On-Band White",
+        "canonical": "#ffffff",
+        "oklch": "oklch(100.0% 0.000 90)",
+        "tonalRamp": [
+          "#0b0b0b",
+          "#252525",
+          "#424242",
+          "#616161",
+          "#828282",
+          "#a5a5a5",
+          "#c9c9c9",
+          "#eeeeee"
+        ],
+        "dark": "#ffffff"
+      }
+    },
+    "typographyMeta": {
+      "wordmark": {
+        "displayName": "Wordmark",
+        "purpose": "Product name in the top bar only."
+      },
+      "headline": {
+        "displayName": "Headline",
+        "purpose": "Sheet headings."
+      },
+      "label-title": {
+        "displayName": "Label title",
+        "purpose": "Product name on a bag label."
+      },
+      "title": {
+        "displayName": "Title",
+        "purpose": "Regimen names, help terms; buttons use 16px at this weight."
+      },
+      "body": {
+        "displayName": "Body",
+        "purpose": "Base text, tabular figures on."
+      },
+      "body-sm": {
+        "displayName": "Body small",
+        "purpose": "Alert bodies, notes, footnotes, formulas; help copy capped at 70ch."
+      },
+      "label": {
+        "displayName": "Label",
+        "purpose": "Visible form labels above every field."
+      },
+      "meta": {
+        "displayName": "Meta",
+        "purpose": "Metric labels, badges, sheet-head meta."
+      },
+      "product-tag": {
+        "displayName": "Product tag",
+        "purpose": "Uppercase product class tag on a bag label; the only uppercase style."
+      },
+      "metric": {
+        "displayName": "Metric",
+        "purpose": "Deficit summary values; 20px small variant."
+      },
+      "numeric-input": {
+        "displayName": "Numeric input",
+        "purpose": "Typed serum values and weight."
+      },
+      "order": {
+        "displayName": "Order",
+        "purpose": "The order line; 15px in alternatives."
+      },
+      "fact": {
+        "displayName": "Fact",
+        "purpose": "Ruled fact values on a bag label; key fact at 22px in band color."
+      },
+      "spine": {
+        "displayName": "Spine",
+        "purpose": "Vertical product name on the bag-label spine."
+      }
+    },
+    "darkMode": {
+      "selector": "@media (prefers-color-scheme: dark)",
+      "tokens": {
+        "ground": "#0c1012",
+        "paper": "#151a1d",
+        "paper-2": "#1b2124",
+        "ink": "#e9ecea",
+        "ink-2": "#b4bcbf",
+        "ink-3": "#8f999d",
+        "rule": "#283035",
+        "rule-2": "#3a4449",
+        "na": "#3aa6c2",
+        "na-tint": "#10262d",
+        "k": "#a58af0",
+        "k-tint": "#1f1a33",
+        "hyper": "#e0609f",
+        "iso": "#4cbb7f",
+        "kcl": "#a58af0",
+        "crit": "#e5534b",
+        "crit-tint": "#2a1312",
+        "crit-ink": "#ffb4ad",
+        "caut": "#f0b44c",
+        "caut-tint": "#2a1f0c",
+        "caut-line": "#6b5020",
+        "ok": "#4cbb7f",
+        "ok-tint": "#10261a",
+        "on-band": "#ffffff",
+        "na-shell": "#0e4a59",
+        "k-shell": "#46308a",
+        "hyper-band": "#8a1f55",
+        "iso-band": "#1a5c3a",
+        "kcl-band": "#4d3596",
+        "crit-band": "#9e2620"
+      },
+      "lift": "0 1px 2px rgba(0,0,0,.3)",
+      "themeColor": "#0e4a59"
+    },
+    "calculatorThemes": {
+      "na": {
+        "--accent": "var(--na)",
+        "--shell": "var(--na-shell)",
+        "--accent-tint": "var(--na-tint)"
+      },
+      "k": {
+        "selector": "body[data-calc=\"k\"]",
+        "--accent": "var(--k)",
+        "--shell": "var(--k-shell)",
+        "--accent-tint": "var(--k-tint)"
+      }
+    },
+    "shadows": [
+      {
+        "name": "lift",
+        "value": "0 1px 2px rgba(20,25,27,.06),0 2px 8px rgba(20,25,27,.04)",
+        "purpose": "Hairline lift on sheets and bag labels only."
+      },
+      {
+        "name": "focus-halo",
+        "value": "0 0 0 3px color-mix(in srgb,var(--accent) 22%,transparent)",
+        "purpose": "Focused inputs, with accent border."
+      }
+    ],
+    "focus": {
+      "outline": "2px solid var(--accent)",
+      "offset": "2px",
+      "onShell": "outline-color: var(--on-band)"
+    },
+    "scrim": "rgba(10,14,16,.55)",
+    "motion": [
+      {
+        "name": "ease",
+        "value": "cubic-bezier(.16,1,.3,1)",
+        "purpose": "All entrances and the shell color change."
+      },
+      {
+        "name": "state",
+        "value": ".15s",
+        "purpose": "Hover, border and color changes."
+      },
+      {
+        "name": "shell",
+        "value": ".3s",
+        "purpose": "Top bar color follows the active calculator."
+      },
+      {
+        "name": "result-enter",
+        "value": "appear .45s: opacity .001→1, translateY 6px→0",
+        "purpose": "Results fade-in."
+      },
+      {
+        "name": "gauge-fill",
+        "value": "height .7s",
+        "purpose": "Graduation gauge fill."
+      },
+      {
+        "name": "sheet-rise",
+        "value": "rise .3s translateY 24px + fade .2s scrim",
+        "purpose": "Help sheet."
+      },
+      {
+        "name": "reduced-motion",
+        "value": "durations .01ms",
+        "purpose": "prefers-reduced-motion collapses all motion."
+      }
+    ],
+    "breakpoints": [
+      {
+        "name": "brand-sub",
+        "value": "480px"
+      },
+      {
+        "name": "sm",
+        "value": "640px"
+      },
+      {
+        "name": "md",
+        "value": "720px"
+      },
+      {
+        "name": "labels-two",
+        "value": "860px–999px"
+      },
+      {
+        "name": "two-column",
+        "value": "1000px"
+      }
+    ],
+    "container": {
+      "maxWidth": "1120px",
+      "gutter": "16px; 24px from 640px",
+      "grid": "minmax(320px,380px) 1fr, gap 24px, inputs sticky at top 76px from 1000px"
+    },
+    "icons": "Inline SVG, 20px, stroke 2, round caps and joins, currentColor."
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "Calculate. Shell-colored, fills the row beside Reset.",
+      "html": "<button class=\"ds-btn-primary\">Calculate</button>",
+      "css": ".ds-btn-primary{height:50px;padding:0 18px;border-radius:5px;background:var(--shell,#0b6378);color:var(--on-band,#fff);border:1px solid var(--shell,#0b6378);font:700 16px/1 'Atkinson',system-ui,sans-serif;cursor:pointer;transition:filter .15s,transform .1s}.ds-btn-primary:hover{filter:brightness(1.08)}.ds-btn-primary:active{transform:translateY(1px)}.ds-btn-primary:focus-visible{outline:2px solid var(--accent,#0b6378);outline-offset:2px}"
+    },
+    {
+      "name": "Ghost Button",
+      "kind": "button",
+      "refersTo": "button-ghost",
+      "description": "Reset and secondary actions.",
+      "html": "<button class=\"ds-btn-ghost\">Reset</button>",
+      "css": ".ds-btn-ghost{height:50px;padding:0 18px;border-radius:5px;background:transparent;color:var(--ink-2,#434b50);border:1px solid var(--rule-2,#b8beb9);font:700 16px/1 'Atkinson',system-ui,sans-serif;cursor:pointer;transition:background-color .15s}.ds-btn-ghost:hover{background:var(--paper-2,#f6f7f5);color:var(--ink,#14191b)}.ds-btn-ghost:focus-visible{outline:2px solid var(--accent,#0b6378);outline-offset:2px}"
+    },
+    {
+      "name": "Numeric Field",
+      "kind": "input",
+      "refersTo": "input-numeric",
+      "description": "Labelled numeric input in mono with accent focus halo.",
+      "html": "<label class=\"ds-lbl\" for=\"ds-w\">Weight (kg)</label><input id=\"ds-w\" class=\"ds-input\" inputmode=\"decimal\" placeholder=\"e.g. 65\">",
+      "css": ".ds-lbl{display:block;font:600 14px/1.3 'Atkinson',system-ui,sans-serif;color:var(--ink-2,#434b50);margin-bottom:6px}.ds-input{width:100%;height:50px;padding:0 12px;border:1px solid var(--rule-2,#b8beb9);border-radius:5px;background:var(--paper,#fff);color:var(--ink,#14191b);font:600 19px 'Atkinson Mono',ui-monospace,monospace;transition:border-color .15s,box-shadow .15s}.ds-input::placeholder{color:var(--ink-3,#5f686d);font-weight:400}.ds-input:hover{border-color:var(--ink-3,#5f686d)}.ds-input:focus{outline:none;border-color:var(--accent,#0b6378);box-shadow:0 0 0 3px color-mix(in srgb,var(--accent,#0b6378) 22%,transparent)}"
+    },
+    {
+      "name": "Calculator Tabs",
+      "kind": "nav",
+      "refersTo": "top-bar",
+      "description": "Two-up segmented calculator tabs on a ruled baseline.",
+      "html": "<div class=\"ds-tabs\"><button class=\"ds-tab ds-on\">Hyponatremia · Na⁺</button><button class=\"ds-tab\">Hypokalemia · K⁺</button></div>",
+      "css": ".ds-tabs{display:grid;grid-template-columns:1fr 1fr;border-bottom:1px solid var(--rule-2,#b8beb9)}.ds-tab{position:relative;border:0;background:transparent;padding:12px 8px 13px;font:600 15px/1.3 'Atkinson',system-ui,sans-serif;color:var(--ink-3,#5f686d);cursor:pointer;transition:color .15s}.ds-tab:hover{color:var(--ink,#14191b)}.ds-tab.ds-on{color:var(--na,#0b6378)}.ds-tab.ds-on::after{content:\"\";position:absolute;left:0;right:0;bottom:-1px;height:3px;border-radius:3px 3px 0 0;background:var(--na,#0b6378)}.ds-tab:focus-visible{outline:2px solid var(--accent,#0b6378);outline-offset:2px}"
+    },
+    {
+      "name": "Badges",
+      "kind": "chip",
+      "refersTo": "badge-critical",
+      "description": "Pill status badges: critical, caution, safe.",
+      "html": "<span class=\"ds-badge ds-crit\">CVC only</span> <span class=\"ds-badge ds-caut\">Caution</span> <span class=\"ds-badge ds-ok\">Safe</span>",
+      "css": ".ds-badge{display:inline-flex;align-items:center;font:700 13px/1 'Atkinson',system-ui,sans-serif;padding:6px 10px;border-radius:999px;border:1px solid transparent}.ds-crit{background:var(--crit-band,#b3261e);color:#fff}.ds-caut{background:var(--caut-tint,#fdf1dc);color:var(--caut,#8a5100);border-color:var(--caut-line,#e4b469)}.ds-ok{background:var(--ok-tint,#e4f2ea);color:var(--ok,#1c6b42)}"
+    },
+    {
+      "name": "Safety Alert",
+      "kind": "card",
+      "refersTo": "alert-critical-head",
+      "description": "Full-width red band, placed after the deficit summary.",
+      "html": "<div class=\"ds-alert\"><div class=\"ds-alert-h\">Safety limit: max 8 mEq/L in 24 h</div><div class=\"ds-alert-b\">Correct no faster than the limit to avoid osmotic demyelination.</div></div>",
+      "css": ".ds-alert{border:1px solid var(--crit-band,#b3261e);border-radius:8px;overflow:hidden;font-family:'Atkinson',system-ui,sans-serif}.ds-alert-h{background:var(--crit-band,#b3261e);color:#fff;padding:10px 14px;font-size:14px;font-weight:700;letter-spacing:.01em}.ds-alert-b{background:var(--crit-tint,#fcebe9);color:var(--ink,#14191b);padding:12px 14px;font-size:14px;line-height:1.55}"
+    },
+    {
+      "name": "Bag Label",
+      "kind": "custom",
+      "refersTo": "bag-label",
+      "description": "Signature result card: band spine, band-ruled title, graduation gauge, ruled facts, order box.",
+      "html": "<article class=\"ds-label\"><div class=\"ds-spine\"><span>NaCl 3%</span></div><div class=\"ds-lb\"><div class=\"ds-lt\"><div><h3>NaCl 3% Hypertonic</h3><p>Otsu-Salin 3 · 513 mEq Na/L</p></div><span class=\"ds-tag\">Hypertonic</span></div><div class=\"ds-lg\"><div class=\"ds-gauge\" style=\"--fill:.42\"><div class=\"ds-tube\"><div class=\"ds-liq\"></div><div class=\"ds-ticks\"></div></div><div class=\"ds-pct\">42%</div></div><div class=\"ds-facts\"><div class=\"ds-fact\"><span>Volume 24 h</span><b>250 mL</b></div><div class=\"ds-fact ds-key\"><span>Rate</span><b>10.4 mL/h</b></div></div></div><div class=\"ds-order\"><div class=\"ds-oh\">Suggested order</div><div class=\"ds-ot\">NaCl 3% 250 mL / 24 h</div></div></div></article>",
+      "css": ".ds-label{--band:#a3195e;display:grid;grid-template-columns:32px minmax(0,1fr);background:var(--paper,#fff);border:1px solid var(--rule-2,#b8beb9);border-radius:8px;overflow:hidden;box-shadow:0 1px 2px rgba(20,25,27,.06),0 2px 8px rgba(20,25,27,.04);font-family:'Atkinson',system-ui,sans-serif;color:var(--ink,#14191b)}.ds-spine{background:var(--band);color:#fff;display:flex;justify-content:center;padding:14px 0}.ds-spine span{writing-mode:vertical-rl;transform:rotate(180deg);font:600 13px 'Atkinson Mono',ui-monospace,monospace;letter-spacing:.08em}.ds-lb{padding:14px;display:grid;gap:14px}.ds-lt{display:flex;justify-content:space-between;gap:10px;padding-bottom:12px;border-bottom:2px solid var(--band)}.ds-lt h3{margin:0;font-size:21px;font-weight:700;line-height:1.15}.ds-lt p{margin:3px 0 0;font-size:14px;color:var(--ink-2,#434b50)}.ds-tag{flex:none;align-self:flex-start;font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--band);border:1.5px solid var(--band);border-radius:4px;padding:3px 7px}.ds-lg{display:grid;grid-template-columns:auto 1fr;gap:14px}.ds-gauge{width:46px;min-height:140px;display:flex;flex-direction:column;align-items:center}.ds-tube{position:relative;flex:1;width:34px;border:1.5px solid var(--rule-2,#b8beb9);border-radius:6px 6px 12px 12px;overflow:hidden;background:var(--paper-2,#f6f7f5)}.ds-liq{position:absolute;left:0;right:0;bottom:0;height:calc(var(--fill)*100%);background:color-mix(in srgb,var(--band) 30%,transparent);border-top:2px solid var(--band)}.ds-ticks{position:absolute;inset:0;background:repeating-linear-gradient(to top,transparent 0,transparent calc(10% - 1px),#b8beb9 calc(10% - 1px),#b8beb9 10%);-webkit-mask:linear-gradient(90deg,#000 0 30%,transparent 30%);mask:linear-gradient(90deg,#000 0 30%,transparent 30%)}.ds-pct{font:600 12px 'Atkinson Mono',monospace;color:var(--ink-2,#434b50);margin-top:6px}.ds-facts{border-top:1px solid var(--rule,#d8dcd7)}.ds-fact{display:flex;justify-content:space-between;align-items:baseline;padding:9px 0;border-bottom:1px solid var(--rule,#d8dcd7);font-size:13px;font-weight:600;color:var(--ink-3,#5f686d)}.ds-fact b{font:600 18px 'Atkinson Mono',monospace;color:var(--ink,#14191b)}.ds-key b{font-size:22px;color:var(--band)}.ds-order{border:1.5px solid var(--ink,#14191b);border-radius:5px;padding:12px}.ds-oh{font-size:13px;font-weight:700;color:var(--ink-2,#434b50);margin-bottom:8px}.ds-ot{font:600 17px/1.4 'Atkinson Mono',monospace}"
+    },
+    {
+      "name": "Sheet",
+      "kind": "card",
+      "refersTo": "sheet",
+      "description": "White paper container with heading row.",
+      "html": "<section class=\"ds-sheet\"><h2>Patient Inputs</h2><p>Enter weight and serum value.</p></section>",
+      "css": ".ds-sheet{background:var(--paper,#fff);border:1px solid var(--rule,#d8dcd7);border-radius:8px;box-shadow:0 1px 2px rgba(20,25,27,.06),0 2px 8px rgba(20,25,27,.04);padding:16px;font-family:'Atkinson',system-ui,sans-serif;color:var(--ink,#14191b)}.ds-sheet h2{margin:0 0 16px;font-size:21px;font-weight:700;line-height:1.25}.ds-sheet p{margin:0;font-size:14px;color:var(--ink-2,#434b50)}"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Printed Bag Label",
+    "overview": "Every result is set the way a pharmacy or manufacturer label is printed on an infusion bag: white stock, carbon ink, a colored product band on the edge, monospaced figures, and hairline rules between facts. The doctor checks the screen the same way they check the bag before hanging it. The world is a clinical print shop, not a dashboard: flat paper on a cool grey-green ground, color reserved for product identity and safety, numerals that cannot be misread.\n\nDensity is moderate and phone-first. One column on phones, a sticky inputs column beside a results column from 1000px. Safety states are the loudest thing on screen when they apply: a full-width red band with white ink, above the bag labels. Dark mode mirrors the system on a carbon ground; the shell, bands and critical heads stay printed-dark with white ink rather than turning into neon accents.\n\nThe previous gold-on-navy dashboard look is not binding and is the explicit anti-reference: no gradient cards, no glow, no gold.",
+    "keyCharacteristics": [
+      "White paper sheets on a cool ground (`ground` behind `paper`), separated by a 1px rule and a hairline lift.",
+      "Atkinson Hyperlegible Next for text, Atkinson Hyperlegible Mono for every number, order line and product spine; tabular figures everywhere.",
+      "Calculator identity by hue: Na⁺ teal-blue, K⁺ violet, carried by the shell, the active tab, the primary button and the focus ring.",
+      "Product bands by fluid: NaCl 3% magenta, NaCl 0.9% green, KCl violet.",
+      "Red and amber appear only for safety states."
+    ],
+    "rules": [
+      {
+        "name": "The Safety Ink Rule",
+        "body": "Red and amber mean a clinical limit or caution, nothing else. No decorative red, no amber highlights, no brand use.",
+        "section": "colors"
+      },
+      {
+        "name": "The Product Band Rule",
+        "body": "A band color identifies a product, not a mood. A new fluid gets its own band; an existing band is never reused for a different product, except KCl sharing the K⁺ calculator's violet.",
+        "section": "colors"
+      },
+      {
+        "name": "The Two-Mode Band Rule",
+        "body": "In dark mode, bands, shell and critical heads get darker, not brighter, and keep white ink.",
+        "section": "colors"
+      },
+      {
+        "name": "The Mono Numbers Rule",
+        "body": "Every dose, volume, rate, concentration, serum value and order line is set in Atkinson Mono at 600. Units sit beside it in the text face at 12–13px, `ink-3`, weight 400.",
+        "section": "typography"
+      },
+      {
+        "name": "The Tabular Rule",
+        "body": "`font-variant-numeric: tabular-nums` is on the body; never turn it off.",
+        "section": "typography"
+      },
+      {
+        "name": "The Hairline Rule",
+        "body": "No elevation beyond the hairline lift. No glow, no gradients on surfaces, no stacked card shadows. The help sheet sits on a 55% carbon scrim, not a shadow.",
+        "section": "elevation"
+      }
+    ],
+    "dos": [
+      "**Do** set every clinical number and order line in Atkinson Mono 600 with tabular figures, units in the text face beside it.",
+      "**Do** give every fluid result a bag label: band spine, band-ruled title, ruled facts, carbon-bordered order box.",
+      "**Do** put the safety alert directly after the deficit summary and before any label, as a red head band with white ink.",
+      "**Do** switch shell, tab, primary button, focus ring and tints together through `--accent` / `--shell` when the calculator changes.",
+      "**Do** keep containers at 8px and controls at 5px, separated by 1px rules and the hairline lift.",
+      "**Do** keep bands, shell and critical heads dark with white ink in dark mode."
+    ],
+    "donts": [
+      "**Don't** use red or amber for anything but safety states.",
+      "**Don't** add gradients, glow, or shadows heavier than the hairline lift.",
+      "**Don't** reintroduce the gold-on-navy dashboard card look.",
+      "**Don't** reuse a product band color for a different product or for decoration.",
+      "**Don't** invent a gauge ratio where the clinical logic has no safe-24h versus full-deficit pair.",
+      "**Don't** use system or remote fonts; both faces are self-hosted for offline use.",
+      "**Don't** use emoji or text glyphs as icons in new UI; icons are inline SVG strokes at 2px."
+    ]
+  }
+}
