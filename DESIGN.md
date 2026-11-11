@@ -203,7 +203,7 @@ components:
 
 Every result is set the way a pharmacy or manufacturer label is printed on an infusion bag: white stock, carbon ink, a colored product band on the edge, monospaced figures, and hairline rules between facts. The doctor checks the screen the same way they check the bag before hanging it. The world is a clinical print shop, not a dashboard: flat paper on a cool grey-green ground, color reserved for product identity and safety, numerals that cannot be misread.
 
-Density is moderate and phone-first. One column on phones, a sticky inputs column beside a results column from 1000px. Safety states are the loudest thing on screen when they apply: a full-width red band with white ink, above the bag labels. Dark mode mirrors the system on a carbon ground; the shell, bands and critical heads stay printed-dark with white ink rather than turning into neon accents.
+Density is moderate and phone-first. One column on phones, a sticky inputs column beside a results column from 1000px. Safety states are the loudest thing on screen when they apply: a full-width red band with white ink, above the bag labels. Light only: the app ignores the system dark setting (owner decision, 2026-11-11).
 
 The previous gold-on-navy dashboard look is not binding and is the explicit anti-reference: no gradient cards, no glow, no gold.
 
@@ -241,14 +241,14 @@ A label-print palette: neutral paper and ink, a small set of product inks, and t
 - **Rule / Strong Rule** (`rule`, `rule-2`): 1px dividers between facts, metric cells and list rows; input borders, label borders, tab baseline.
 - **On-Band White** (`on-band`): text on the shell, bands and critical heads, in both modes.
 
-Dark mode values live in `.impeccable/design.json` (`extensions.darkMode`). Inks lighten (Na⁺ `#3aa6c2`, K⁺ `#a58af0`); shells and bands darken (`#0e4a59`, `#46308a`, `#8a1f55`, `#1a5c3a`, `#4d3596`, `#9e2620`) so white ink stays legible on them.
+There is no dark mode (removed 2026-11-11 at the owner's request). The `extensions.darkMode` values in `.impeccable/design.json` are retired and must not be reintroduced without asking.
 
 ### Named Rules
 **The Safety Ink Rule.** Red and amber mean a clinical limit or caution, nothing else. No decorative red, no amber highlights, no brand use.
 
 **The Product Band Rule.** A band color identifies a product, not a mood. A new fluid gets its own band; an existing band is never reused for a different product, except KCl sharing the K⁺ calculator's violet.
 
-**The Two-Mode Band Rule.** In dark mode, bands, shell and critical heads get darker, not brighter, and keep white ink.
+**The Light-Only Rule.** The UI is always light; do not add a `prefers-color-scheme: dark` theme.
 
 ## Typography
 
@@ -285,7 +285,7 @@ Breakpoints in use: 480px, 640px, 720px, 860px, 1000px.
 Flat paper. Depth comes from the ground/paper value step and 1px rules. Sheets and bag labels carry one hairline lift; nothing else casts a shadow.
 
 ### Shadow Vocabulary
-- **Hairline lift** (`box-shadow: 0 1px 2px rgba(20,25,27,.06), 0 2px 8px rgba(20,25,27,.04)`; dark: `0 1px 2px rgba(0,0,0,.3)`): sheets and bag labels only.
+- **Hairline lift** (`box-shadow: 0 1px 2px rgba(20,25,27,.06), 0 2px 8px rgba(20,25,27,.04)`): sheets and bag labels only.
 - **Focus halo** (`box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 22%, transparent)`): focused inputs, with the border turning accent.
 
 ### Named Rules
@@ -300,7 +300,7 @@ Square-ish printed corners: 8px on containers (sheets, bag labels, alerts, notes
 ### Buttons
 Solid and printed, never glossy.
 - **Shape:** control corners (5px), 50px tall, 16px/700 text.
-- **Primary (Calculate):** shell fill (Na⁺ teal-blue or K⁺ violet), white ink, takes the remaining row width beside Reset. Hover `filter: brightness(1.08)`; active nudges down 1px. Dark mode adds a 55% accent border so the dark shell keeps an edge.
+- **Primary (Calculate):** shell fill (Na⁺ teal-blue or K⁺ violet), white ink, takes the remaining row width beside Reset. Hover `filter: brightness(1.08)`; active nudges down 1px.
 - **Ghost (Reset):** transparent, `ink-2` text, `rule-2` border; hover fills Tray Grey and darkens text. A 36px compact ghost lives inside the rate-override row.
 - **Icon button:** 40px circle, translucent white border on the shell; inline SVG stroke icons at 20px.
 
@@ -343,7 +343,6 @@ Results enter with a 6px rise and fade over 0.45s on `cubic-bezier(.16,1,.3,1)`;
 - **Do** put the safety alert directly after the deficit summary and before any label, as a red head band with white ink.
 - **Do** switch shell, tab, primary button, focus ring and tints together through `--accent` / `--shell` when the calculator changes.
 - **Do** keep containers at 8px and controls at 5px, separated by 1px rules and the hairline lift.
-- **Do** keep bands, shell and critical heads dark with white ink in dark mode.
 
 ### Don't:
 - **Don't** use red or amber for anything but safety states.

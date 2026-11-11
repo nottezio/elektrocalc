@@ -5,8 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>ElektroCalc · Electrolyte Correction</title>
 <meta name="robots" content="noindex, nofollow">
-<meta name="theme-color" content="#0b6378" media="(prefers-color-scheme: light)">
-<meta name="theme-color" content="#0e4a59" media="(prefers-color-scheme: dark)">
+<meta name="theme-color" content="#0b6378">
+<meta name="color-scheme" content="light only">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" type="image/svg+xml" href="icons/icon.svg">
 <link rel="apple-touch-icon" href="icons/icon-192.png">
@@ -37,21 +37,6 @@
   --r:8px; --r-sm:5px;
   --lift:0 1px 2px rgba(20,25,27,.06),0 2px 8px rgba(20,25,27,.04);
   --ease:cubic-bezier(.16,1,.3,1);
-}
-@media (prefers-color-scheme:dark){
-  :root{
-    color-scheme:dark;
-    --ground:#0c1012; --paper:#151a1d; --paper-2:#1b2124; --ink:#e9ecea; --ink-2:#b4bcbf; --ink-3:#8f999d;
-    --rule:#283035; --rule-2:#3a4449;
-    --na:#3aa6c2; --na-tint:#10262d; --k:#a58af0; --k-tint:#1f1a33;
-    --hyper:#e0609f; --iso:#4cbb7f; --kcl:#a58af0;
-    --crit:#e5534b; --crit-tint:#2a1312; --crit-ink:#ffb4ad;
-    --caut:#f0b44c; --caut-tint:#2a1f0c; --caut-line:#6b5020;
-    --ok:#4cbb7f; --ok-tint:#10261a;
-    --on-band:#ffffff;
-    --na-shell:#0e4a59; --k-shell:#46308a; --hyper-band:#8a1f55; --iso-band:#1a5c3a; --kcl-band:#4d3596; --crit-band:#9e2620;
-    --lift:0 1px 2px rgba(0,0,0,.3);
-  }
 }
 body[data-calc="k"]{--accent:var(--k);--accent-tint:var(--k-tint);--shell:var(--k-shell)}
 
@@ -124,7 +109,6 @@ select.input-field{font-family:var(--sans);font-size:16px;font-weight:600;paddin
 .btn{height:50px;border-radius:var(--r-sm);font-size:16px;font-weight:700;padding:0 18px;transition:background-color .15s,filter .15s,transform .1s}
 .btn:active{transform:translateY(1px)}
 .btn-primary{flex:1;background:var(--shell);color:var(--on-band);border:1px solid var(--shell)}
-@media (prefers-color-scheme:dark){.btn-primary{border-color:color-mix(in srgb,var(--accent) 55%,transparent)}}
 .btn-primary:hover{filter:brightness(1.08)}
 .btn-ghost{background:transparent;color:var(--ink-2);border:1px solid var(--rule-2)}
 .btn-ghost:hover{background:var(--paper-2);color:var(--ink)}
@@ -617,7 +601,7 @@ select.input-field{font-family:var(--sans);font-size:16px;font-weight:600;paddin
           <div class="alts">
             <div class="alt">
               <div class="alt-head">
-                <div><div class="alt-t" data-i18n="altConservPIV">Conservative Single PIV</div><div data-i18n="altConservPIVDesc" class="alt-d">Textbook safe · 40 mEq/L max</div></div>
+                <div><div class="alt-t" data-i18n="altConservPIV">Conservative Single PIV</div><div data-i18n="altConservPIVDesc" class="alt-d">1 vial 25 mEq in 500 mL · 50 mEq/L · 6.3 mEq/h</div></div>
                 <span class="badge b-em" data-i18n="safeBadge">Safe</span>
               </div>
               <div class="order-text" id="k-alt-safe-order">—</div>
@@ -825,7 +809,7 @@ const I18N = {
     recommendedBadge: "Recommended",
     altRegimens: "Alternative Regimens", reference: "Reference",
     altConservPIV: "Conservative Single PIV",
-    altConservPIVDesc: "Textbook safe · 40 mEq/L max",
+    altConservPIVDesc: "1 vial 25 mEq in 500 mL · 50 mEq/L · 6.3 mEq/h",
     altStdPIV: "Standard Single PIV",
     altStdPIVDesc: "Common Indonesian practice · 100 mEq/L · large-bore PIV",
     altDualPIV: "Dual-Line PIV",
@@ -954,7 +938,7 @@ const I18N = {
     recommendedBadge: "Rekomendasi",
     altRegimens: "Alternatif Regimen", reference: "Referensi",
     altConservPIV: "PIV Tunggal Konservatif",
-    altConservPIVDesc: "Aman sesuai pedoman · maks 40 mEq/L",
+    altConservPIVDesc: "1 flakon 25 mEq dalam 500 mL · 50 mEq/L · 6.3 mEq/jam",
     altStdPIV: "PIV Tunggal Standar",
     altStdPIVDesc: "Praktik umum Indonesia · 100 mEq/L · IV perifer besar",
     altDualPIV: "PIV Dua Jalur",
@@ -1281,7 +1265,7 @@ function calculateK(rerender=false) {
   else if (context === 'cardiac') { cvcNeeded = true; cvcReason = t('cvcReasonECG');    }
 
   // ===== REGIMEN TEMPLATES =====
-  const SAFE = { mEq: 20, mL: 500, hpb: 4 };   // 40 mEq/L, 5 mEq/h (textbook peripheral limit)
+  const SAFE = { mEq: 25, mL: 500, hpb: 4 };   // 1 vial KCl 25 mEq in 500 mL: 50 mEq/L, 6.25 mEq/h (Indonesian peripheral practice)
   const STD  = { mEq: 50, mL: 500, hpb: 8 };   // 100 mEq/L, 6.25 mEq/h (single line peripheral, Indonesian standard)
   const CVC  = { mEq: 20, mL: 100, hpb: 1 };   // 200 mEq/L, 20 mEq/h (usual CVC maximum)
 
@@ -1553,7 +1537,7 @@ const _switchTab = switchTab;
 switchTab = function (tab) {
   _switchTab(tab);
   document.body.dataset.calc = tab;
-  const meta = document.querySelector('meta[name="theme-color"]:not([media*="dark"])');
+  const meta = document.querySelector('meta[name="theme-color"]');
   if (meta) meta.content = getComputedStyle(document.body).getPropertyValue('--shell').trim() || '#0b6378';
 };
 document.getElementById('app-version').textContent = 'v' + (self.APP_VERSION || '');
