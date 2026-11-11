@@ -203,7 +203,7 @@ components:
 
 Every result is set the way a pharmacy or manufacturer label is printed on an infusion bag: white stock, carbon ink, a colored product band on the edge, monospaced figures, and hairline rules between facts. The doctor checks the screen the same way they check the bag before hanging it. The world is a clinical print shop, not a dashboard: flat paper on a cool grey-green ground, color reserved for product identity and safety, numerals that cannot be misread.
 
-Density is moderate and phone-first. One column on phones, a sticky inputs column beside a results column from 1000px. Safety states are the loudest thing on screen when they apply: a full-width red band with white ink, above the bag labels. Light only: the app ignores the system dark setting (owner decision, 2026-11-11).
+Density is moderate and phone-first. One column on phones, a sticky inputs column beside a results column from 1000px. Safety states are the loudest thing on screen when they apply: a full-width red band with white ink, above the bag labels. Light by default; dark is a manual switch in the header, remembered per device, and never follows the system setting (owner decision, 2026-11-11). In dark, the shell, bands and critical heads stay printed-dark with white ink.
 
 The previous gold-on-navy dashboard look is not binding and is the explicit anti-reference: no gradient cards, no glow, no gold.
 
@@ -241,14 +241,14 @@ A label-print palette: neutral paper and ink, a small set of product inks, and t
 - **Rule / Strong Rule** (`rule`, `rule-2`): 1px dividers between facts, metric cells and list rows; input borders, label borders, tab baseline.
 - **On-Band White** (`on-band`): text on the shell, bands and critical heads, in both modes.
 
-There is no dark mode (removed 2026-11-11 at the owner's request). The `extensions.darkMode` values in `.impeccable/design.json` are retired and must not be reintroduced without asking.
+Dark values live in `.impeccable/design.json` (`extensions.darkMode`) and apply only under `:root[data-theme="dark"]`, set by the header switch.
 
 ### Named Rules
 **The Safety Ink Rule.** Red and amber mean a clinical limit or caution, nothing else. No decorative red, no amber highlights, no brand use.
 
 **The Product Band Rule.** A band color identifies a product, not a mood. A new fluid gets its own band; an existing band is never reused for a different product, except KCl sharing the K⁺ calculator's violet.
 
-**The Light-Only Rule.** The UI is always light; do not add a `prefers-color-scheme: dark` theme.
+**The Manual Theme Rule.** Light is the default. Dark only via the header switch; never use `prefers-color-scheme` to change the theme automatically.
 
 ## Typography
 
